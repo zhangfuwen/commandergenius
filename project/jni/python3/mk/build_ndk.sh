@@ -36,6 +36,9 @@ case "${NDK_REV}" in
            # Zip archive.
 	   pushd "${BASE}/sdk"
            unzip "${NDK_ARCHIVE}" || exit 1
+
+	   #ln -s "/home/gerstrong/apps/android-dev/android-ndk-r${NDK_REV}-$(uname -s | tr '[A-Z]' '[a-z]')-${NDK_ARCH}" android-ndk-r${NDK_REV}-$(uname -s | tr '[A-Z]' '[a-z]')-${NDK_ARCH}
+
 	   popd
       fi
       ;;

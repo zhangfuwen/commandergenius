@@ -19,6 +19,17 @@ build() {
 			CONFIGURE_ARCH=android-$ARCH;;
 	esac
 
+#	case $ARCH in
+#		armeabi-v7a)
+#			ANDROID_PLATFORM=arm;;
+#		armeabi)
+#			ANDROID_PLATFORM=arm;;
+#		arm64-v8a)
+#			ANDROID_PLATFORM=arm;;
+#		*)
+#			ANDROID_PLATFORM=arm;;
+#	esac
+
 #	rm -rf build/$ARCH
 #	mkdir -p build/$ARCH
 #	cd build/$ARCH
@@ -42,7 +53,9 @@ build() {
 #	rm -rf lib-$ARCH
 #	mkdir -p lib-$ARCH
 #	cp build/$ARCH/libcrypto.so.sdl.1.so lib-${ARCH}/libcrypto.so.sdl.1.so || exit 1
-	./setCrossEnvironment-$ARCH.sh make
+#	./setCrossEnvironment-$ARCH.sh make
+	export ANDROID_PLATFORM=arm
+	make
 }
 
 PIDS=""

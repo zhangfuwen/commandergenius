@@ -11,14 +11,12 @@ mk/env.mk: env
 define formula
 $1: $1-$2
 
-#$1-$2: ndk $3
-$1-$2: $3
+$1-$2: ndk $3
 	$$(info Checking $1 $2 sources...)
 	@wget -N -P "src/" -i "mk/$1/$2/sources.txt"
 ifeq ("$$(wildcard build/.built-$(BUILD_IDENTIFIER)/$1-$2)","")
 	$$(info Building $1 $2...)
 	@bash --noprofile --norc mk/build_single.sh $1 $2
-	@mkdir -p build/.built-$(BUILD_IDENTIFIER)
 	@touch build/.built-$(BUILD_IDENTIFIER)/$1-$2
 endif
 endef
@@ -64,14 +62,14 @@ python_gdbm: gdbm
 
 
 # Android NDK.
-#ndk:
-#	$(info Checking NDK sources...)
-#	@wget -N -P "sdk/" $(shell bash mk/ndk_source.sh)
-#ifeq ("$(wildcard build/.built-ndk-$(BUILD_IDENTIFIER))","")
-#	$(info Preparing NDK toolchain...)
-#	@bash --noprofile --norc mk/build_ndk.sh
-#	@touch build/.built-ndk-$(BUILD_IDENTIFIER)
-#endif
+ndk:
+	$(info Checking NDK sources...)
+	@wget -N -P "sdk/" $(shell bash mk/ndk_source.sh)
+ifeq ("$(wildcard build/.built-ndk-$(BUILD_IDENTIFIER))","")
+	$(info Preparing NDK toolchain...)
+	@bash --noprofile --norc mk/build_ndk.sh
+	@touch build/.built-ndk-$(BUILD_IDENTIFIER)
+endif
 
 
 ## Cleaning.
