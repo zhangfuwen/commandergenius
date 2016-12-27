@@ -31,8 +31,16 @@ static void fast_math() {
 void load_libs();
 void glx_init();
 
+#ifdef NO_INIT_CONSTRUCTOR
+__attribute__((visibility("default")))
+#else
 __attribute__((constructor))
+#endif
 void initialize_gl4es() {
+    // only init 1 time
+    static int inited = 0;
+    if(inited) return;
+    inited = 1;
     // default init of globals
     memset(&globals4es, 0, sizeof(globals4es));
     globals4es.mergelist = 1;
@@ -249,6 +257,8 @@ void initialize_gl4es() {
         globals4es.queries = 0;
         SHUT(LOGD("LIBGL: Dont't expose fake glQueries functions\n"));
     }
+
+    env(LIBGL_NOTEXMAT, globals4es.texmat, "Don't handle Texture Matrice internaly");
      
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd))!= NULL)
