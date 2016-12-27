@@ -566,6 +566,10 @@ class SDL_Keys
 		try {
 			for(Field f: fields)
 			{
+				if( !f.getName().startsWith("SDLK_") )
+				{
+					continue;
+				}
 				Values.add(f.getInt(null));
 				Names.add(f.getName().substring(5).toUpperCase());
 			}
