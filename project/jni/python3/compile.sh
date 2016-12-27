@@ -59,15 +59,15 @@ build() {
 }
 
 PIDS=""
-for ARCH in $ARCH_LIST; do
-	build $ARCH &
-	PIDS="$PIDS $!"
-done
+#for ARCH in $ARCH_LIST; do
+	#build $ARCH &
+	#PIDS="$PIDS $!"
+#done
 
-for PID in $PIDS; do
-	wait $PID || exit 1
-done
+#for PID in $PIDS; do
+#	wait $PID || exit 1
+#done
 
 # Provide includes for the to be built apps
-rm -rf include
-cp -r -L build/armeabi-v7a/include ./ || exit 1
+#rm -rf include
+#cp -r -L build/armeabi-v7a/include ./ || exit 1
