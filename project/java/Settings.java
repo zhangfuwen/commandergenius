@@ -78,7 +78,7 @@ import android.content.Intent;
 
 
 // TODO: too much code here, split into multiple files, possibly auto-generated menus?
-class Settings
+public class Settings
 {
 	static String SettingsFileName = "libsdl-settings.cfg";
 
