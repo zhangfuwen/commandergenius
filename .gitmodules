@@ -86,3 +86,6 @@
 [submodule "project/jni/application/ninslash/src"]
 	path = project/jni/application/ninslash/src
 	url = git@github.com:pelya/Ninslash.git
+[submodule "project/jni/python3/python3-android"]
+	path = project/jni/python3/python3-android
+	url = http://github.com/gerstrong/python3-android.git
