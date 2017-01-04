@@ -23,6 +23,7 @@ python scripts/cmd5.py src/engine/shared/protocol.h src/game/generated/protocol.
 
 echo "Archiving data"
 mkdir -p ../AndroidData
+ln -sf ../src/logo.png ../AndroidData
 rm -f ../AndroidData/data.zip
 zip -r ../AndroidData/data.zip data *.txt *.cfg "example configs" >/dev/null
 
