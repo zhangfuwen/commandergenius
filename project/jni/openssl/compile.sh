@@ -48,3 +48,5 @@ done
 
 rm -rf include
 cp -r -L build/armeabi-v7a/include ./ || exit 1
+sed -i.tmp 's@".*/dist/.*"@"."@g' include/openssl/opensslconf.h
+rm -f include/openssl/opensslconf.h.tmp
