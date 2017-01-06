@@ -4,12 +4,11 @@
 [submodule "project/jni/boost/src"]
 	path = project/jni/boost/src
 	url = git@github.com:pelya/Boost-for-Android.git
+	branch = master2
+	update = merge
 [submodule "project/jni/application/commandergenius/commandergenius"]
 	path = project/jni/application/commandergenius/commandergenius
 	url = git@github.com:gerstrong/Commander-Genius.git
-[submodule "project/jni/application/frogatto"]
-	path = project/jni/application/frogatto
-	url = git@github.com:frogatto/frogatto.git
 [submodule "project/jni/application/openarena/engine"]
 	path = project/jni/application/openarena/engine
 	url = git@github.com:pelya/openarena-engine.git
@@ -28,12 +27,18 @@
 [submodule "project/jni/application/xserver/xserver"]
 	path = project/jni/application/xserver/xserver
 	url = git@github.com:pelya/xserver.git
+	branch = xsdl2
+	update = merge
 [submodule "android-shmem"]
 	path = project/jni/shmem
 	url = git@github.com:pelya/android-shmem.git
+	branch = master
+	update = merge
 [submodule "project/jni/application/hid-pc-keyboard/src"]
 	path = project/jni/application/hid-pc-keyboard/src
 	url = git@github.com:pelya/android-keyboard-gadget.git
+	branch = master
+	update = merge
 [submodule "project/jni/iconv/src"]
 	path = project/jni/iconv/src
 	url = git@github.com:pelya/libiconv-libicu-android.git
@@ -70,3 +75,5 @@
 [submodule "project/jni/application/ninslash/src"]
 	path = project/jni/application/ninslash/src
 	url = git@github.com:pelya/Ninslash.git
+	branch = master
+	update = merge
