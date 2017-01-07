@@ -58,6 +58,7 @@ static SDL_Rect hiddenButtons[SDL_ANDROID_SCREENKEYBOARD_BUTTON_NUM];
 static short buttonsize = 1;
 static short buttonDrawSize = 1;
 static float transparency = 128.0f/255.0f;
+static int preventButtonOverlap = 0;
 
 static SDL_Rect arrows[MAX_JOYSTICKS], arrowsExtended[MAX_JOYSTICKS], buttons[MAX_BUTTONS];
 static SDL_Rect arrowsDraw[MAX_JOYSTICKS], buttonsDraw[MAX_BUTTONS];
@@ -488,7 +489,34 @@ unsigned SDL_ANDROID_processTouchscreenKeyboard(int x, int y, int action, int po
 	if( action == MOUSE_DOWN )
 	{
 		//__android_log_print(ANDROID_LOG_INFO, "libSDL", "touch %03dx%03d ptr %d action %d", x, y, pointerId, action);
-		for( j = 0; j < joyAmount; j++ )
+		int processOtherButtons = 1;
+
+		for( i = 0; i < MAX_BUTTONS; i++ )
+		{
+			if( ! buttons[i].h || ! buttons[i].w )
+				continue;
+			if( InsideRect( &buttons[i], x, y) )
+			{
+				processed |= 1<<i;
+				if( pointerInButtonRect[i] == -1 )
+				{
+					pointerInButtonRect[i] = pointerId;
+					if( i == BUTTON_TEXT_INPUT )
+						SDL_ANDROID_ToggleScreenKeyboardTextInput(NULL);
+					else if( buttonsStayPressedAfterTouch[i] )
+						SDL_ANDROID_MainThreadPushKeyboardKey( SDL_GetKeyboardState(NULL)[buttonKeysyms[i]] == 0 ? SDL_PRESSED : SDL_RELEASED, buttonKeysyms[i], 0 );
+					else
+						SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, buttonKeysyms[i], 0 );
+					if( preventButtonOverlap )
+					{
+						processOtherButtons = 0;
+						break;
+					}
+				}
+			}
+		}
+
+		for( j = 0; j < joyAmount && processOtherButtons; j++ )
 		{
 			if( InsideRect( &arrows[j], x, y ) )
 			{
@@ -521,25 +549,10 @@ unsigned SDL_ANDROID_processTouchscreenKeyboard(int x, int y, int action, int po
 						oldArrows = i;
 					}
 				}
-			}
-		}
-
-		for( i = 0; i < MAX_BUTTONS; i++ )
-		{
-			if( ! buttons[i].h || ! buttons[i].w )
-				continue;
-			if( InsideRect( &buttons[i], x, y) )
-			{
-				processed |= 1<<i;
-				if( pointerInButtonRect[i] == -1 )
+				if( preventButtonOverlap )
 				{
-					pointerInButtonRect[i] = pointerId;
-					if( i == BUTTON_TEXT_INPUT )
-						SDL_ANDROID_ToggleScreenKeyboardTextInput(NULL);
-					else if( buttonsStayPressedAfterTouch[i] )
-						SDL_ANDROID_MainThreadPushKeyboardKey( SDL_GetKeyboardState(NULL)[buttonKeysyms[i]] == 0 ? SDL_PRESSED : SDL_RELEASED, buttonKeysyms[i], 0 );
-					else
-						SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, buttonKeysyms[i], 0 );
+					processOtherButtons = 0;
+					break;
 				}
 			}
 		}
@@ -610,10 +623,13 @@ unsigned SDL_ANDROID_processTouchscreenKeyboard(int x, int y, int action, int po
 		int processOtherButtons = 1;
 		for( i = 0; i < MAX_BUTTONS; i++ )
 		{
-			if( buttonsGenerateSdlEvents[i] && pointerInButtonRect[i] == pointerId )
+			if( pointerInButtonRect[i] == pointerId )
 			{
-				processOtherButtons = 0;
-				break;
+				if (buttonsGenerateSdlEvents[i] || preventButtonOverlap)
+				{
+					processOtherButtons = 0;
+					break;
+				}
 			}
 		}
 		if( processOtherButtons )
@@ -1273,6 +1289,12 @@ int SDLCALL SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(int buttonId,
 	if( buttonId < 0 || buttonId >= SDL_ANDROID_SCREENKEYBOARD_BUTTON_NUM )
 		return 0;
 	buttonsGenerateSdlEvents[buttonId] = generateEvents;
+	return 1;
+}
+
+int SDLCALL SDL_ANDROID_SetScreenKeyboardPreventButtonOverlap(int prevent)
+{
+	preventButtonOverlap = prevent;
 	return 1;
 }
 
