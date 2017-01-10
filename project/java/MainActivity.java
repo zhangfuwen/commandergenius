@@ -791,7 +791,6 @@ public class MainActivity extends Activity
 
 	public void showScreenKeyboard(final String oldText)
 	{
-		Log.i("SDL", "showScreenKeyboard()");
 		if(Globals.CompatibilityHacksTextInputEmulatesHwKeyboard)
 		{
 			showScreenKeyboardWithoutTextInputField(Globals.TextInputKeyboard);
@@ -799,7 +798,6 @@ public class MainActivity extends Activity
 		}
 		if(_screenKeyboard != null)
 			return;
-		Log.i("SDL", "showScreenKeyboard() - adding keyboard view");
 		class simpleKeyListener implements OnKeyListener
 		{
 			MainActivity _parent;
@@ -819,7 +817,6 @@ public class MainActivity extends Activity
 					keyCode == KeyEvent.KEYCODE_BUTTON_3 ||
 					keyCode == KeyEvent.KEYCODE_BUTTON_4 ))
 				{
-					Log.i("SDL", "_parent.hideScreenKeyboard()");
 					_parent.hideScreenKeyboard();
 					return true;
 				}
@@ -907,7 +904,6 @@ public class MainActivity extends Activity
 
 	public void hideScreenKeyboard()
 	{
-		Log.i("SDL", "hideScreenKeyboard()");
 		if( keyboardWithoutTextInputShown )
 			showScreenKeyboardWithoutTextInputField(Globals.TextInputKeyboard);
 
@@ -922,7 +918,6 @@ public class MainActivity extends Activity
 				DemoRenderer.nativeTextInput( (int)text.charAt(i), (int)text.codePointAt(i) );
 			}
 		}
-		Log.i("SDL", "hideScreenKeyboard() nativeTextInputFinished()");
 		DemoRenderer.nativeTextInputFinished();
 		_inputManager.hideSoftInputFromWindow(_screenKeyboard.getWindowToken(), 0);
 		_videoLayout.removeView(_screenKeyboard);

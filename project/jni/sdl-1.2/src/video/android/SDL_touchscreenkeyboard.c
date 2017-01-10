@@ -96,7 +96,7 @@ static int themeType = 0;
 static int joystickTouchPoints[MAX_JOYSTICKS*2];
 static int floatingScreenJoystick = 0;
 
-static int asyncTextInputActive = 0;
+int SDL_ANDROID_AsyncTextInputActive = 0;
 
 static void R_DumpOpenGlState(void);
 
@@ -1249,12 +1249,12 @@ SDL_AndroidTextInputAsyncStatus_t SDLCALL SDL_ANDROID_GetScreenKeyboardTextInput
 	if( SDL_ANDROID_TextInputFinished )
 	{
 		SDL_ANDROID_TextInputFinished = 0;
-		asyncTextInputActive = 0;
+		SDL_ANDROID_AsyncTextInputActive = 0;
 		return SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED;
 	}
-	if( !SDL_ANDROID_IsScreenKeyboardShownFlag && !asyncTextInputActive )
+	if( !SDL_ANDROID_IsScreenKeyboardShownFlag && !SDL_ANDROID_AsyncTextInputActive )
 	{
-		asyncTextInputActive = 1;
+		SDL_ANDROID_AsyncTextInputActive = 1;
 		SDL_ANDROID_CallJavaShowScreenKeyboard(textBuf, textBuf, textBufSize, 1);
 	}
 	return SDL_ANDROID_TEXTINPUT_ASYNC_IN_PROGRESS;

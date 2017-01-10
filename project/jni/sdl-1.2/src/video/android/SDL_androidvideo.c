@@ -327,7 +327,7 @@ void SDL_ANDROID_CallJavaHideScreenKeyboard()
 
 int SDL_ANDROID_IsScreenKeyboardShown()
 {
-	return SDL_ANDROID_IsScreenKeyboardShownFlag;
+	return SDL_ANDROID_IsScreenKeyboardShownFlag || SDL_ANDROID_AsyncTextInputActive;
 }
 
 JNIEXPORT void JNICALL
