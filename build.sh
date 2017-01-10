@@ -6,6 +6,7 @@ run_apk=false
 sign_apk=false
 build_release=true
 quick_rebuild=false
+QUICK_REBUILD_ARGS=
 
 if [ "$#" -gt 0 -a "$1" = "-s" ]; then
 	shift
@@ -26,6 +27,7 @@ fi
 if [ "$#" -gt 0 -a "$1" = "-q" ]; then
 	shift
 	quick_rebuild=true
+	QUICK_REBUILD_ARGS=APP_ABI=armeabi-v7a
 fi
 
 if [ "$#" -gt 0 -a "$1" = "release" ]; then
@@ -169,7 +171,7 @@ strip_libs() {
 	return 0
 }
 
-cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU nice -n19 ndk-build -j$NCPU V=1 && \
+cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU nice -n19 ndk-build -j$NCPU V=1 $QUICK_REBUILD_ARGS && \
 	strip_libs && \
 	cd .. && ./copyAssets.sh && cd project && \
 	{	if $build_release ; then \

@@ -306,7 +306,6 @@ void SDL_ANDROID_DeferredTextInput()
 	{
 		if( SDL_ANDROID_TextInputFinished )
 		{
-			SDL_ANDROID_TextInputFinished = 0;
 			SDL_ANDROID_IsScreenKeyboardShownFlag = 0;
 		}
 	}
