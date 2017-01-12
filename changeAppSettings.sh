@@ -1007,7 +1007,18 @@ else
 	cd $CURDIR
 
 	$SEDI "s/==GOOGLEPLAYGAMESERVICES_APP_ID==/$GooglePlayGameServicesId/g" project/res/values/strings.xml
-	grep 'google-play-services' project/local.properties > /dev/null || {
+	grep 'play-services' project/local.properties > /dev/null || {
+
+		PROGUARD=`which android`
+		PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
+		java -jar $PROGUARD | grep 'ProGuard, version 5.3.2' || {
+			echo "Error: ProGuard is too old"
+			echo "You need to update ProGuard. Download it here:"
+			echo "https://sourceforge.net/projects/proguard/files/proguard/5.3/proguard5.3.2.tar.gz"
+			echo "Unpack it, then place file proguard.jar to $PROGUARD"
+			exit 1
+		}
+
 		# Ant is way too smart, and adds current project path in front of the ${sdk.dir}
 		echo "android.library.reference.1=play-services/games/play-services-games-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.2=play-services/drive/play-services-drive-$PLAY_SERVICES_VER" >> project/local.properties
@@ -1020,19 +1031,6 @@ else
 		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
 		ln -s -f $SDK_DIR/extras/android/compatibility/v4/android-support-v4.jar project/libs
 	}
-	if false; then
-	[ -e $SDK_DIR/extras/google/google_play_services/libproject/google-play-services_lib/build.xml ] || \
-		android update project -t android-23 -p $SDK_DIR/extras/google/google_play_services/libproject/google-play-services_lib
-	[ -e $SDK_DIR/extras/android/compatibility/v7/mediarouter/build.xml ] || { \
-		android update project -t android-23 -p $SDK_DIR/extras/android/compatibility/v7/mediarouter
-		echo 'android.library.reference.1=../../../../../../../../../../../../../../${sdk.dir}/extras/android/compatibility/v7/appcompat' >> $SDK_DIR/extras/android/compatibility/v7/mediarouter/local.properties
-	}
-	[ -e $SDK_DIR/extras/android/compatibility/v7/appcompat/build.xml ] || \
-		android update project -t android-23 -p $SDK_DIR/extras/android/compatibility/v7/appcompat
-	[ -e $SDK_DIR/extras/android/compatibility/v7/palette/build.xml ] || \
-		android update project -t android-23 -p $SDK_DIR/extras/android/compatibility/v7/palette && \
-		mkdir -p $SDK_DIR/extras/android/compatibility/v7/palette/src
-	fi
 fi
 
 if [ -e project/jni/application/src/project.patch ]; then patch -p1 --dry-run -f -R < project/jni/application/src/project.patch > /dev/null 2>&1 || patch -p1 --no-backup-if-mismatch < project/jni/application/src/project.patch || exit 1 ; fi
