@@ -89,7 +89,7 @@ public class Settings
 	static void Save(final MainActivity p)
 	{
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(p.openFileOutput( SettingsFileName, p.MODE_WORLD_READABLE ));
+			ObjectOutputStream out = new ObjectOutputStream(p.openFileOutput( SettingsFileName, p.MODE_PRIVATE ));
 			out.writeInt(SETTINGS_FILE_VERSION);
 			out.writeBoolean(Globals.DownloadToSdcard);
 			out.writeBoolean(Globals.PhoneHasArrowKeys);
@@ -401,8 +401,11 @@ public class Settings
 			return;
 			
 		} catch( FileNotFoundException e ) {
+				Log.i("SDL", "libSDL: settings file not found: " + e);
 		} catch( SecurityException e ) {
+				Log.i("SDL", "libSDL: settings file cannot be opened: " + e);
 		} catch ( IOException e ) {
+				Log.i("SDL", "libSDL: settings file cannot be read: " + e);
 			DeleteFilesOnUpgrade(p);
 			if( Globals.ResetSdlConfigForThisVersion )
 			{
@@ -508,7 +511,7 @@ public class Settings
 	public static void DeleteSdlConfigOnUpgradeAndRestart(final MainActivity p)
 	{
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(p.openFileOutput( SettingsFileName, p.MODE_WORLD_READABLE ));
+			ObjectOutputStream out = new ObjectOutputStream(p.openFileOutput( SettingsFileName, p.MODE_PRIVATE ));
 			out.writeInt(-1);
 			out.close();
 		} catch( FileNotFoundException e ) {

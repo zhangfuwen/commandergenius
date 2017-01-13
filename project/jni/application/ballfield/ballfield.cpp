@@ -693,6 +693,7 @@ int main(int argc, char* argv[])
 					if(evt.key.keysym.sym == SDLK_1)
 					{
 						SDL_ANDROID_SetScreenKeyboardButtonShown(SDL_ANDROID_SCREENKEYBOARD_BUTTON_2, 0);
+						SDL_ANDROID_OpenExternalWebBrowser("http:/google.com/");
 					}
 					if(evt.key.keysym.sym == SDLK_2)
 					{
