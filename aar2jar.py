@@ -70,7 +70,7 @@ def convert_project(project_name, output_dir):
    os.rename(os.path.join(your_file_dest_path, 'classes.jar'), os.path.join(your_file_dest_path, project_name + '.jar'))
    shutil.move(os.path.join(your_file_dest_path, project_name + '.jar'), os.path.join(your_file_dest_path, 'libs/' + project_name + '.jar'))
    # Call android update. So we have to install android first, then add it into PATH
-   command = "android update lib-project -p " + os.path.join(output_dir, project_name) + " -t 10"
+   command = "android update lib-project -p " + os.path.join(output_dir, project_name) + " -t android-25"
    os.system(command)
    # Update project.properties file
    with open(os.path.join(output_dir, project_name, 'project.properties'), "a") as myfile:

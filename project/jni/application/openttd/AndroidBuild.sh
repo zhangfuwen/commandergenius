@@ -25,4 +25,4 @@ uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i p
 LIBATOMIC=
 echo $1 | grep 'arm' && LIBATOMIC=-latomic
 
-env CLANG=1 LIBATOMIC=$LIBATOMIC ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' LIBS='-lsdl-1.2 -llzo2 -lpng -ltimidity -lfreetype -lfontconfig -lexpat -licui18n -liculx -licule -licuuc -licudata -lgcc -lz -lc -lgnustl_static -lsupc++ $LIBATOMIC'" && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1
+env CLANG=1 LIBATOMIC=$LIBATOMIC ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' LIBS='-lsdl-1.2 -llzo2 -lpng -ltimidity -lfontconfig -lfreetype -lexpat -licui18n -liculx -licule -licuuc -licudata -lgcc -lz -lc -lgnustl_static -lsupc++ $LIBATOMIC'" && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1

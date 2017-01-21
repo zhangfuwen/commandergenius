@@ -100,6 +100,9 @@ extern DECLSPEC int SDLCALL SDL_ANDROID_GetScreenKeyboardSize(void);
 /* Set a particular button to pass a mouse/multitouch events down to the application, by default all buttons block touch events */
 extern DECLSPEC int SDLCALL SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(int buttonId, int generateEvents);
 
+/* Prevent a button from sharing touch events with other buttons, if they overlap */
+extern DECLSPEC int SDLCALL SDL_ANDROID_SetScreenKeyboardPreventButtonOverlap(int prevent);
+
 /* Configure a button to stay pressed after touch, and un-press after second touch, to emulate Ctrl/Alt/Shift keys  */
 extern DECLSPEC int SDLCALL SDL_ANDROID_SetScreenKeyboardButtonStayPressedAfterTouch(int buttonId, int stayPressed);
 

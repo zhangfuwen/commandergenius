@@ -4,15 +4,11 @@
 [submodule "project/jni/boost/src"]
 	path = project/jni/boost/src
 	url = git@github.com:pelya/Boost-for-Android.git
+	branch = master2
+	update = merge
 [submodule "project/jni/application/commandergenius/commandergenius"]
 	path = project/jni/application/commandergenius/commandergenius
 	url = git@github.com:gerstrong/Commander-Genius.git
-[submodule "project/jni/application/frogatto"]
-	path = project/jni/application/frogatto
-	url = git@github.com:frogatto/frogatto.git
-[submodule "project/jni/application/ufoai/ufoai"]
-	path = project/jni/application/ufoai/ufoai
-	url = git://ufoai.git.sourceforge.net/gitroot/ufoai/ufoai
 [submodule "project/jni/application/openarena/engine"]
 	path = project/jni/application/openarena/engine
 	url = git@github.com:pelya/openarena-engine.git
@@ -31,15 +27,18 @@
 [submodule "project/jni/application/xserver/xserver"]
 	path = project/jni/application/xserver/xserver
 	url = git@github.com:pelya/xserver.git
+	branch = xsdl2
+	update = merge
 [submodule "android-shmem"]
 	path = project/jni/shmem
 	url = git@github.com:pelya/android-shmem.git
+	branch = master
+	update = merge
 [submodule "project/jni/application/hid-pc-keyboard/src"]
 	path = project/jni/application/hid-pc-keyboard/src
 	url = git@github.com:pelya/android-keyboard-gadget.git
-[submodule "project/jni/application/xserver-gimp/xserver"]
-	path = project/jni/application/xserver-gimp/xserver
-	url = git@github.com:pelya/xserver.git
+	branch = master
+	update = merge
 [submodule "project/jni/iconv/src"]
 	path = project/jni/iconv/src
 	url = git@github.com:pelya/libiconv-libicu-android.git
@@ -49,9 +48,6 @@
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = git@github.com:pelya/openttd-android.git
-[submodule "project/jni/application/xserver-debian/xserver"]
-	path = project/jni/application/xserver-debian/xserver
-	url = git@github.com:pelya/xserver.git
 [submodule "project/jni/application/uae4all2"]
 	path = project/jni/application/uae4all2
 	url = git@github.com:lubomyr/uae4all2.git
@@ -64,19 +60,12 @@
 [submodule "project/jni/application/vice/vice"]
 	path = project/jni/application/vice/vice
 	url = git@github.com:lubomyr/vice-2.4.git
-[submodule "project/jni/openssl/openssl/jni"]
-	path = project/jni/openssl/openssl/jni
-	url = https://android.googlesource.com/platform/external/openssl
-	branch = lollipop-mr1-dev
 [submodule "project/jni/application/xserver/pulseaudio"]
 	path = project/jni/application/xserver/pulseaudio
 	url = git@github.com:pelya/pulseaudio-android.git
 [submodule "project/jni/application/bochs/bochs"]
 	path = project/jni/application/bochs/bochs
 	url = git@github.com:lubomyr/bochs.git
-[submodule "project/jni/boringssl/boringssl/jni"]
-	path = project/jni/boringssl/boringssl/jni
-	url = https://android.googlesource.com/platform/external/boringssl
 [submodule "project/jni/application/supertux/supertux"]
 	path = project/jni/application/supertux/supertux
 	url = git@github.com:pelya/supertux.git
@@ -89,3 +78,4 @@
 [submodule "project/jni/python3/python3-android"]
 	path = project/jni/python3/python3-android
 	url = http://github.com/gerstrong/python3-android.git
+

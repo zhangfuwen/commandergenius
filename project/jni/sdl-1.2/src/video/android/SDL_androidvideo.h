@@ -71,6 +71,7 @@ extern void SDL_ANDROID_CallJavaHideScreenKeyboard();
 extern void SDL_ANDROID_CallJavaSetScreenKeyboardHintMessage(const char *hint);
 extern int SDL_ANDROID_IsScreenKeyboardShown();
 extern int SDL_ANDROID_IsScreenKeyboardShownFlag;
+extern int SDL_ANDROID_AsyncTextInputActive;
 extern int SDL_ANDROID_drawTouchscreenKeyboard();
 extern void SDL_ANDROID_VideoContextLost();
 extern void SDL_ANDROID_VideoContextRecreated();

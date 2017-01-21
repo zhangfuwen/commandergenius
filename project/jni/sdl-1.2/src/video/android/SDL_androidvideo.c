@@ -266,14 +266,22 @@ extern int SDL_Flip(SDL_Surface *screen);
 extern SDL_Surface *SDL_GetVideoSurface(void);
 #endif
 
+JNIEXPORT void JNICALL
+JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeMotionEvent) ( JNIEnv*  env, jobject  thiz, jint x, jint y, jint action, jint pointerId, jint force, jint radius );
+
 void SDL_ANDROID_CallJavaShowScreenKeyboard(const char * oldText, char * outBuf, int outBufLen, int async)
 {
+	int i;
 	JNIEnv *JavaEnv = GetJavaEnv();
 
 	// Clear mouse button state, to avoid repeated clicks on the text field in some apps
 	SDL_ANDROID_MainThreadPushMouseButton( SDL_RELEASED, SDL_BUTTON_LEFT );
 	SDL_ANDROID_MainThreadPushMouseButton( SDL_RELEASED, SDL_BUTTON_RIGHT );
 	SDL_ANDROID_MainThreadPushMouseButton( SDL_RELEASED, SDL_BUTTON_MIDDLE );
+	for (i = 0; i < MAX_MULTITOUCH_POINTERS; i++)
+	{
+		JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeMotionEvent) ( NULL, NULL, 0, 0, MOUSE_UP, i, 0, 0 );
+	}
 
 	SDL_ANDROID_TextInputFinished = 0;
 	SDL_ANDROID_IsScreenKeyboardShownFlag = 1;
@@ -327,7 +335,7 @@ void SDL_ANDROID_CallJavaHideScreenKeyboard()
 
 int SDL_ANDROID_IsScreenKeyboardShown()
 {
-	return SDL_ANDROID_IsScreenKeyboardShownFlag;
+	return SDL_ANDROID_IsScreenKeyboardShownFlag || SDL_ANDROID_AsyncTextInputActive;
 }
 
 JNIEXPORT void JNICALL
