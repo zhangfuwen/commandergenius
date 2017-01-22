@@ -1,8 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 
 
-
-
 include $(CLEAR_VARS)
 
 ifeq ($(TARGET_ARCH),arm)
@@ -17,7 +15,7 @@ LOCAL_SHARED_LIBRARIES :=
 
 LOCAL_LDLIBS :=
 
-LOCAL_SRC_FILES = libpython3.5m.so 
+LOCAL_SRC_FILES = lib/libpython3.5m.so 
 
 include $(PREBUILT_SHARED_LIBRARY)
 
@@ -34,9 +32,9 @@ LOCAL_STATIC_LIBRARIES :=
 
 LOCAL_SHARED_LIBRARIES := python3.5m
 
-LOCAL_LDLIBS := 
+LOCAL_LDLIBS :=
 
-LOCAL_SRC_FILES = libpython3.so 
+LOCAL_SRC_FILES = lib/libpython3.so 
 
 include $(PREBUILT_SHARED_LIBRARY)
 
