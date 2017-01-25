@@ -33,10 +33,12 @@ typedef struct _globals4es {
  int queries;
  int silentstub;
  int glx_surface_srgb;
+ int nodownsampling;
 #ifdef PANDORA
  float gamma;
 #endif
  int texmat;
+ int novaocache;
  char version[50];
 } globals4es_t;
 
