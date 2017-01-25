@@ -13,7 +13,7 @@ LOCAL_STATIC_LIBRARIES :=
 
 LOCAL_SHARED_LIBRARIES :=
 
-LOCAL_LDLIBS :=
+LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 
 LOCAL_SRC_FILES = lib/libpython3.5m.so 
 
@@ -32,7 +32,7 @@ LOCAL_STATIC_LIBRARIES :=
 
 LOCAL_SHARED_LIBRARIES := python3.5m
 
-LOCAL_LDLIBS :=
+LOCAL_LDLIBS := -L$(SYSROOT)/usr/lib -llog
 
 LOCAL_SRC_FILES = lib/libpython3.so 
 
