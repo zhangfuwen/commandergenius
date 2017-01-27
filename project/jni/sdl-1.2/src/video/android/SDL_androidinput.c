@@ -1179,6 +1179,27 @@ JAVA_EXPORT_NAME(Settings_nativeSetMouseUsed) (JNIEnv* env, jobject thiz,
 	}
 }
 
+void SDLCALL SDL_ANDROID_SetMouseEmulationMode(
+	int _relativeMovement, int _relativeMovementSpeed, int _relativeMovementAcceleration,
+	int _leftClickMode, SDLKey _leftClickKey, int _leftClickTimeout,
+	int _rightClickMode, SDLKey _rightClickKey, int _rightClickTimeout,
+	int _moveMouseWithJoystick, int _moveMouseWithJoystickSpeed, int _moveMouseWithJoystickAcceleration,
+	int _moveMouseWithGyroscope, int _moveMouseWithGyroscopeSpeed,
+	int _forceHardwareMouse, int _showScreenUnderFinger,
+	int _fingerHover, int _fingerHoverJitterFilter, int _generateSubframeTouchEvents
+)
+{
+	relativeMovement = _relativeMovement;
+	if (relativeMovement)
+	{
+		leftClickMethod = LEFT_CLICK_WITH_TAP_OR_TIMEOUT;
+	}
+	else
+	{
+		leftClickMethod = LEFT_CLICK_NORMAL;
+	}
+}
+
 typedef struct
 {
 		int leftClickMethod;
