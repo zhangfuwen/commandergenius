@@ -124,21 +124,25 @@ class SettingsMenuMouse extends SettingsMenu
 										p.getResources().getString(R.string.display_size_small),
 										p.getResources().getString(R.string.display_size_small_touchpad),
 										p.getResources().getString(R.string.display_size_large),
+										p.getResources().getString(R.string.display_size_desktop),
 									};
 			int _size_small = 0;
 			int _size_small_touchpad = 1;
 			int _size_large = 2;
-			int _more_options = 3;
+			int _size_desktop = 3;
+			int _more_options = 4;
 
 			if( ! Globals.SwVideoMode )
 			{
 				CharSequence[] items2 = {
 											p.getResources().getString(R.string.display_size_small_touchpad),
 											p.getResources().getString(R.string.display_size_large),
+											p.getResources().getString(R.string.display_size_desktop),
 										};
 				items = items2;
 				_size_small_touchpad = 0;
 				_size_large = 1;
+				_size_desktop = 2;
 				_size_small = 1000;
 			}
 			if( firstStart )
@@ -147,6 +151,7 @@ class SettingsMenuMouse extends SettingsMenu
 											p.getResources().getString(R.string.display_size_small),
 											p.getResources().getString(R.string.display_size_small_touchpad),
 											p.getResources().getString(R.string.display_size_large),
+											p.getResources().getString(R.string.display_size_desktop),
 											p.getResources().getString(R.string.show_more_options),
 										};
 				items = items2;
@@ -155,6 +160,7 @@ class SettingsMenuMouse extends SettingsMenu
 					CharSequence[] items3 = {
 												p.getResources().getString(R.string.display_size_small_touchpad),
 												p.getResources().getString(R.string.display_size_large),
+												p.getResources().getString(R.string.display_size_desktop),
 												p.getResources().getString(R.string.show_more_options),
 											};
 					items = items3;
@@ -165,6 +171,7 @@ class SettingsMenuMouse extends SettingsMenu
 			final int size_small = _size_small;
 			final int size_small_touchpad = _size_small_touchpad;
 			final int size_large = _size_large;
+			final int size_desktop = _size_desktop;
 			final int more_options = _more_options;
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(p);
@@ -174,23 +181,33 @@ class SettingsMenuMouse extends SettingsMenu
 				public void onClick(DialogInterface dialog, int item) 
 				{
 					dialog.dismiss();
+					if( item == size_desktop )
+					{
+						Globals.LeftClickMethod = Mouse.LEFT_CLICK_NORMAL;
+						Globals.RelativeMouseMovement = false;
+						Globals.ShowScreenUnderFinger = Mouse.ZOOM_NONE;
+						Globals.ForceHardwareMouse = true;
+					}
 					if( item == size_large )
 					{
 						Globals.LeftClickMethod = Mouse.LEFT_CLICK_NORMAL;
 						Globals.RelativeMouseMovement = false;
 						Globals.ShowScreenUnderFinger = Mouse.ZOOM_NONE;
+						Globals.ForceHardwareMouse = false;
 					}
 					if( item == size_small )
 					{
 						Globals.LeftClickMethod = Mouse.LEFT_CLICK_NEAR_CURSOR;
 						Globals.RelativeMouseMovement = false;
 						Globals.ShowScreenUnderFinger = Mouse.ZOOM_MAGNIFIER;
+						Globals.ForceHardwareMouse = false;
 					}
 					if( item == size_small_touchpad )
 					{
 						Globals.LeftClickMethod = Mouse.LEFT_CLICK_WITH_TAP_OR_TIMEOUT;
 						Globals.RelativeMouseMovement = true;
 						Globals.ShowScreenUnderFinger = Mouse.ZOOM_NONE;
+						Globals.ForceHardwareMouse = false;
 					}
 					if( item == more_options )
 					{

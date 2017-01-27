@@ -106,8 +106,8 @@ abstract class DifferentTouchInput
 	public abstract void process(final MotionEvent event);
 	public abstract void processGenericEvent(final MotionEvent event);
 
-	public static int ExternalMouseDetected = 0;
-	
+	public static int ExternalMouseDetected = Mouse.MOUSE_HW_INPUT_FINGER;
+
 	public static DifferentTouchInput touchInput = getInstance();
 
 	public static DifferentTouchInput getInstance()
@@ -315,8 +315,8 @@ abstract class DifferentTouchInput
 		}
 		public void process(final MotionEvent event)
 		{
-			int hwMouseEvent = ((event.getSource() & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS) ? Mouse.MOUSE_HW_INPUT_STYLUS :
-								((event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE) ? Mouse.MOUSE_HW_INPUT_MOUSE :
+			int hwMouseEvent =  ((event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE || Globals.ForceHardwareMouse) ? Mouse.MOUSE_HW_INPUT_MOUSE :
+								((event.getSource() & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS) ? Mouse.MOUSE_HW_INPUT_STYLUS :
 								Mouse.MOUSE_HW_INPUT_FINGER;
 			if( ExternalMouseDetected != hwMouseEvent )
 			{

@@ -112,6 +112,7 @@ class Globals
 	public static int MoveMouseWithGyroscopeSpeed = 2;
 	public static boolean ClickMouseWithDpad = false;
 	public static boolean RelativeMouseMovement = ForceRelativeMouseMode; // Laptop touchpad mode
+	public static boolean ForceHardwareMouse = false;
 	public static int RelativeMouseMovementSpeed = 2;
 	public static int RelativeMouseMovementAccel = 0;
 	public static int ShowScreenUnderFinger = Mouse.ZOOM_NONE;
