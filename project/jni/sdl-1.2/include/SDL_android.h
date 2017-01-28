@@ -148,6 +148,8 @@ extern DECLSPEC void SDLCALL SDL_ANDROID_SetMouseEmulationMode(
 	int forceHardwareMouse, int showScreenUnderFinger,
 	int fingerHover, int fingerHoverJitterFilter, int generateSubframeTouchEvents
 );
+	
+extern DECLSPEC int SDLCALL SDL_ANDROID_GetMouseEmulationMode();
 
 #ifdef __cplusplus
 }
