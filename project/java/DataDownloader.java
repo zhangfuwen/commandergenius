@@ -750,14 +750,19 @@ class DataDownloader extends Thread
 						ret = check.read(buf, 0, buf.length);
 					}
 					check.close();
+
+
+					// NOTE: For some reason this not work properly on older Android versions (4.4 and below). 
+					// Setting this to become a warning
 					if( check.getChecksum().getValue() != entry.getCrc() || count != entry.getSize() )
 					{
-						File ff = new File(path);
-						ff.delete();
+						//File ff = new File(path);
+						//ff.delete();
 						Log.i("SDL", "Saving file '" + path + "' - CRC check failed, ZIP: " +
 											String.format("%x", entry.getCrc()) + " actual file: " + String.format("%x", check.getChecksum().getValue()) +
 											" file size in ZIP: " + entry.getSize() + " actual size " + count );
-						throw new Exception();
+						Log.i("SDL", "If you still get problems try to reset the app or delete file at path " + path );
+						//throw new Exception();
 					}
 				} catch( Exception e ) {
 					Status.setText( res.getString(R.string.error_write, path) + ": " + e.getMessage() );
