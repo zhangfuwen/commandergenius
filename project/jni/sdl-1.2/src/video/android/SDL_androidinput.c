@@ -1200,6 +1200,10 @@ void SDLCALL SDL_ANDROID_SetMouseEmulationMode(
 	}
 }
 
+int SDLCALL SDL_ANDROID_GetMouseEmulationMode() {
+    return relativeMovement;
+}
+
 typedef struct
 {
 		int leftClickMethod;
