@@ -88,7 +88,7 @@ void tex_setup_texcoord(GLuint len, GLuint itarget) {
     
     // check if some changes are needed
     int changes = 0;
-    if ((glstate->texture.rect_arb[texunit]) 
+    if ((itarget == ENABLED_TEXTURE_RECTANGLE) 
         || (bound && ((bound->width!=bound->nwidth)||(bound->height!=bound->nheight)
         )) || !(globals4es.texmat || glstate->texture_matrix[texunit]->identity) 
         )
@@ -102,7 +102,7 @@ void tex_setup_texcoord(GLuint len, GLuint itarget) {
         }
         copy_gl_pointer_tex_noalloc(tex[texunit], &glstate->vao->pointers.tex_coord[texunit], 4, 0, len);
         // Normalize if needed
-        if ((glstate->texture.rect_arb[texunit]))
+        if (itarget == ENABLED_TEXTURE_RECTANGLE)
             tex_coord_rect_arb(tex[texunit], len, bound->width, bound->height);
         // Apply transformation matrix if any
         if (!(globals4es.texmat || glstate->texture_matrix[texunit]->identity))
@@ -940,8 +940,8 @@ void gl4es_glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoff
 		errorGL();
     }
 
-    if (bound && bound->mipmap_need && !bound->mipmap_auto && (globals4es.automipmap!=3) && (!globals4es.texstream || (globals4es.texstream && !bound->streamed)))
-        gles_glTexParameteri( target, GL_GENERATE_MIPMAP, GL_FALSE );
+    /*if (bound && bound->mipmap_need && !bound->mipmap_auto && (globals4es.automipmap!=3) && (!globals4es.texstream || (globals4es.texstream && !bound->streamed)))
+        gles_glTexParameteri( target, GL_GENERATE_MIPMAP, GL_FALSE );*/
 
     if ((target==GL_TEXTURE_2D) && globals4es.texcopydata && bound && ((globals4es.texstream && !bound->streamed) || !globals4es.texstream)) {
     //printf("*texcopy* glTexSubImage2D, xy=%i,%i, size=%i,%i=>%i,%i, format=%s, type=%s, tex=%u\n", xoffset, yoffset, width, height, bound->width, bound->height, PrintEnum(format), PrintEnum(type), bound->glname);
@@ -1173,7 +1173,6 @@ tex_changed=1;  // seems buggy, temporary disabling that...
 	        }
 #endif
 
-	        glstate->texture.rect_arb[glstate->texture.active] = (target == GL_TEXTURE_RECTANGLE_ARB);
 	        target = map_tex_target(target);
 
             glstate->texture.bound[glstate->texture.active][itarget] = tex;
@@ -1373,28 +1372,20 @@ void gl4es_glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GL
 		case GL_TEXTURE_WIDTH:
 			if (target==GL_PROXY_TEXTURE_2D)
 				(*params) = nlevel(proxy_width,level);
-			else
+			else {
 				(*params) = nlevel((bound)?bound->width:2048,level);
-            /*if(bound && ((bound->orig_internal==GL_COMPRESSED_RGB) || (bound->orig_internal==GL_COMPRESSED_RGBA))) {
-                if (*params<4)      // minimum size of a compressed block is 4
-                    *params = 0;
-            } else {
-                if (*params<=0)     // 1 is the minimum, not 0
-                    *params = 1;
-            }*/
+                if(level && (!bound || (bound && !(bound->mipmap_auto || bound->mipmap_need))))
+                    (*params) = 0;   // Mipmap level not loaded
+            }
 			break;
 		case GL_TEXTURE_HEIGHT: 
 			if (target==GL_PROXY_TEXTURE_2D)
 				(*params) = nlevel(proxy_height,level);
-			else
+			else {
 				(*params) = nlevel((bound)?bound->height:2048,level); 
-            /*if(bound && ((bound->orig_internal==GL_COMPRESSED_RGB) || (bound->orig_internal==GL_COMPRESSED_RGBA))) {
-                if (*params<4)      // minimum size of a compressed block is 4
-                    *params = 0;
-            } else {
-                if (*params<=0)      // 1 is the minimum, not 0, but only on uncompressed textures
-                    *params = 1;
-            }*/
+                if(level && (!bound || (bound && !(bound->mipmap_auto || bound->mipmap_need))))
+                    (*params) = 0;   // Mipmap level not loaded
+            }
 			break;
 		case GL_TEXTURE_INTERNAL_FORMAT:
             if (target==GL_PROXY_TEXTURE_2D)
