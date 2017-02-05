@@ -66,6 +66,35 @@ void* NewGLState(void* shared_glstate) {
     // init the matrix tracking
     init_matrix(glstate);
 
+    // init the light tracking
+    glstate->light.ambient[0]=glstate->light.ambient[1]=glstate->light.ambient[2]=0.2f;
+    glstate->light.ambient[3]=1.0f;
+    glstate->light.lights[0].diffuse[0]=
+    glstate->light.lights[0].diffuse[1]=
+    glstate->light.lights[0].diffuse[2]=
+    glstate->light.lights[0].diffuse[3]=1.0f;
+    memcpy(glstate->light.lights[0].specular, glstate->light.lights[0].diffuse, 4*sizeof(GLfloat));
+    for (int i=0; i<hardext.maxlights; i++) {
+        glstate->light.lights[i].ambient[3] = 1.0f;
+        glstate->light.lights[i].position[2] = 1.0f;
+        glstate->light.lights[i].spotDirection[2] = -1.0f;
+        glstate->light.lights[i].spotCutoff = 180;
+        glstate->light.lights[i].constantAttenuation = 1;
+    }
+    // Materials
+    glstate->material.front.ambient[0] = 
+    glstate->material.front.ambient[1] =
+    glstate->material.front.ambient[2] = 0.2f;
+    glstate->material.front.ambient[3] = 1.0f;
+    glstate->material.front.diffuse[0] = 
+    glstate->material.front.diffuse[1] =
+    glstate->material.front.diffuse[2] = 0.8f;
+    glstate->material.front.diffuse[3] = 1.0f;
+    glstate->material.front.specular[3] = 1.0f;
+    glstate->material.front.emission[3] = 1.0f;
+    glstate->material.front.colormat = GL_AMBIENT_AND_DIFFUSE;
+    memcpy(&glstate->material.back, &glstate->material.front, sizeof(material_t));
+
     for(int i=0; i<4; i++)
         glstate->raster.raster_scale[i] = 1.0f;
     LOAD_GLES(glGetFloatv);
@@ -1085,42 +1114,6 @@ void gl4es_glSecondaryColor3f(GLfloat r, GLfloat g, GLfloat b) {
 }
 void glSecondaryColor3f(GLfloat r, GLfloat g, GLfloat b) AliasExport("gl4es_glSecondaryColor3f");
 
-#ifndef USE_ES2
-void gl4es_glMaterialfv(GLenum face, GLenum pname, const GLfloat *params) {
-    LOAD_GLES(glMaterialfv);
-    if ((glstate->list.compiling || glstate->gl_batch) && glstate->list.active) {
-		//TODO: Materialfv can be done per vertex, how to handle that ?!
-		//NewStage(glstate->list.active, STAGE_MATERIAL);
-        rlMaterialfv(glstate->list.active, face, pname, params);
-        noerrorShim();
-    } else {
-	    if (face!=GL_FRONT_AND_BACK) {
-		    face=GL_FRONT_AND_BACK;
-		}
-        gles_glMaterialfv(face, pname, params);
-        errorGL();
-    }
-}
-void glMaterialfv(GLenum face, GLenum pname, const GLfloat *params) AliasExport("gl4es_glMaterialfv");
-void gl4es_glMaterialf(GLenum face, GLenum pname, const GLfloat param) {
-    LOAD_GLES(glMaterialf);
-    if ((glstate->list.compiling || glstate->gl_batch) && glstate->list.active) {
-		GLfloat params[4];
-		memset(params, 0, 4*sizeof(GLfloat));
-		params[0] = param;
-		NewStage(glstate->list.active, STAGE_MATERIAL);
-        rlMaterialfv(glstate->list.active, face, pname, params);
-        noerrorShim();
-    } else {
-	    if (face!=GL_FRONT_AND_BACK) {
-		    face=GL_FRONT_AND_BACK;
-		}
-        gles_glMaterialf(face, pname, param);
-        errorGL();
-    }
-}
-void glMaterialf(GLenum face, GLenum pname, const GLfloat param) AliasExport("gl4es_glMaterialf");
-#endif
 
 void gl4es_glTexCoord4f(GLfloat s, GLfloat t, GLfloat r, GLfloat q) {
     if (glstate->list.active) {

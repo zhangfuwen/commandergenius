@@ -15,8 +15,6 @@
 #define skip_glDisable
 #define skip_glEnable
 #define skip_glIsEnabled
-#define skip_glMaterialfv
-#define skip_glMaterialf
 #define skip_glNormal3f
 
 #define skip_glBindBuffer
@@ -51,6 +49,8 @@
 #define skip_glGetIntegerv
 #define skip_glGetFloatv
 #define skip_glGetString
+#define skip_glGetLightfv
+#define skip_glGetMaterialfv
 
 // hint.c
 #define skip_glHint
@@ -60,6 +60,8 @@
 #define skip_glLightModelfv
 #define skip_glLightfv
 #define skip_glLightf
+#define skip_glMaterialfv
+#define skip_glMaterialf
 
 // raster.c
 #define skip_glViewport
