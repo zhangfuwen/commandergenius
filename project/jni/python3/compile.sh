@@ -7,11 +7,19 @@ ARCH_LIST="arm"
 
 mkdir -p build
 
-build() {
-		
+build() {		
 	pushd python3-android
-	rm env
-        rm mk/env.mk
+	if [ -f env ]; then 
+           rm env 
+        fi
+
+	if [ -f mk/env.mk ]; then 
+           rm mk/env.mk 
+        fi
+	 
+	echo ANDROID_PLATFORM=$1 > env
+	cat env.noarch >> env
+
 	make all ANDROID_PLATFORM=$1
 	popd
 }
