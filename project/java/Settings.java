@@ -186,6 +186,7 @@ public class Settings
 			out.writeBoolean(Globals.ImmersiveMode);
 			out.writeBoolean(Globals.AutoDetectOrientation);
 			out.writeBoolean(Globals.TvBorders);
+			out.writeBoolean(Globals.ForceHardwareMouse);
 
 			out.close();
 			settingsLoaded = true;
@@ -379,6 +380,7 @@ public class Settings
 			Globals.ImmersiveMode = settingsFile.readBoolean();
 			Globals.AutoDetectOrientation = settingsFile.readBoolean();
 			Globals.TvBorders = settingsFile.readBoolean();
+			Globals.ForceHardwareMouse = settingsFile.readBoolean();
 
 			settingsLoaded = true;
 

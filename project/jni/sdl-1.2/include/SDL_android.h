@@ -134,8 +134,22 @@ enum {
 	/* TODO: more options, see Globals.java */
 };
 
-/* Set SDL Android-specifc option, such as video depth or mouse emulation mode. Most options require restarting the app. */
+/* Set SDL Android-specifc option, and save it to SDL config file, such as video depth or mouse emulation mode. Most options require restarting the app. */
 extern DECLSPEC void SDLCALL SDL_ANDROID_SetConfigOption(int option, int value);
+
+/* Change mouse emulation mode, pass -1 to any option to keep the current value, this does not change SDL config file.
+   Currently only relativeMovement is processed, other options are ignored  */
+extern DECLSPEC void SDLCALL SDL_ANDROID_SetMouseEmulationMode(
+	int relativeMovement, int relativeMovementSpeed, int relativeMovementAcceleration,
+	int leftClickMode, int leftClickKey, int leftClickTimeout,
+	int rightClickMode, int rightClickKey, int rightClickTimeout,
+	int moveMouseWithJoystick, int moveMouseWithJoystickSpeed, int moveMouseWithJoystickAcceleration,
+	int moveMouseWithGyroscope, int moveMouseWithGyroscopeSpeed,
+	int forceHardwareMouse, int showScreenUnderFinger,
+	int fingerHover, int fingerHoverJitterFilter, int generateSubframeTouchEvents
+);
+	
+extern DECLSPEC int SDLCALL SDL_ANDROID_GetMouseEmulationMode();
 
 #ifdef __cplusplus
 }

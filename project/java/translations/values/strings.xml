@@ -163,6 +163,7 @@
 
     <string name="display_size_mouse">Mouse emulation mode</string>
     <string name="display_size">Display size for mouse emulation</string>
+    <string name="display_size_desktop">Desktop, no emulation</string>
     <string name="display_size_large">Large (tablets)</string>
     <string name="display_size_small">Small, magnifying glass</string>
     <string name="display_size_small_touchpad">Small, touchpad mode</string>

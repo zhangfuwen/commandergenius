@@ -681,12 +681,13 @@ void adjust_renderlist(renderlist_t *list) {
     list->stage = STAGE_LAST;
     list->open = false;
     for (int a=0; a<hardext.maxtex; a++) {
-	    gltexture_t *bound = glstate->texture.bound[a][ENABLED_TEX2D];  //TODO check if hardcoded TEX2D is ok
+        const GLint itarget = get_target(glstate->enable.texture[a]);
+	    gltexture_t *bound = glstate->texture.bound[a][itarget];
         // in case of Texture bounding inside a list
         if (list->set_texture && (list->tmu == a))
             bound = gl4es_getTexture(list->target_texture, list->texture);
 	    // GL_ARB_texture_rectangle
-	    if ((list->tex[a]) && glstate->texture.rect_arb[a] && (bound)) {
+	    if ((list->tex[a]) && (itarget == ENABLED_TEXTURE_RECTANGLE) && (bound)) {
 		    tex_coord_rect_arb(list->tex[a], list->len, bound->width, bound->height);
 	    }
     }
@@ -935,7 +936,7 @@ void draw_renderlist(renderlist_t *list) {
         old_tex = glstate->texture.client;
         GLuint cur_tex = old_tex;
         #define RS(A, len) if(texgenedsz[A]<len) {free(texgened[A]); texgened[A]=malloc(4*sizeof(GLfloat)*len); texgenedsz[A]=len; } use_texgen[A]=1
-        GLint needclean[MAX_TEX];
+        GLint needclean[MAX_TEX] = {0};
         for (int a=0; a<hardext.maxtex; a++) {
             if(glstate->enable.texture[a]) {
                 const GLint itarget = get_target(glstate->enable.texture[a]);

@@ -820,7 +820,6 @@ public class MainActivity extends Activity
 					_parent.hideScreenKeyboard();
 					return true;
 				}
-				/*
 				if (keyCode == KeyEvent.KEYCODE_DEL || keyCode == KeyEvent.KEYCODE_CLEAR)
 				{
 					// EditText deletes two characters at a time, here's a hacky fix
@@ -830,12 +829,12 @@ public class MainActivity extends Activity
 						int start = t.getSelectionStart();  //get cursor starting position
 						int end = t.getSelectionEnd();      //get cursor ending position
 						if ( start < 0 )
-							return true;
+							return false;
 						if ( end < 0 || end == start )
 						{
 							start --;
 							if ( start < 0 )
-								return true;
+								return false;
 							end = start + 1;
 						}
 						t.setText(t.getText().toString().substring(0, start) + t.getText().toString().substring(end));
@@ -843,7 +842,6 @@ public class MainActivity extends Activity
 						return true;
 					}
 				}
-				*/
 				//Log.i("SDL", "Key " + keyCode + " flags " + event.getFlags() + " action " + event.getAction());
 				return false;
 			}

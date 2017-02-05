@@ -13,7 +13,7 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H
 
 LOCAL_SHARED_LIBRARIES := freetype expat
 
-LOCAL_LDLIBS := -lz
+#LOCAL_LDLIBS := -lz
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include \

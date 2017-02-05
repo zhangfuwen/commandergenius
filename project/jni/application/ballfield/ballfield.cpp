@@ -689,11 +689,12 @@ int main(int argc, char* argv[])
 					if(evt.key.keysym.sym == SDLK_0)
 					{
 						SDL_ANDROID_SetScreenKeyboardButtonShown(SDL_ANDROID_SCREENKEYBOARD_BUTTON_2, 1);
+						SDL_ANDROID_SetMouseEmulationMode(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 					}
 					if(evt.key.keysym.sym == SDLK_1)
 					{
 						SDL_ANDROID_SetScreenKeyboardButtonShown(SDL_ANDROID_SCREENKEYBOARD_BUTTON_2, 0);
-						SDL_ANDROID_OpenExternalWebBrowser("http:/google.com/");
+						SDL_ANDROID_SetMouseEmulationMode(1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
 					}
 					if(evt.key.keysym.sym == SDLK_2)
 					{
