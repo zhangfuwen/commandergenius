@@ -276,13 +276,13 @@ void gl4es_glEnable(GLenum cap) {
         }
     }
 	PUSH_IF_COMPILING(glEnable)
-        
+#ifdef TEXSTREAM
 	if (globals4es.texstream && (cap==GL_TEXTURE_2D)) {
 		if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D])
 			if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D]->streamed)
 				cap = GL_TEXTURE_STREAM_IMG;
 	}
-
+#endif
     LOAD_GLES(glEnable);
     proxy_glEnable(cap, true, gles_glEnable);
 }
@@ -502,6 +502,10 @@ static inline bool should_intercept_render(GLenum mode) {
         if (glstate->enable.texture[aa]) {
             if ((glstate->enable.texgen_s[aa] || glstate->enable.texgen_t[aa] || glstate->enable.texgen_r[aa] || glstate->enable.texgen_q[aa]))
                 return true;
+            if ((!glstate->vao->tex_coord_array[aa]) && !(mode==GL_POINT && glstate->texture.pscoordreplace[aa]))
+                return true;
+            if ((glstate->vao->tex_coord_array[aa]) && (glstate->vao->pointers.tex_coord[aa].size == 1))
+                return true;
         }
     }
     if(glstate->polygon_mode == GL_LINE && mode>=GL_TRIANGLES)
@@ -513,7 +517,7 @@ static inline bool should_intercept_render(GLenum mode) {
     return (
         (glstate->vao->vertex_array && ! valid_vertex_type(glstate->vao->pointers.vertex.type)) ||
         (mode == GL_LINES && glstate->enable.line_stipple) ||
-        (mode == GL_QUADS) || (glstate->list.active && (glstate->list.compiling || glstate->gl_batch))
+        /*(mode == GL_QUADS) ||*/ (glstate->list.active && (glstate->list.compiling || glstate->gl_batch))
     );
 }
 
@@ -568,7 +572,7 @@ void gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid 
         return;
      }
 
-     if (should_intercept_render(mode)) {
+     if (should_intercept_render(mode) || (mode==GL_QUADS)) {
         renderlist_t *list = NULL;
         GLsizei min, max;
 
@@ -599,6 +603,7 @@ void gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid 
         LOAD_GLES(glDisable);
         LOAD_GLES(glEnableClientState);
         LOAD_GLES(glDisableClientState);
+        LOAD_GLES(glMultiTexCoord4f);
         GLuint len = 0;
         for (int i=0; i<count; i++)
             if (len<sindices[i]) len = sindices[i]; // get the len of the arrays
@@ -638,7 +643,7 @@ void gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid 
 				gles_glVertexPointer(glstate->vao->pointers.vertex.size, glstate->vao->pointers.vertex.type, glstate->vao->pointers.vertex.stride, glstate->vao->pointers.vertex.pointer);
 			GLuint old_tex = glstate->texture.client;
             #define TEXTURE(A) gl4es_glClientActiveTexture(A+GL_TEXTURE0);
-            for (int aa=0; aa<MAX_TEX; aa++) {
+            for (int aa=0; aa<hardext.maxtex; aa++) {
                 client_state(tex_coord_array[aa], GL_TEXTURE_COORD_ARRAY, TEXTURE(aa););
                 // get 1st enabled target
                 const GLint itarget = get_target(glstate->enable.texture[aa]);
@@ -650,7 +655,13 @@ void gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid 
                     if (glstate->vao->tex_coord_array[aa]) {
                         TEXTURE(aa);
                         tex_setup_texcoord(len, itarget);
-                    }
+                    } else
+                        gles_glMultiTexCoord4f(GL_TEXTURE0+aa, glstate->texcoord[aa][0], glstate->texcoord[aa][1], glstate->texcoord[aa][2], glstate->texcoord[aa][3]);
+                } else if (glstate->clientstate.tex_coord_array[aa]) {
+                    // special case, Tex disable but CoordArray enabled... disabling it temporarly
+                    TEXTURE(aa);
+                    glstate->clientstate.tex_coord_array[aa] = 0;
+                    gles_glDisableClientState(GL_TEXTURE_COORD_ARRAY);
                 }
             }
 			if (glstate->texture.client!=old_tex)
@@ -658,7 +669,7 @@ void gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid 
 			// POLYGON mode as LINE is "intercepted" and drawn using list
 			gles_glDrawElements(mode, count, GL_UNSIGNED_SHORT, sindices);
 			
-			for (int aa=0; aa<MAX_TEX; aa++) {
+			for (int aa=0; aa<hardext.maxtex; aa++) {
                 if (!IS_TEX2D(glstate->enable.texture[aa]) && (IS_ANYTEX(glstate->enable.texture[aa]))) {
                     TEXTURE(aa);
                     gles_glDisable(GL_TEXTURE_2D);
@@ -706,6 +717,7 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
     LOAD_GLES(glDisable);
     LOAD_GLES(glEnableClientState);
     LOAD_GLES(glDisableClientState);
+    LOAD_GLES(glMultiTexCoord4f);
 
     if (glstate->list.active && (glstate->list.compiling || glstate->gl_batch)) {
         NewStage(glstate->list.active, STAGE_DRAW);
@@ -719,31 +731,6 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
     if (glstate->polygon_mode == GL_POINT && mode>=GL_TRIANGLES)
 		mode = GL_POINTS;
 
-    if (glstate->polygon_mode != GL_LINES && mode==GL_QUADS) {
-        static GLushort *indices = NULL;
-        static int indcnt = 0;
-        if(indcnt < count+first) {
-            indcnt = count + first;
-            if (indices) free(indices);
-            indices = (GLushort*)malloc(sizeof(GLushort)*(indcnt*3/2));
-            for (int i=0, j=0; i+3<indcnt; i+=4, j+=6) {
-                    indices[j+0] = i+0;
-                    indices[j+1] = i+1;
-                    indices[j+2] = i+2;
-
-                    indices[j+3] = i+0;
-                    indices[j+4] = i+2;
-                    indices[j+5] = i+3;
-            }
-        }
-        // take care of vao elements, just in case
-        glbuffer_t *old_vao_elements = glstate->vao->elements;
-        glstate->vao->elements = NULL;
-        gl4es_glDrawElements(GL_TRIANGLES, count*3/2, GL_UNSIGNED_SHORT, indices+first*3/2);
-        glstate->vao->elements = old_vao_elements;
-        return;
-    }
-
     if (should_intercept_render(mode)) {
         renderlist_t *list;
         list = arrays_to_renderlist(NULL, mode, first, count+first);
@@ -751,6 +738,35 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
         draw_renderlist(list);
         free_renderlist(list);
     } else {
+        if (mode==GL_QUADS) {
+            static GLushort *indices = NULL;
+            static int indcnt = 0;
+            static int indfirst = 0;
+            if((indcnt < count) || (indfirst!=first)) {
+                if(indcnt < count) {
+                    indcnt = count;
+                    if (indices) free(indices);
+                    indices = (GLushort*)malloc(sizeof(GLushort)*(indcnt*3/2));
+                }
+                indfirst = first;
+                for (int i=0, j=0; i+3<indcnt; i+=4, j+=6) {
+                        indices[j+0] = indfirst + i+0;
+                        indices[j+1] = indfirst + i+1;
+                        indices[j+2] = indfirst + i+2;
+
+                        indices[j+3] = indfirst + i+0;
+                        indices[j+4] = indfirst + i+2;
+                        indices[j+5] = indfirst + i+3;
+                }
+            }
+            // take care of vao elements, just in case
+            glbuffer_t *old_vao_elements = glstate->vao->elements;
+            glstate->vao->elements = NULL;
+            gl4es_glDrawElements(GL_TRIANGLES, count*3/2, GL_UNSIGNED_SHORT, indices);
+            glstate->vao->elements = old_vao_elements;
+            return;
+        }
+
         LOAD_GLES(glDrawArrays);
 
 		GLenum mode_init = mode;
@@ -774,7 +790,7 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
 				gles_glVertexPointer(glstate->vao->pointers.vertex.size, glstate->vao->pointers.vertex.type, glstate->vao->pointers.vertex.stride, glstate->vao->pointers.vertex.pointer);
 			GLuint old_tex = glstate->texture.client;
             #define TEXTURE(A) gl4es_glClientActiveTexture(A+GL_TEXTURE0);
-            for (int aa=0; aa<MAX_TEX; aa++) {
+            for (int aa=0; aa<hardext.maxtex; aa++) {
                 client_state(tex_coord_array[aa], GL_TEXTURE_COORD_ARRAY, TEXTURE(aa););
                 // get 1st enabled target
                 const GLint itarget = get_target(glstate->enable.texture[aa]);
@@ -786,9 +802,13 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
                     if (glstate->vao->tex_coord_array[aa]) {
                         TEXTURE(aa);
                         tex_setup_texcoord(count+first, itarget);
-                        /*glClientActiveTexture(aa+GL_TEXTURE0);
-                        gles_glTexCoordPointer(glstate->pointers.tex_coord[aa].size, glstate->pointers.tex_coord[aa].type, glstate->pointers.tex_coord[aa].stride, glstate->pointers.tex_coord[aa].pointer);*/
-                    }
+                    } else
+                        gles_glMultiTexCoord4f(GL_TEXTURE0+aa, glstate->texcoord[aa][0], glstate->texcoord[aa][1], glstate->texcoord[aa][2], glstate->texcoord[aa][3]);
+                }  else if (glstate->clientstate.tex_coord_array[aa]) {
+                    // special case, Tex disable but CoordArray enabled... disabling it temporarly
+                    TEXTURE(aa);
+                    glstate->clientstate.tex_coord_array[aa] = 0;
+                    gles_glDisableClientState(GL_TEXTURE_COORD_ARRAY);
                 }
             }
 			if (glstate->texture.client!=old_tex)
@@ -796,7 +816,7 @@ void gl4es_glDrawArrays(GLenum mode, GLint first, GLsizei count) {
 
 			gles_glDrawArrays(mode, first, count);
 			
-			for (int aa=0; aa<MAX_TEX; aa++) {
+			for (int aa=0; aa<hardext.maxtex; aa++) {
                 if (!IS_TEX2D(glstate->enable.texture[aa]) && (IS_ANYTEX(glstate->enable.texture[aa]))) {
                     TEXTURE(aa);
                     gles_glDisable(GL_TEXTURE_2D);
@@ -1660,9 +1680,10 @@ void glPointParameterfv(GLenum pname, const GLfloat * params) AliasExport("gl4es
 void gl4es_glMultiDrawArrays(GLenum mode, const GLint *first, const GLsizei *count, GLsizei primcount)
 {
     LOAD_GLES_EXT(glMultiDrawArrays);
-    if((!gles_glMultiDrawArrays) || should_intercept_render(mode) || (glstate->list.active && (glstate->list.compiling || glstate->gl_batch)) 
+    if((!gles_glMultiDrawArrays) || should_intercept_render(mode) || (mode==GL_QUADS) || (glstate->list.active && (glstate->list.compiling || glstate->gl_batch)) 
         || (glstate->render_mode == GL_SELECT) || ((glstate->polygon_mode == GL_LINE) || (glstate->polygon_mode == GL_POINT)) )
     {
+        // GL_QUADS special case can probably by improved
         // divide the call
         // TODO optimize with forcing Batch mode
         for (int i=0; i<primcount; i++)
@@ -1681,7 +1702,7 @@ void glMultiDrawArrays(GLenum mode, const GLint *first, const GLsizei *count, GL
 void gl4es_glMultiDrawElements( GLenum mode, GLsizei *count, GLenum type, const void * const *indices, GLsizei primcount)
 {
     LOAD_GLES_EXT(glMultiDrawElements);
-    if((!gles_glMultiDrawElements) || should_intercept_render(mode) || (glstate->list.active && (glstate->list.compiling || glstate->gl_batch)) 
+    if((!gles_glMultiDrawElements) || should_intercept_render(mode) || (mode==GL_QUADS) || (glstate->list.active && (glstate->list.compiling || glstate->gl_batch)) 
         || (glstate->render_mode == GL_SELECT) || ((glstate->polygon_mode == GL_LINE) || (glstate->polygon_mode == GL_POINT)) || (type != GL_UNSIGNED_SHORT) )
     {
         // divide the call
