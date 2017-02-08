@@ -39,16 +39,12 @@ done
 
 
 # Set some symbolic links for android ndk toolkit access
-rm -rf include 
+rm include 
 rm -rf lib
 
-mkdir -p include
 mkdir -p lib
 
-pushd include
-ln -s ../python3-android/build/13b-23-arm-linux-androideabi-4.9/include arm	
-ln -s ../python3-android/build/13b-23-x86-4.9/include x86	
-popd
+ln -s python3-android/build/13b-23-arm-linux-androideabi-4.9/include include 	
 
 pushd lib 
 ln -s ../python3-android/build/13b-23-arm-linux-androideabi-4.9/lib arm
