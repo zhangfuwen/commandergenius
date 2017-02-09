@@ -3,7 +3,7 @@
 #ARCH_LIST="arm64-v8a x86 mips armeabi-v7a armeabi"
 
 #ARCH_LIST="arm x86 mips arm64"
-ARCH_LIST="arm"
+ARCH_LIST="arm x86"
 
 mkdir -p build
 
