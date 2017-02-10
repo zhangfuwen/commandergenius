@@ -46,7 +46,7 @@ bool ispurerender_renderlist(renderlist_t *list) {
         return false;
     if (list->popattribute)
         return false;
-    if (list->material || list->light || list->lightmodel || list->texgen || list->texenv)
+    if (list->material || list->colormat_face || list->light || list->lightmodel || list->texgen || list->texenv)
         return false;
     if (list->fog_op)
         return false;
@@ -454,6 +454,8 @@ renderlist_t *extend_renderlist(renderlist_t *list) {
         // just in case
         memcpy(new->lastNormal, list->lastNormal, 3*sizeof(GLfloat));
         memcpy(new->lastSecondaryColors, list->lastSecondaryColors, 3*sizeof(GLfloat));
+        memcpy(new->lastColors, list->lastColors, 4*sizeof(GLfloat));
+        new->lastColorsSet = list->lastColorsSet;
         // detach
         list->prev = NULL;
         // free list now
@@ -821,13 +823,15 @@ void draw_renderlist(renderlist_t *list) {
             kh_foreach_value(map, m,
                 switch (m->pname) {
                     case GL_SHININESS:
-                        gl4es_glMaterialf(GL_FRONT_AND_BACK,  m->pname, m->color[0]);
+                        gl4es_glMaterialf(m->face,  m->pname, m->color[0]);
                         break;
                     default:
-                        gl4es_glMaterialfv(GL_FRONT_AND_BACK, m->pname, m->color);
+                        gl4es_glMaterialfv(m->face, m->pname, m->color);
                 }
             )
         }
+        if (list->colormat_face)
+            gl4es_glColorMaterial(list->colormat_face, list->colormat_mode);
         if (list->light) {
             khash_t(light) *lig = list->light;
             renderlight_t *m;

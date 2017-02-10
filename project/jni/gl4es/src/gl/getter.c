@@ -3,6 +3,7 @@
 #include "texgen.h"
 #include "../glx/hardext.h"
 #include "gl4eshint.h"
+#include "light.h"
 
 GLenum gl4es_glGetError() {
 	LOAD_GLES(glGetError);
@@ -100,8 +101,8 @@ const GLubyte *gl4es_glGetString(GLenum name) {
                 "GL_EXT_polygon_offset "
                 "GL_GL4ES_hint "
                 "GL_ARB_vertex_array_bgra "
+                "GL_ARB_texture_rectangle "
 //                "GL_EXT_blend_logic_op "
-//                "GL_ARB_texture_cube_map "
 				);
 		if(globals4es.npot>=1)
 			strcat(extensions, "GL_APPLE_texture_2D_limited_npot ");
@@ -295,6 +296,16 @@ void gl4es_glGetIntegerv(GLenum pname, GLint *params) {
     case GL_MATRIX_MODE:
         *params=glstate->matrix_mode;
         break;
+    case GL_LIGHT_MODEL_TWO_SIDE:
+        *params=glstate->light.two_side;
+        break;
+    case GL_LIGHT_MODEL_AMBIENT:
+        for (dummy=0; dummy<4; dummy++)
+                params[dummy]=glstate->light.ambient[dummy];
+        break;
+    case GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB:
+        *params=hardext.maxsize;
+        break;
     case GL_SHRINK_HINT_GL4ES:
         *params=globals4es.texshrink;
         break;
@@ -459,6 +470,15 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
         case GL_TEXTURE_MATRIX:
             memcpy(params, TOP(texture_matrix[glstate->texture.active]), 16*sizeof(GLfloat));
             break;
+        case GL_LIGHT_MODEL_TWO_SIDE:
+            *params=glstate->light.two_side;
+            break;
+        case GL_LIGHT_MODEL_AMBIENT:
+            memcpy(params, glstate->light.ambient, 4*sizeof(GLfloat));
+            break;
+        case GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB:
+            *params=hardext.maxsize;
+            break;
         case GL_SHRINK_HINT_GL4ES:
             *params=globals4es.texshrink;
             break;
@@ -498,3 +518,102 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
     }
 }
 void glGetFloatv(GLenum pname, GLfloat *params) AliasExport("gl4es_glGetFloatv");
+
+void gl4es_glGetLightfv(GLenum light, GLenum pname, GLfloat * params) {
+    if(light<0 || light>=hardext.maxlights) {
+        errorShim(GL_INVALID_ENUM);
+        return;
+    }
+    switch(pname) {
+        case GL_AMBIENT:
+            memcpy(params, glstate->light.lights[light].ambient, 4*sizeof(GLfloat));
+            break;
+        case GL_DIFFUSE:
+            memcpy(params, glstate->light.lights[light].diffuse, 4*sizeof(GLfloat));
+            break;
+        case GL_SPECULAR:
+            memcpy(params, glstate->light.lights[light].specular, 4*sizeof(GLfloat));
+            break;
+        case GL_POSITION:
+            memcpy(params, glstate->light.lights[light].position, 4*sizeof(GLfloat));
+            break;
+        case GL_SPOT_DIRECTION:
+            memcpy(params, glstate->light.lights[light].spotDirection, 3*sizeof(GLfloat));
+            break;
+        case GL_SPOT_EXPONENT:
+            params[0] = glstate->light.lights[light].spotExponent;
+            break;
+        case GL_SPOT_CUTOFF:
+            params[0] = glstate->light.lights[light].spotCutoff;
+            break;
+        case GL_CONSTANT_ATTENUATION:
+            params[0] = glstate->light.lights[light].constantAttenuation;
+            break;
+        case GL_LINEAR_ATTENUATION:
+            params[0] = glstate->light.lights[light].linearAttenuation;
+            break;
+        case GL_QUADRATIC_ATTENUATION:
+            params[0] = glstate->light.lights[light].quadraticAttenuation;
+            break;
+        default:
+            errorShim(GL_INVALID_ENUM);
+            return;
+    }
+    noerrorShim();
+}
+void glGetLightfv(GLenum pname, GLfloat *params) AliasExport("gl4es_glGetLightfv");
+
+void gl4es_glGetMaterialfv(GLenum face, GLenum pname, GLfloat * params) {
+    if(face!=GL_FRONT && face!=GL_BACK) {
+        errorShim(GL_INVALID_ENUM);
+        return;
+    }
+    switch(pname) {
+        case GL_AMBIENT:
+            if(face==GL_FRONT)
+                memcpy(params, glstate->material.front.ambient, 4*sizeof(GLfloat));
+            if(face==GL_BACK)
+                memcpy(params, glstate->material.back.ambient, 4*sizeof(GLfloat));
+            break;
+        case GL_DIFFUSE:
+            if(face==GL_FRONT)
+                memcpy(params, glstate->material.front.diffuse, 4*sizeof(GLfloat));
+            if(face==GL_BACK)
+                memcpy(params, glstate->material.back.diffuse, 4*sizeof(GLfloat));
+            break;
+        case GL_SPECULAR:
+            if(face==GL_FRONT)
+                memcpy(params, glstate->material.front.specular, 4*sizeof(GLfloat));
+            if(face==GL_BACK)
+                memcpy(params, glstate->material.back.specular, 4*sizeof(GLfloat));
+            break;
+        case GL_EMISSION:
+            if(face==GL_FRONT)
+                memcpy(params, glstate->material.front.emission, 4*sizeof(GLfloat));
+            if(face==GL_BACK)
+                memcpy(params, glstate->material.back.emission, 4*sizeof(GLfloat));
+            break;
+        case GL_SHININESS:
+            if(face==GL_FRONT)
+                *params = glstate->material.front.shininess;
+            if(face==GL_BACK)
+                *params = glstate->material.back.shininess;
+            break;
+        case GL_COLOR_INDEXES:
+            if(face==GL_FRONT) {
+                params[0] = glstate->material.front.indexes[0];
+                params[1] = glstate->material.front.indexes[1];
+                params[2] = glstate->material.front.indexes[2];
+            }
+            if(face==GL_BACK) {
+                params[0] = glstate->material.back.indexes[0];
+                params[1] = glstate->material.back.indexes[1];
+                params[2] = glstate->material.back.indexes[2];
+            }
+        default:
+            errorShim(GL_INVALID_ENUM);
+            return;
+    }
+    noerrorShim();
+}
+void glGetMaterialfv(GLenum face, GLenum pname, GLfloat * params) AliasExport("gl4es_glGetMaterialfv");
