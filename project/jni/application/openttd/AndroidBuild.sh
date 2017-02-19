@@ -15,7 +15,7 @@ export ARCH=$1
 [ -e openttd-$VER-$1/Makefile ] || {
 	rm -f src/src/rev.cpp
 	env PATH=$LOCAL_PATH/..:$PATH \
-	env CLANG=1 ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && env ../src/configure --with-sdl --with-freetype --with-png --with-zlib --with-icu --with-libtimidity --with-lzo2=$LOCAL_PATH/../../../obj/local/$ARCH/liblzo2.so --prefix-dir='.' --data-dir='' --without-allegro --with-fontconfig --with-lzma --endian=LE"
+	env CLANG=1 ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && env ../src/configure --with-sdl --with-freetype --with-png --with-zlib --with-icu --with-libtimidity='pkg-config libtimidity' --with-lzo2=$LOCAL_PATH/../../../obj/local/$ARCH/liblzo2.so --prefix-dir='.' --data-dir='' --without-allegro --with-fontconfig --with-lzma --endian=LE"
 } || exit 1
 
 NCPU=4
