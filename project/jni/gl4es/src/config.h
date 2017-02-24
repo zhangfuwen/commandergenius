@@ -141,6 +141,9 @@
 // MultiDrawArrays
 #define skip_glMultiDrawArrays
 #define skip_glMultiDrawElements
+// this is to avoid a warning. I don't Push those anyway
+#define direct_glMultiDrawArrays
+#define direct_glMultiDrawElements
 
 // don't compile these into display lists
 #define direct_glColorPointer
@@ -148,7 +151,7 @@
 #define direct_glDisableClientState
 #define direct_glEdgeFlagPointer
 #define direct_glEnableClientState
-#define direct_glClientActiveTexture
+//#define direct_glClientActiveTexture  // will use it in Batch mode
 #define direct_glFeedbackBuffer
 #define direct_glGenLists
 #define direct_glIndexPointer

@@ -100,10 +100,11 @@ const GLubyte *gl4es_glGetString(GLenum name) {
                 "GL_EXT_texture_object "
                 "GL_EXT_polygon_offset "
                 "GL_GL4ES_hint "
-                "GL_ARB_vertex_array_bgra "
                 "GL_ARB_texture_rectangle "
 //                "GL_EXT_blend_logic_op "
 				);
+        if(globals4es.vabgra)
+            strcat(extensions, "GL_ARB_vertex_array_bgra ");
 		if(globals4es.npot>=1)
 			strcat(extensions, "GL_APPLE_texture_2D_limited_npot ");
 		if(globals4es.npot>=2)
@@ -160,6 +161,12 @@ void gl4es_glGetIntegerv(GLenum pname, GLint *params) {
     if (glstate->list.active && (glstate->gl_batch && !glstate->list.compiling)) flush();
     noerrorShim();
     switch (pname) {
+        case GL_MAJOR_VERSION:
+            *params = 1;
+            break;
+        case GL_MINOR_VERSION:
+            *params = 5;
+            break;
         case GL_MAX_ELEMENTS_INDICES:
             *params = 1024;
             break;
@@ -348,6 +355,12 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
     if (glstate->list.active && (glstate->gl_batch && !glstate->list.compiling)) flush();
     noerrorShim();
     switch (pname) {
+        case GL_MAJOR_VERSION:
+            *params = 1;
+            break;
+        case GL_MINOR_VERSION:
+            *params = 5;
+            break;
         case GL_MAX_ELEMENTS_INDICES:
             *params = 1024;
             break;
@@ -520,40 +533,41 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
 void glGetFloatv(GLenum pname, GLfloat *params) AliasExport("gl4es_glGetFloatv");
 
 void gl4es_glGetLightfv(GLenum light, GLenum pname, GLfloat * params) {
-    if(light<0 || light>=hardext.maxlights) {
+    const int nl = light-GL_LIGHT0;
+    if(nl<0 || nl>=hardext.maxlights) {
         errorShim(GL_INVALID_ENUM);
         return;
     }
     switch(pname) {
         case GL_AMBIENT:
-            memcpy(params, glstate->light.lights[light].ambient, 4*sizeof(GLfloat));
+            memcpy(params, glstate->light.lights[nl].ambient, 4*sizeof(GLfloat));
             break;
         case GL_DIFFUSE:
-            memcpy(params, glstate->light.lights[light].diffuse, 4*sizeof(GLfloat));
+            memcpy(params, glstate->light.lights[nl].diffuse, 4*sizeof(GLfloat));
             break;
         case GL_SPECULAR:
-            memcpy(params, glstate->light.lights[light].specular, 4*sizeof(GLfloat));
+            memcpy(params, glstate->light.lights[nl].specular, 4*sizeof(GLfloat));
             break;
         case GL_POSITION:
-            memcpy(params, glstate->light.lights[light].position, 4*sizeof(GLfloat));
+            memcpy(params, glstate->light.lights[nl].position, 4*sizeof(GLfloat));
             break;
         case GL_SPOT_DIRECTION:
-            memcpy(params, glstate->light.lights[light].spotDirection, 3*sizeof(GLfloat));
+            memcpy(params, glstate->light.lights[nl].spotDirection, 3*sizeof(GLfloat));
             break;
         case GL_SPOT_EXPONENT:
-            params[0] = glstate->light.lights[light].spotExponent;
+            params[0] = glstate->light.lights[nl].spotExponent;
             break;
         case GL_SPOT_CUTOFF:
-            params[0] = glstate->light.lights[light].spotCutoff;
+            params[0] = glstate->light.lights[nl].spotCutoff;
             break;
         case GL_CONSTANT_ATTENUATION:
-            params[0] = glstate->light.lights[light].constantAttenuation;
+            params[0] = glstate->light.lights[nl].constantAttenuation;
             break;
         case GL_LINEAR_ATTENUATION:
-            params[0] = glstate->light.lights[light].linearAttenuation;
+            params[0] = glstate->light.lights[nl].linearAttenuation;
             break;
         case GL_QUADRATIC_ATTENUATION:
-            params[0] = glstate->light.lights[light].quadraticAttenuation;
+            params[0] = glstate->light.lights[nl].quadraticAttenuation;
             break;
         default:
             errorShim(GL_INVALID_ENUM);

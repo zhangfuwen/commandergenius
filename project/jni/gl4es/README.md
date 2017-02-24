@@ -227,13 +227,23 @@ Initial Hardware test
 
 ##### LIBGL_NOVAOCACHE
 VAO Caching
- * 0 : Default, tr to cache vao to avoid memcpy in render list
+ * 0 : Default, try to cache vao to avoid memcpy in render list
  * 1 : Don't cache VAO
+
+##### LIBGL_VABGRA
+Vertex Array BGRA extension
+ * 0 : Default, GL_ARB_vertex_array_bgra not exposed (still emulated)
+ * 1 : Extension exposed may be faster in some cases (Arx Libertatis mainly)
 
 ----
 
 Version history
 ----
+
+##### Current version
+ * Added some optimisations for sequencial glBegin/glEnd blocks
+ * Fixed many issue with Lights introduced with 0.9.4
+ * Fixed Android build introduced with 0.9.4
 
 ##### 0.9.4
  * Fixed some extended functions (like glBlendFuncSeparate) not working inside list (fixing some issues with Batch mode)
