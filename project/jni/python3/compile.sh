@@ -44,10 +44,10 @@ rm -rf lib
 
 mkdir -p lib
 
-ln -s python3-android/build/13b-23-arm-linux-androideabi-4.9/include include 	
+ln -s python3-android/build/13b-18-arm-linux-androideabi-4.9/include include 	
 
 pushd lib 
-ln -s ../python3-android/build/13b-23-arm-linux-androideabi-4.9/lib arm
-ln -s ../python3-android/build/13b-23-x86-4.9/lib x86
+ln -s ../python3-android/build/13b-18-arm-linux-androideabi-4.9/lib arm
+ln -s ../python3-android/build/13b-18-x86-4.9/lib x86
 popd
 
