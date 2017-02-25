@@ -1,14 +1,17 @@
 #include "stack.h"
 #include "../glx/hardext.h"
+#include "matrix.h"
 
 void gl4es_glPushAttrib(GLbitfield mask) {
     //printf("glPushAttrib(0x%04X)\n", mask);
     noerrorShim();
-    if ((glstate->list.compiling || glstate->gl_batch) && glstate->list.active) {
-		NewStage(glstate->list.active, STAGE_PUSH);
-		glstate->list.active->pushattribute = mask;
-		return;
-	}
+    if (glstate->list.active)
+        if (glstate->list.compiling || glstate->gl_batch) {
+            NewStage(glstate->list.active, STAGE_PUSH);
+            glstate->list.active->pushattribute = mask;
+            return;
+        } else flush();
+
     if (glstate->stack == NULL) {
         glstate->stack = (glstack_t *)malloc(STACK_SIZE * sizeof(glstack_t));
         glstate->stack->len = 0;
@@ -161,8 +164,9 @@ void gl4es_glPushAttrib(GLbitfield mask) {
             #undef L
         }
         j=0;
-        cur->materials = (GLfloat *)malloc(1 * sizeof(GLfloat)*(5*4));
-        #define M(A) gl4es_glGetMaterialfv(GL_FRONT, A, cur->materials+j); j+=4
+        cur->materials = (GLfloat *)malloc(2 * sizeof(GLfloat)*(5*4));
+        memset(cur->materials, 0, 2 * sizeof(GLfloat)*(5*4));
+        #define M(A) gl4es_glGetMaterialfv(GL_BACK, A, cur->materials+j); j+=4; gl4es_glGetMaterialfv(GL_FRONT, A, cur->materials+j); j+=4
         M(GL_AMBIENT); M(GL_DIFFUSE); M(GL_SPECULAR); M(GL_EMISSION); M(GL_SHININESS);  // handle both face at some point?
         #undef M
         gl4es_glGetIntegerv(GL_SHADE_MODEL, &cur->shade_model);
@@ -279,7 +283,7 @@ void gl4es_glPushAttrib(GLbitfield mask) {
 void gl4es_glPushClientAttrib(GLbitfield mask) {
     noerrorShim();
      GLuint old_glbatch = glstate->gl_batch;
-     if (glstate->gl_batch) {
+     if (glstate->gl_batch || glstate->list.pending) {
          flush();
          glstate->gl_batch = 0;
      }
@@ -337,11 +341,13 @@ void gl4es_glPushClientAttrib(GLbitfield mask) {
 void gl4es_glPopAttrib() {
 //printf("glPopAttrib()\n");
     noerrorShim();
-    if ((glstate->list.compiling || glstate->gl_batch) && glstate->list.active) {
-		NewStage(glstate->list.active, STAGE_POP);
-		glstate->list.active->popattribute = true;
-		return;
-	}
+    if (glstate->list.active)
+        if (glstate->list.compiling || glstate->gl_batch) {
+            NewStage(glstate->list.active, STAGE_POP);
+		    glstate->list.active->popattribute = true;
+		    return;
+        } else flush();
+
     if (glstate->stack == NULL || glstate->stack->len == 0) {
         errorShim(GL_STACK_UNDERFLOW);
         return;
@@ -468,6 +474,14 @@ void gl4es_glPopAttrib() {
 
         int i;
         int j=0;
+        int old_matrixmode = glstate->matrix_mode;
+        // Light position / direction is transformed. So load identity in modelview to restore correct stuff
+        int identity = is_identity(getMVMat());
+        if(!identity) {
+            if(old_matrixmode != GL_MODELVIEW) gl4es_glMatrixMode(GL_MODELVIEW);
+            gl4es_glPushMatrix();
+            gl4es_glLoadIdentity();
+        }
         for (i = 0; i < hardext.maxlights; i++) {
             enable_disable(GL_LIGHT0 + i, *(cur->lights_enabled + i));
             #define L(A) gl4es_glLightfv(GL_LIGHT0 + i, A, cur->lights+j); j+=4
@@ -483,8 +497,15 @@ void gl4es_glPopAttrib() {
             L(GL_QUADRATIC_ATTENUATION);
             #undef L
         }
+        if(!identity) {
+            gl4es_glPopMatrix();
+            if(old_matrixmode != GL_MODELVIEW) gl4es_glMatrixMode(old_matrixmode);
+        }
         j=0;
-        #define M(A) gl4es_glMaterialfv(GL_FRONT_AND_BACK, A, cur->materials+j); j+=4
+        #define M(A) if(memcmp(cur->materials+j, cur->materials+j+4, 4*sizeof(GLfloat))==0) \
+            {gl4es_glMaterialfv(GL_FRONT_AND_BACK, A, cur->materials+j); j+=8;} \
+            else \
+            {gl4es_glMaterialfv(GL_BACK, A, cur->materials+j); j+=4; gl4es_glMaterialfv(GL_FRONT, A, cur->materials+j); j+=4;}
         M(GL_AMBIENT); M(GL_DIFFUSE); M(GL_SPECULAR); M(GL_EMISSION); M(GL_SHININESS);  // handle both face at some point?
         #undef M
 
@@ -603,7 +624,7 @@ void gl4es_glPopAttrib() {
 void gl4es_glPopClientAttrib() {
     noerrorShim();
      GLuint old_glbatch = glstate->gl_batch;
-     if (glstate->gl_batch) {
+     if (glstate->gl_batch || glstate->list.pending) {
          flush();
          glstate->gl_batch = 0;
      }

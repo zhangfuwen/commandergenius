@@ -15,8 +15,6 @@
 #define skip_glDisable
 #define skip_glEnable
 #define skip_glIsEnabled
-#define skip_glMaterialfv
-#define skip_glMaterialf
 #define skip_glNormal3f
 
 #define skip_glBindBuffer
@@ -51,6 +49,8 @@
 #define skip_glGetIntegerv
 #define skip_glGetFloatv
 #define skip_glGetString
+#define skip_glGetLightfv
+#define skip_glGetMaterialfv
 
 // hint.c
 #define skip_glHint
@@ -60,6 +60,8 @@
 #define skip_glLightModelfv
 #define skip_glLightfv
 #define skip_glLightf
+#define skip_glMaterialfv
+#define skip_glMaterialf
 
 // raster.c
 #define skip_glViewport
@@ -139,6 +141,9 @@
 // MultiDrawArrays
 #define skip_glMultiDrawArrays
 #define skip_glMultiDrawElements
+// this is to avoid a warning. I don't Push those anyway
+#define direct_glMultiDrawArrays
+#define direct_glMultiDrawElements
 
 // don't compile these into display lists
 #define direct_glColorPointer
@@ -146,7 +151,7 @@
 #define direct_glDisableClientState
 #define direct_glEdgeFlagPointer
 #define direct_glEnableClientState
-#define direct_glClientActiveTexture
+//#define direct_glClientActiveTexture  // will use it in Batch mode
 #define direct_glFeedbackBuffer
 #define direct_glGenLists
 #define direct_glIndexPointer

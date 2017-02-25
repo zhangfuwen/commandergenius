@@ -18,10 +18,11 @@ On RPM based distros they are usually called java-x.x.x-openjdk and java-x.x.x-o
 On Debian or Ubuntu you install them like this: sudo apt-get install openjdk-8-jdk ant
 The application will run on Android 2.3 and above, but will use features from Android 6.0 if available.
 The most supported environment for this port is Linux, MacOs should be okay too.
-If you're developing under Windows you'd better install Portable Ubuntu, to get proper Linux environment
-running inside Windows, then install Linux toolchain on it.
+If you're developing under Windows, you will need to install some Linux environment,
+such as Bash shell on Windows 10, or Portable Ubuntu, then install Linux toolchain on it.
+https://msdn.microsoft.com/en-us/commandline/wsl/install_guide
 https://sourceforge.net/projects/portableubuntu/
-Cygwin is not supported by the NDK, starting from the NDK r6.
+Cygwin is not supported by the NDK.
 
 
 How to compile demo application

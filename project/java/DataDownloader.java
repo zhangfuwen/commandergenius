@@ -287,7 +287,7 @@ class DataDownloader extends Thread
 		Log.i("SDL", "Downloading data to: '" + outFilesDir + "'");
 		try {
 			File outDir = new File( outFilesDir );
-			if( !(outDir.exists() && outDir.isDirectory()) )
+			if( !outDir.exists() )
 				outDir.mkdirs();
 			OutputStream out = new FileOutputStream( getOutFilePath(".nomedia") );
 			out.flush();

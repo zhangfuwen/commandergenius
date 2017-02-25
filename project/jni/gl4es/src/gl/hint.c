@@ -3,7 +3,10 @@
 #include "init.h"
 
 void gl4es_glHint(GLenum pname, GLenum mode) {
-    if(glstate->gl_batch) flush();
+    
+    if (glstate->gl_batch || glstate->list.pending)
+        flush();
+
     LOAD_GLES(glHint);
     noerrorShim();
     switch(pname) {

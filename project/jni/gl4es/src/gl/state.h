@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "buffers.h"
 #include "queries.h"
+#include "light.h"
 
 typedef struct _glstack_t glstack_t;
 typedef struct _glclientstack_t glclientstack_t;
@@ -61,6 +62,8 @@ typedef struct {
 typedef struct {
     renderlist_t *active;
     GLboolean compiling;
+    GLboolean pending;
+    GLboolean begin;
     GLboolean locked;
     GLuint base;
     GLuint name;
@@ -189,6 +192,8 @@ typedef struct {
     int emulatedPixmap;
     int emulatedWin;
     int shared_cnt;
+    light_state_t light;
+    material_state_t material;
 } glstate_t;
 
 #endif
