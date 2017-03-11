@@ -93,7 +93,7 @@ else
 fi
 
 [ -e project/local.properties ] || {
-	android update project -p project -t android-23 || exit 1
+	android update project -p project -t android-25 || exit 1
 	rm -f project/src/Globals.java
 }
 
