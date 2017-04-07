@@ -979,7 +979,8 @@ if [ "$GooglePlayGameServicesId" = "n" -o -z "$GooglePlayGameServicesId" ] ; the
 	$SEDI "/==GOOGLEPLAYGAMESERVICES==/ d" project/AndroidManifest.xml
 	GooglePlayGameServicesId=""
 	grep '=play-services' project/local.properties > /dev/null && {
-		$SEDI 's/.*=play-services.*//g' project/local.properties
+		echo "sdk.dir=$SDK_DIR" > project/local.properties
+		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
 		rm -f project/libs/android-support-v4.jar
 	}
 else
@@ -990,10 +991,12 @@ else
 		cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/$OUT
 	done
 
-	PLAY_SERVICES_VER=9.4.0
+	PLAY_SERVICES_VER=10.2.1
+	SUPPORT_V4_VER=24.0.0
 	rm -rf project/play-services
 
 	CURDIR=`pwd`
+
 	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-games/$PLAY_SERVICES_VER       || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/games     -i play-services-games-$PLAY_SERVICES_VER    || exit 1
 	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-drive/$PLAY_SERVICES_VER       || exit 1
@@ -1004,10 +1007,19 @@ else
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/tasks     -i play-services-tasks-$PLAY_SERVICES_VER    || exit 1
 	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-basement/$PLAY_SERVICES_VER    || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/basement  -i play-services-basement-$PLAY_SERVICES_VER || exit 1
+	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
+	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
+	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
+	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
+	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-v4/$SUPPORT_V4_VER || exit 1
+	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-v4 -i support-v4-$SUPPORT_V4_VER || exit 1
+
 	cd $CURDIR
 
+	ln -s -f $SDK_DIR/extras/android/m2repository/com/android/support/support-annotations/$SUPPORT_V4_VER/support-annotations-$SUPPORT_V4_VER.jar project/libs/android-support-v4.jar || exit 1
+
 	$SEDI "s/==GOOGLEPLAYGAMESERVICES_APP_ID==/$GooglePlayGameServicesId/g" project/res/values/strings.xml
-	grep 'play-services' project/local.properties > /dev/null || {
+	grep "play-services-games-$PLAY_SERVICES_VER" project/local.properties > /dev/null || {
 
 		PROGUARD=`which android`
 		PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
@@ -1019,17 +1031,16 @@ else
 			exit 1
 		}
 
+		
 		# Ant is way too smart, and adds current project path in front of the ${sdk.dir}
+		echo "sdk.dir=$SDK_DIR" > project/local.properties
+		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
 		echo "android.library.reference.1=play-services/games/play-services-games-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.2=play-services/drive/play-services-drive-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.3=play-services/base/play-services-base-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.4=play-services/tasks/play-services-tasks-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.5=play-services/basement/play-services-basement-$PLAY_SERVICES_VER" >> project/local.properties
-		#echo 'android.library.reference.6=../../../../../../../../../../../../../../${sdk.dir}/extras/android/compatibility/v7/mediarouter' >> project/local.properties
-		#echo 'android.library.reference.7=../../../../../../../../../../../../../../${sdk.dir}/extras/android/compatibility/v7/appcompat' >> project/local.properties
-		#echo 'android.library.reference.8=../../../../../../../../../../../../../../${sdk.dir}/extras/android/compatibility/v7/palette' >> project/local.properties
-		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
-		ln -s -f $SDK_DIR/extras/android/compatibility/v4/android-support-v4.jar project/libs
+		echo "android.library.reference.6=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
 	}
 fi
 

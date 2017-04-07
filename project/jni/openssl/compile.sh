@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ARCH_LIST="arm64-v8a x86 mips armeabi-v7a armeabi"
+ARCH_LIST="arm64-v8a x86_64 x86 mips armeabi-v7a armeabi"
 
 mkdir -p build
 
@@ -21,7 +21,7 @@ build() {
 	mkdir -p build/$ARCH
 	cd build/$ARCH
 
-	tar -x -v -z -f ../../openssl-1.0.2h.tar.gz --strip=1
+	tar -x -v -z -f ../../openssl-1.0.2k.tar.gz --strip=1
 	#sed -i.old 's/-Wl,-soname=[$][$]SHLIB[$][$]SHLIB_SOVER[$][$]SHLIB_SUFFIX//g' Makefile.shared
 	../../setCrossEnvironment-$ARCH.sh ./Configure shared zlib --prefix=`pwd`/dist $CONFIGURE_ARCH -fPIC || exit 1
 	# OpenSSL build system disables parallel compilation, -j4 won't do anything

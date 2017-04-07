@@ -3,11 +3,11 @@ gl4es
 
 This is a library providing OpenGL 1.x functionality for OpenGL ES accelerated hardware.
 
-This is a fork a glshim (https://github.com/lunixbochs/glshim). Go check this lib if you need things like RemoteGL or if need support for TinyGLES (for 100% software rendering).
+This is a fork a glshim (https://github.com/lunixbochs/glshim). Go check this lib if you need things like RemoteGL or TinyGLES (for 100% software rendering).
 
-The focusse is on compatibility with a wide selection of game and software, as well as speed.
+The focus is on compatibility with a wide selection of game and software, as well as speed.
 
-It has been tested successfully of a large selection of games and software, including: Mincraft, OpenMW, SeriousSam, RVGL, TSMC, TORCS, SpeedDreams, GL-117, Blender 2.68 and many more.
+It has been tested successfully of a large selection of games and software, including: Mincraft, OpenMW, SeriousSam, RVGL, TSMC, TORCS, SpeedDreams, GL-117, Foobillard(plus), Blender 2.68 and many more.
 
 Most function of OpenGL up to 1.5 are supported, with some notable exceptions:
  * Reading of Depth or Stencil buffer will not work
@@ -235,13 +235,19 @@ Vertex Array BGRA extension
  * 0 : Default, GL_ARB_vertex_array_bgra not exposed (still emulated)
  * 1 : Extension exposed may be faster in some cases (Arx Libertatis mainly)
 
+##### LIBGL_BEGINEND
+Merge of subsequent glBegin/glEnd blocks (will be non-effective if BATCH mode is used)
+ * 0 : Don't try to merge
+ * 1 : Try to merge, even if there is a glColor / glNormal in between (default)
+ * 2 : Try hard to merge, even if there is a glColor / glNormal or Matrix operations in between
+
 ----
 
 Version history
 ----
 
-##### Current version
- * Added some optimisations for sequencial glBegin/glEnd blocks
+##### 0.9.5
+ * Added some optimisations for sequencial glBegin/glEnd blocks, with a switch to control them
  * Fixed many issue with Lights introduced with 0.9.4
  * Fixed Android build introduced with 0.9.4
 

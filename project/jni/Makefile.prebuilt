@@ -2,7 +2,7 @@
 # TODO: libboost, libffmpeg, libpython (used only in GemRB)
 
 ARCHES32 := armeabi armeabi-v7a x86 mips
-ARCHES64 := arm64-v8a
+ARCHES64 := arm64-v8a x86_64
 
 ICONV := $(foreach ARCH, $(ARCHES32), iconv/lib/$(ARCH)/libiconv.so iconv/lib/$(ARCH)/libcharset.so)
 
