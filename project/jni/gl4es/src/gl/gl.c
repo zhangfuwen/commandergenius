@@ -53,6 +53,14 @@ void* NewGLState(void* shared_glstate) {
         glvao->array = 0;
         glstate->defaultvao = glvao;
     }
+    // initialize gllists
+    {
+        khint_t k;
+        int ret;
+        khash_t(gllisthead) *list = glstate->headlists = kh_init(gllisthead);
+		kh_put(gllisthead, list, 1, &ret);
+		kh_del(gllisthead, list, 1);
+    }
     // Bind defaults...
     glstate->vao = glstate->defaultvao;
 
@@ -63,6 +71,10 @@ void* NewGLState(void* shared_glstate) {
     //raster & viewport
     glstate->raster.raster_zoomx=1.0f;
     glstate->raster.raster_zoomy=1.0f;
+
+    // pack & unpack alignment
+    glstate->texture.pack_align = 4;
+    glstate->texture.unpack_align = 4;
 
     // init the matrix tracking
     init_matrix(glstate);
@@ -95,7 +107,12 @@ void* NewGLState(void* shared_glstate) {
     glstate->material.front.emission[3] = 1.0f;
     glstate->material.front.colormat = GL_AMBIENT_AND_DIFFUSE;
     memcpy(&glstate->material.back, &glstate->material.front, sizeof(material_t));
-
+    // Fog
+    glstate->fog.mode = GL_EXP;
+    glstate->fog.density = 1.0f;
+    glstate->fog.end = 1.0f;
+    glstate->fog.coord_src = GL_FRAGMENT_DEPTH;
+    // Raster
     for(int i=0; i<4; i++)
         glstate->raster.raster_scale[i] = 1.0f;
     LOAD_GLES(glGetFloatv);
@@ -117,18 +134,19 @@ void DeleteGLState(void* oldstate) {
         glstate = NULL;
 
 
-    #define free_hashmap(T, N, K)           \
+    #define free_hashmap(T, N, K, F)        \
     {                                       \
         T *m;                               \
         kh_foreach_value(state->N, m,       \
-            free(m);                        \
+            F(m);                        \
         )                                   \
         kh_destroy(K, state->N);            \
     }
-    free_hashmap(glvao_t, vaos, glvao);
-    free_hashmap(glbuffer_t, buffers, buff);
-    free_hashmap(glquery_t, queries, queries);
-    free_hashmap(gltexture_t, texture.list, tex);
+    free_hashmap(glvao_t, vaos, glvao, free);
+    free_hashmap(glbuffer_t, buffers, buff, free);
+    free_hashmap(glquery_t, queries, queries, free);
+    free_hashmap(gltexture_t, texture.list, tex, free);
+    free_hashmap(renderlist_t, headlists, gllisthead, free_renderlist);
     #undef free_hashmap
     // free eval maps
     #define freemap(dims, name)                              \
@@ -143,12 +161,7 @@ void DeleteGLState(void* oldstate) {
     freemap(2, vertex3); freemap(2, vertex4); freemap(2, index); freemap(2, color4); freemap(2, normal); 
     freemap(2, texture1); freemap(2, texture2); freemap(2, texture3); freemap(2, texture4);   
     #undef freemap
-    // free lists
-    if(state->lists) {
-        for (int i=0; i<state->list.count; i++)
-            free_renderlist(state->lists[i]);
-        free(state->lists);
-    }
+    // free active list
     if(state->list.active) free_renderlist(state->list.active);
 
     // free matrix stack
@@ -192,22 +205,15 @@ void gl_init() {
 #endif
 
 static void proxy_glEnable(GLenum cap, bool enable, void (*next)(GLenum)) {
-    #define proxy_enable(constant, name) \
+    #define proxy_GO(constant, name) \
         case constant: glstate->enable.name = enable; next(cap); break
-    #define enable(constant, name) \
+    #define GO(constant, name) \
         case constant: glstate->enable.name = enable; break;
-    #define proxy_clientenable(constant, name) \
+    #define proxy_clientGO(constant, name) \
         case constant: glstate->vao->name = enable; next(cap); break
-    #define clientenable(constant, name) \
+    #define clientGO(constant, name) \
         case constant: glstate->vao->name = enable; break;
 
-    // TODO: maybe could be weird behavior if someone tried to:
-    // 1. enable GL_TEXTURE_1D
-    // 2. enable GL_TEXTURE_2D
-    // 3. disable GL_TEXTURE_1D
-    // 4. render. GL_TEXTURE_2D would be disabled.
-    // cap = map_tex_target(cap);
-    
     // Alpha Hack
     if (globals4es.alphahack && (cap==GL_ALPHA_TEST) && enable) {
         if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D])
@@ -223,8 +229,8 @@ static void proxy_glEnable(GLenum cap, bool enable, void (*next)(GLenum)) {
             glstate->enable.texture[glstate->texture.active] &= ~(1<<ENABLED_TEX2D);
 #endif
     switch (cap) {
-        enable(GL_AUTO_NORMAL, auto_normal);
-        proxy_enable(GL_BLEND, blend);
+        GO(GL_AUTO_NORMAL, auto_normal);
+        proxy_GO(GL_BLEND, blend);
         case GL_TEXTURE_2D:
             if(enable)
                 glstate->enable.texture[glstate->texture.active] |= (1<<ENABLED_TEX2D);
@@ -233,24 +239,24 @@ static void proxy_glEnable(GLenum cap, bool enable, void (*next)(GLenum)) {
             next(cap);
             break;
 
-        enable(GL_TEXTURE_GEN_S, texgen_s[glstate->texture.active]);
-        enable(GL_TEXTURE_GEN_T, texgen_t[glstate->texture.active]);
-        enable(GL_TEXTURE_GEN_R, texgen_r[glstate->texture.active]);
-        enable(GL_TEXTURE_GEN_Q, texgen_q[glstate->texture.active]);
-        enable(GL_LINE_STIPPLE, line_stipple);
+        GO(GL_TEXTURE_GEN_S, texgen_s[glstate->texture.active]);
+        GO(GL_TEXTURE_GEN_T, texgen_t[glstate->texture.active]);
+        GO(GL_TEXTURE_GEN_R, texgen_r[glstate->texture.active]);
+        GO(GL_TEXTURE_GEN_Q, texgen_q[glstate->texture.active]);
+        GO(GL_LINE_STIPPLE, line_stipple);
 
         // point sprite
-        proxy_enable(GL_POINT_SPRITE, pointsprite);
+        proxy_GO(GL_POINT_SPRITE, pointsprite);
         
         // Secondary color
-        enable(GL_COLOR_SUM, color_sum);
-        clientenable(GL_SECONDARY_COLOR_ARRAY, secondary_array);
+        GO(GL_COLOR_SUM, color_sum);
+        clientGO(GL_SECONDARY_COLOR_ARRAY, secondary_array);
 	
         // for glDrawArrays
-        clientenable(GL_VERTEX_ARRAY, vertex_array);
-        clientenable(GL_NORMAL_ARRAY, normal_array);
-        clientenable(GL_COLOR_ARRAY, color_array);
-        clientenable(GL_TEXTURE_COORD_ARRAY, tex_coord_array[glstate->texture.client]);
+        clientGO(GL_VERTEX_ARRAY, vertex_array);
+        clientGO(GL_NORMAL_ARRAY, normal_array);
+        clientGO(GL_COLOR_ARRAY, color_array);
+        clientGO(GL_TEXTURE_COORD_ARRAY, tex_coord_array[glstate->texture.client]);
         
         // Texture 1D and 3D
         case GL_TEXTURE_1D:
@@ -282,10 +288,10 @@ static void proxy_glEnable(GLenum cap, bool enable, void (*next)(GLenum)) {
         
         default: errorGL(); next(cap); break;
     }
-    #undef proxy_enable
-    #undef enable
-    #undef proxy_clientenable
-    #undef clientenable
+    #undef proxy_GO
+    #undef GO
+    #undef proxy_clientGO
+    #undef clientGO
 }
 
 int Cap2BatchState(GLenum cap) {
@@ -318,6 +324,11 @@ void gl4es_glEnable(GLenum cap) {
 			if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D]->streamed)
 				cap = GL_TEXTURE_STREAM_IMG;
 	}
+	if (globals4es.texstream && (cap==GL_TEXTURE_RECTANGLE_ARB)) {
+		if (glstate->texture.bound[glstate->texture.active][ENABLED_TEXTURE_RECTANGLE])
+			if (glstate->texture.bound[glstate->texture.active][ENABLED_TEXTURE_RECTANGLE]->streamed)
+				cap = GL_TEXTURE_STREAM_IMG;
+	}
 #endif
     LOAD_GLES(glEnable);
     proxy_glEnable(cap, true, gles_glEnable);
@@ -337,12 +348,18 @@ void gl4es_glDisable(GLenum cap) {
     }
 	PUSH_IF_COMPILING(glDisable)
         
+#ifdef TEXSTREAM
 	if (globals4es.texstream && (cap==GL_TEXTURE_2D)) {
 		if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D])
 			if (glstate->texture.bound[glstate->texture.active][ENABLED_TEX2D]->streamed)
 				cap = GL_TEXTURE_STREAM_IMG;
 	}
-
+	if (globals4es.texstream && (cap==GL_TEXTURE_RECTANGLE_ARB)) {
+		if (glstate->texture.bound[glstate->texture.active][ENABLED_TEXTURE_RECTANGLE])
+			if (glstate->texture.bound[glstate->texture.active][ENABLED_TEXTURE_RECTANGLE]->streamed)
+				cap = GL_TEXTURE_STREAM_IMG;
+	}
+#endif
     LOAD_GLES(glDisable);
     proxy_glEnable(cap, false, gles_glDisable);
 }
@@ -1051,20 +1068,25 @@ void gl4es_glEnd() {
     for (int a=0; a<MAX_TEX; a++)
 		if (glstate->enable.texture[a] && ((glstate->list.active->tex[a]==0) && !(glstate->enable.texgen_s[a] || glstate->texture.pscoordreplace[a])))
 			rlMultiTexCoord4f(glstate->list.active, GL_TEXTURE0+a, glstate->texcoord[a][0], glstate->texcoord[a][1], glstate->texcoord[a][2], glstate->texcoord[a][3]);
+    int withColor = 0;
     // render if we're not in a display list
     if (!(glstate->list.compiling || glstate->gl_batch) && (!(globals4es.beginend) || (glstate->polygon_mode==GL_LINE))) {
         renderlist_t *mylist = glstate->list.active;
+        withColor = (mylist->color!=NULL);
         glstate->list.active = NULL;
         mylist = end_renderlist(mylist);
         draw_renderlist(mylist);
         free_renderlist(mylist);
     } else {
         if(!(glstate->list.compiling || glstate->gl_batch)) {
+            withColor = (glstate->list.active->color!=NULL);
             glstate->list.pending = 1;
             NewStage(glstate->list.active, STAGE_POSTDRAW);
         }
         else glstate->list.active = extend_renderlist(glstate->list.active);
     }
+    if(withColor)
+        gl4es_glColor4f(glstate->color[0], glstate->color[1], glstate->color[2], glstate->color[3]);
     noerrorShim();
 }
 void glEnd() AliasExport("gl4es_glEnd");
@@ -1272,9 +1294,12 @@ void glUnlockArraysEXT() AliasExport("gl4es_glUnlockArrays");
 // display lists
 
 static renderlist_t *gl4es_glGetList(GLuint list) {
-    if (glIsList(list))
-        return glstate->lists[list - 1];
-
+    khint_t k;
+    int ret;
+    khash_t(gllisthead) *lists = glstate->headlists;
+    k = kh_get(gllisthead, lists, list);
+    if (k != kh_end(lists))
+        return kh_value(lists, k);
     return NULL;
 }
 
@@ -1284,18 +1309,18 @@ GLuint gl4es_glGenLists(GLsizei range) {
 		return 0;
 	}
 	noerrorShim();
+   	khint_t k;
+   	int ret;
+	khash_t(gllisthead) *lists = glstate->headlists;
     int start = glstate->list.count;
-    if (glstate->lists == NULL) {
-        glstate->list.cap += range + 100;
-        glstate->lists = malloc(glstate->list.cap * sizeof(uintptr_t));
-    } else if (glstate->list.count + range > glstate->list.cap) {
-        glstate->list.cap += range + 100;
-        glstate->lists = realloc(glstate->lists, glstate->list.cap * sizeof(uintptr_t));
-    }
     glstate->list.count += range;
 
     for (int i = 0; i < range; i++) {
-        glstate->lists[start+i] = NULL;
+        k = kh_get(gllisthead, lists, start+i);
+        if (k == kh_end(lists)){
+            k = kh_put(gllisthead, lists, start+i, &ret);
+            kh_value(lists, k) = NULL;  // create an empty gllist
+        }
     }
     return start + 1;
 }
@@ -1306,8 +1331,16 @@ void gl4es_glNewList(GLuint list, GLenum mode) {
 	errorShim(GL_INVALID_VALUE);
 	if (list==0)
 		return;
-    if (! glIsList(list))
-        return;
+    {
+        khint_t k;
+        int ret;
+        khash_t(gllisthead) *lists = glstate->headlists;
+        k = kh_get(gllisthead, lists, list);
+        if (k == kh_end(lists)){
+            k = kh_put(gllisthead, lists, list, &ret);
+            kh_value(lists, k) = NULL;
+        }
+    }
     noerrorShim();
     if (glstate->gl_batch) {
         glstate->gl_batch = 0;
@@ -1324,10 +1357,20 @@ void glNewList(GLuint list, GLenum mode) AliasExport("gl4es_glNewList");
 void gl4es_glEndList() {
 	noerrorShim();
     GLuint list = glstate->list.name;
+    khash_t(gllisthead) *lists = glstate->headlists;
+    khint_t k;
+    {
+        int ret;
+        k = kh_get(gllisthead, lists, list);
+        if (k == kh_end(lists)){
+            k = kh_put(gllisthead, lists, list, &ret);
+            kh_value(lists, k) = NULL;
+        }
+    }
     if (glstate->list.compiling) {
 	// Free the previous list if it exist...
-        free_renderlist(glstate->lists[list - 1]);
-        glstate->lists[list - 1] = GetFirst(glstate->list.active);
+        free_renderlist(kh_value(lists, k));
+        kh_value(lists, k) = GetFirst(glstate->list.active);
         glstate->list.compiling = false;
         end_renderlist(glstate->list.active);
         glstate->list.active = NULL;
@@ -1403,13 +1446,19 @@ void gl4es_glDeleteList(GLuint list) {
     if(glstate->gl_batch) {
         flush();
     }
-    renderlist_t *l = gl4es_glGetList(list);
-    if (l) {
-        free_renderlist(l);
-        glstate->lists[list-1] = NULL;
+    renderlist_t *gllist = NULL;
+    {
+        khint_t k;
+        int ret;
+        khash_t(gllisthead) *lists = glstate->headlists;
+        k = kh_get(gllisthead, lists, list);
+        renderlist_t *gllist = NULL;
+        if (k != kh_end(lists)){
+            gllist = kh_value(lists, k);
+            free_renderlist(gllist);
+            kh_del(gllisthead, lists, k);
+        }
     }
-
-    // lists just grow upwards, maybe use a better storage mechanism?
 }
 
 void gl4es_glDeleteLists(GLuint list, GLsizei range) {
@@ -1428,9 +1477,12 @@ void glListBase(GLuint base) AliasExport("gl4es_glListBase");
 
 GLboolean gl4es_glIsList(GLuint list) {
 	noerrorShim();
-    if (list - 1 < glstate->list.count) {
+    khint_t k;
+    int ret;
+    khash_t(gllisthead) *lists = glstate->headlists;
+    k = kh_get(gllisthead, lists, list);
+    if (k != kh_end(lists))
         return true;
-    }
     return false;
 }
 GLboolean glIsList(GLuint list) AliasExport("gl4es_glIsList");
@@ -1462,122 +1514,6 @@ void gl4es_glPolygonMode(GLenum face, GLenum mode) {
 	}
 }
 void glPolygonMode(GLenum face, GLenum mode) AliasExport("gl4es_glPolygonMode");
-
-void gl4es_glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) {
-    PUSH_IF_COMPILING(glBlendColor);
-    LOAD_GLES_OES(glBlendColor);
-	if  (gles_glBlendColor)
-		gles_glBlendColor(red, green, blue, alpha);
-	else {
-        static int test = 1;
-        if (test) {
-            LOGD("stub glBlendColor(%f, %f, %f, %f)\n", red, green, blue, alpha);
-            test = 0;
-        }
-    }
-}
-void glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) AliasExport("gl4es_glBlendColor");
-void glBlendColorEXT(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) AliasExport("gl4es_glBlendColor");
-void glBlendColorARB(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) AliasExport("gl4es_glBlendColor");
-
-void gl4es_glBlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha)
-{
-    PUSH_IF_COMPILING(glBlendFuncSeparate);
-    LOAD_GLES_OES(glBlendFuncSeparate);
-#ifdef ODROID
-    if(gles_glBlendFuncSeparate)
-#endif
-    gles_glBlendFuncSeparate(sfactorRGB, dfactorRGB, sfactorAlpha, dfactorAlpha);
-}
-void glBlendFuncSeparate(GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha) AliasExport("gl4es_glBlendFuncSeparate");
-void glBlendFuncSeparateEXT (GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha) AliasExport("gl4es_glBlendFuncSeparate");
-
-void gl4es_glBlendEquationSeparate(GLenum modeRGB, GLenum modeA) {
-    PUSH_IF_COMPILING(glBlendEquationSeparate);
-    LOAD_GLES_OES(glBlendEquationSeparate);
-#ifdef ODROID
-    if(gles_glBlendEquationSeparate)
-#endif
-    gles_glBlendEquationSeparate(modeRGB, modeA);
-}
-void glBlendEquationSeparate(GLenum modeRGB, GLenum modeA) AliasExport("gl4es_glBlendEquationSeparate");
-void glBlendEquationSeparateEXT(GLenum modeRGB, GLenum modeA) AliasExport("gl4es_glBlendEquationSeparate");
-
-void gl4es_glBlendFunc(GLenum sfactor, GLenum dfactor) {
-    if (glstate->list.active)
-        if (!glstate->list.compiling && glstate->gl_batch) {
-            if ((glstate->statebatch.blendfunc_s == sfactor) && (glstate->statebatch.blendfunc_d == dfactor))
-                return; // nothing to do...
-            if (!glstate->statebatch.blendfunc_s) {
-                glstate->statebatch.blendfunc_s = sfactor;
-                glstate->statebatch.blendfunc_d = dfactor;
-            }
-        } 
-
-    PUSH_IF_COMPILING(glBlendFunc)
-    LOAD_GLES(glBlendFunc);
-    LOAD_GLES_OES(glBlendFuncSeparate);
-    errorGL();
-    // There are some limitations in GLES1.1 Blend functions
-    switch(sfactor) {
-        case GL_SRC_COLOR:
-            if (gles_glBlendFuncSeparate) {
-                gles_glBlendFuncSeparate(sfactor, dfactor, sfactor, dfactor);
-                return;
-            }
-            sfactor = GL_ONE;   // approx...
-            break;
-        case GL_ONE_MINUS_SRC_COLOR:
-            if (gles_glBlendFuncSeparate) {
-                gles_glBlendFuncSeparate(sfactor, dfactor, sfactor, dfactor);
-                return;
-            }
-            sfactor = GL_ONE;  // not sure it make sense...
-            break;
-        // here, we need support for glBlendColor...
-        case GL_CONSTANT_COLOR:
-        case GL_CONSTANT_ALPHA:
-            sfactor = GL_ONE;
-            break;
-        case GL_ONE_MINUS_CONSTANT_COLOR:
-        case GL_ONE_MINUS_CONSTANT_ALPHA:
-            sfactor = GL_ZERO;
-            break;
-        default:
-            break;
-    }
-    
-    switch(dfactor) {
-        case GL_DST_COLOR:
-            sfactor = GL_ONE;   // approx...
-            break;
-        case GL_ONE_MINUS_DST_COLOR:
-            sfactor = GL_ZERO;  // not sure it make sense...
-            break;
-        // here, we need support for glBlendColor...
-        case GL_CONSTANT_COLOR:
-        case GL_CONSTANT_ALPHA:
-            sfactor = GL_ONE;
-            break;
-        case GL_ONE_MINUS_CONSTANT_COLOR:
-        case GL_ONE_MINUS_CONSTANT_ALPHA:
-            sfactor = GL_ZERO;
-            break;
-        default:
-            break;
-    }
-    
-    if ((globals4es.blendhack) && (sfactor==GL_SRC_ALPHA) && (dfactor==GL_ONE)) {
-        // special case, as seen in Xash3D, but it breaks torus_trooper, so behind a parameter
-        sfactor = GL_ONE;
-    }
-
-#ifdef ODROID
-    if(gles_glBlendFunc)
-#endif
-    gles_glBlendFunc(sfactor, dfactor);
-}
-void glBlendFunc(GLenum sfactor, GLenum dfactor) AliasExport("gl4es_glBlendFunc");
 
 
 void gl4es_glStencilMaskSeparate(GLenum face, GLuint mask) {
@@ -1646,21 +1582,6 @@ void gl4es_glFinish() {
     errorGL();
 }
 void glFinish() AliasExport("gl4es_glFinish");
-
-void gl4es_glFogfv(GLenum pname, const GLfloat* params) {
-
-    if (glstate->list.active)
-        if (glstate->list.compiling || glstate->gl_batch) {
-                NewStage(glstate->list.active, STAGE_FOG);
-                rlFogOp(glstate->list.active, pname, params);
-                return;
-            }
-        else flush();
-
-    LOAD_GLES(glFogfv);
-    gles_glFogfv(pname, params);
-}
-void glFogfv(GLenum pname, const GLfloat* params) AliasExport("gl4es_glFogfv");
 
 void gl4es_glIndexPointer(GLenum type, GLsizei stride, const GLvoid * pointer) {
     static bool warning = false;

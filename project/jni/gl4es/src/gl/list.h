@@ -7,7 +7,6 @@ typedef enum {
 	STAGE_NONE = 0,
 	STAGE_PUSH,
 	STAGE_POP,
-	STAGE_CALLLIST,
 	STAGE_GLCALL,
     STAGE_RENDER,
 	STAGE_FOG,
@@ -33,7 +32,6 @@ static int StageExclusive[] = {
 	0, 	// STAGE_NONE
 	1,	// STAGE_PUSH
 	1,  // STAGE_POP
-	1, 	// STAGE_CALLLIST
 	0,  // STAGE_GLCALL
     1,  // STAGE_RENDER
 	1, 	// STAGE_FOG
@@ -181,6 +179,8 @@ typedef struct _renderlist_t {
     struct _renderlist_t *next;
     GLboolean open;
 } renderlist_t;
+
+KHASH_MAP_INIT_INT(gllisthead, renderlist_t*)
 
 #define DEFAULT_CALL_LIST_CAPACITY 20
 #define DEFAULT_RENDER_LIST_CAPACITY 64
