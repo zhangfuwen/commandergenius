@@ -85,6 +85,7 @@ class Globals
 	public static boolean HorizontalOrientation = true;
 	public static boolean AutoDetectOrientation = false;
 	public static boolean ImmersiveMode = true;
+	public static boolean HideSystemMousePointer = false;
 	public static boolean DownloadToSdcard = true;
 	public static boolean PhoneHasArrowKeys = false;
 	public static boolean UseAccelerometerAsArrowKeys = false;
