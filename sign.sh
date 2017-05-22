@@ -32,3 +32,16 @@ cp -f ../obj/local/x86/*.so ../debuginfo/$DEBUGINFODIR/x86
 cp -f ../obj/local/armeabi-v7a/*.so ../debuginfo/$DEBUGINFODIR/armeabi-v7a
 cp -f MainActivity-debug.apk ../debuginfo/$DEBUGINFODIR/$APPNAME-$APPVER.apk
 fi
+
+if [ -n "$ANDROID_UPLOAD_KEYSTORE_FILE" ]; then
+cd ../..
+cp -f $APPNAME-$APPVER.apk $APPNAME-$APPVER-upload1.apk
+# Sign with the upload certificate
+echo Using keystore $ANDROID_UPLOAD_KEYSTORE_FILE and alias $ANDROID_UPLOAD_KEYSTORE_ALIAS
+stty -echo
+jarsigner -verbose -tsa http://timestamp.digicert.com -keystore $ANDROID_UPLOAD_KEYSTORE_FILE -sigalg MD5withRSA -digestalg SHA1 $APPNAME-$APPVER-upload1.apk $ANDROID_UPLOAD_KEYSTORE_ALIAS || exit 1
+stty echo
+echo
+zipalign 4 $APPNAME-$APPVER-upload1.apk $APPNAME-$APPVER-upload.apk
+rm -f $APPNAME-$APPVER-upload1.apk
+fi
