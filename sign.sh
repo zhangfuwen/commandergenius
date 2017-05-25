@@ -42,6 +42,7 @@ stty -echo
 jarsigner -verbose -tsa http://timestamp.digicert.com -keystore $ANDROID_UPLOAD_KEYSTORE_FILE -sigalg MD5withRSA -digestalg SHA1 $APPNAME-$APPVER-upload1.apk $ANDROID_UPLOAD_KEYSTORE_ALIAS || exit 1
 stty echo
 echo
+rm -f $APPNAME-$APPVER-upload.apk
 zipalign 4 $APPNAME-$APPVER-upload1.apk $APPNAME-$APPVER-upload.apk
 rm -f $APPNAME-$APPVER-upload1.apk
 fi
