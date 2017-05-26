@@ -435,6 +435,9 @@ echo >> AndroidAppSettings.cfg
 echo "# Google Play Game Services application ID, required for cloud saves to work" >> AndroidAppSettings.cfg
 echo GooglePlayGameServicesId=$GooglePlayGameServicesId >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
+echo "# The app will open files with following extension, file path will be added to commandline params" >> AndroidAppSettings.cfg
+echo AppOpenFileExtension=\'$AppOpenFileExtension\' >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
 fi
 
 AppShortName=`echo $AppName | sed 's/ //g'`
@@ -835,6 +838,15 @@ fi
 
 if [ "$AccessInternet" = "n" ]; then
 	$SEDI "/==INTERNET==/ d" project/AndroidManifest.xml
+fi
+
+if [ -z "$AppOpenFileExtension" ]; then
+	$SEDI "/==OPENFILE==/ d" project/AndroidManifest.xml
+else
+	EXTS="`for EXT in $AppOpenFileExtension; do echo -n '\\\\1'$EXT'\\\\2' ; done`"
+	echo "EXTS $EXTS"
+	#$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
+	$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
 fi
 
 if [ "$ImmersiveMode" = "n" ]; then

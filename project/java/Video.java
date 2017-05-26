@@ -710,9 +710,16 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 		// Tweak video thread priority, if user selected big audio buffer
 		if( Globals.AudioBufferConfig >= 2 )
 			Thread.currentThread().setPriority( (Thread.NORM_PRIORITY + Thread.MIN_PRIORITY) / 2 ); // Lower than normal
-		 // Calls main() and never returns, hehe - we'll call eglSwapBuffers() from native code
+		// Calls main() and never returns, hehe - we'll call eglSwapBuffers() from native code
+		String commandline = Globals.CommandLine;
+		if( context.getIntent() != null && context.getIntent().getScheme() != null &&
+			context.getIntent().getScheme().compareTo(android.content.ContentResolver.SCHEME_FILE) == 0 &&
+			context.getIntent().getData() != null && context.getIntent().getData().getPath() != null )
+		{
+			commandline += " " + context.getIntent().getData().getPath();
+		}
 		nativeInit( Globals.DataDir,
-					Globals.CommandLine,
+					commandline,
 					( (Globals.SwVideoMode && Globals.MultiThreadedVideo) || Globals.CompatibilityHacksVideo ) ? 1 : 0,
 					0 );
 		System.exit(0); // The main() returns here - I don't bother with deinit stuff, just terminate process

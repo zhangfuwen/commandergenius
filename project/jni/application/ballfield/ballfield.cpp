@@ -488,7 +488,7 @@ int main(int argc, char* argv[])
 	/*
 	 * Load background image
 	 */
-	temp_image = IMG_Load("sun.gif");
+	temp_image = IMG_Load(argc > 1 ? argv[1] : "sun.gif");
 	if(!temp_image)
 	{
 		fprintf(stderr, "Could not load background!\n");
