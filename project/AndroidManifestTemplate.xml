@@ -26,6 +26,8 @@
 				<action android:name="com.sec.android.airview.HOVER" /> <!-- Stupid Samsung requires their own intent for finger-hover events -->
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER" /> <!-- Android TV requires this -->
 				<category android:name="tv.ouya.intent.category.GAME" /> <!-- For that one user who still got an OUYA in his living room and won't throw it away just because someone else decides that it's dead -->
+			</intent-filter>
+			<intent-filter>
 				<!-- ==OPENFILE== --> <action android:name="android.intent.action.VIEW" />
 				<!-- ==OPENFILE== --> <category android:name="android.intent.category.DEFAULT" />
 				<!-- ==OPENFILE== --> <category android:name="android.intent.category.BROWSABLE" />
