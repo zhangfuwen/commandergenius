@@ -1013,8 +1013,8 @@ else
 		cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/$OUT
 	done
 
-	PLAY_SERVICES_VER=10.2.1
-	SUPPORT_V4_VER=24.0.0
+	PLAY_SERVICES_VER=11.0.0
+	SUPPORT_V4_VER=25.2.0
 	rm -rf project/play-services
 
 	CURDIR=`pwd`
@@ -1029,10 +1029,10 @@ else
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/tasks     -i play-services-tasks-$PLAY_SERVICES_VER    || exit 1
 	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-basement/$PLAY_SERVICES_VER    || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/basement  -i play-services-basement-$PLAY_SERVICES_VER || exit 1
-	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
-	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
-	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
-	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
+	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
+	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
+	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
+	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
 	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-v4/$SUPPORT_V4_VER || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-v4 -i support-v4-$SUPPORT_V4_VER || exit 1
 
@@ -1062,7 +1062,9 @@ else
 		echo "android.library.reference.3=play-services/base/play-services-base-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.4=play-services/tasks/play-services-tasks-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.5=play-services/basement/play-services-basement-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.6=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.6=play-services/support-core-utils/support-core-utils-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.7=play-services/support-compat/support-compat-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.8=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
 	}
 fi
 
