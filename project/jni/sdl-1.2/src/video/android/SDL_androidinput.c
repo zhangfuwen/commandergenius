@@ -349,13 +349,14 @@ static void ProcessMultitouchGesture( int x, int y, int action, int pointerId )
 			}
 			else
 			{
-				int distMaxDiff = SDL_ANDROID_sFakeWindowHeight / ( 1 + (1 + multitouchGestureSensitivity) * 2 );
+				int distMaxDiff = SDL_ANDROID_sFakeWindowHeight / ( 2 + (1 + multitouchGestureSensitivity) * 3 );
 				int angleMaxDiff = atan2i_PI * 2 / 3 / ( 1 + (1 + multitouchGestureSensitivity) * 2 );
 				int wheelThreshold = SDL_ANDROID_sFakeWindowHeight / MULTITOUCH_MOUSE_WHEEL_DIST;
 				if( dist - multitouchGestureDist > distMaxDiff )
 				{
 					multitouchGestureHappened = 1;
 					multitouchGestureDist += distMaxDiff;
+					SDL_ANDROID_MainThreadPushMouseMotion( middleX, middleY );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, multitouchGestureKeycode[0], 0 );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, multitouchGestureKeycode[0], 0 );
 				}
@@ -363,6 +364,7 @@ static void ProcessMultitouchGesture( int x, int y, int action, int pointerId )
 				{
 					multitouchGestureHappened = 1;
 					multitouchGestureDist -= distMaxDiff;
+					SDL_ANDROID_MainThreadPushMouseMotion( middleX, middleY );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, multitouchGestureKeycode[1], 0 );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, multitouchGestureKeycode[1], 0 );
 				}
@@ -378,6 +380,7 @@ static void ProcessMultitouchGesture( int x, int y, int action, int pointerId )
 				{
 					multitouchGestureHappened = 1;
 					multitouchGestureAngle = angle;
+					SDL_ANDROID_MainThreadPushMouseMotion( middleX, middleY );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, multitouchGestureKeycode[2], 0 );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, multitouchGestureKeycode[2], 0 );
 				}
@@ -385,6 +388,7 @@ static void ProcessMultitouchGesture( int x, int y, int action, int pointerId )
 				{
 					multitouchGestureHappened = 1;
 					multitouchGestureAngle = angle;
+					SDL_ANDROID_MainThreadPushMouseMotion( middleX, middleY );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, multitouchGestureKeycode[3], 0 );
 					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, multitouchGestureKeycode[3], 0 );
 				}
