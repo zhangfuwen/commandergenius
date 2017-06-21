@@ -1,13 +1,13 @@
 # Makefile to build precompiled libraries, which cannot be built using standard NDK makefiles
 # TODO: libboost, libffmpeg, libpython (used only in GemRB)
 
-ARCHES32 := armeabi armeabi-v7a x86 mips
+ARCHES32 := armeabi-v7a x86
 ARCHES64 := arm64-v8a x86_64
 
-ICONV := $(foreach ARCH, $(ARCHES32), iconv/lib/$(ARCH)/libiconv.so iconv/lib/$(ARCH)/libcharset.so)
+ICONV := $(foreach ARCH, $(ARCHES32) $(ARCHES64), iconv/lib/$(ARCH)/libiconv.so iconv/lib/$(ARCH)/libcharset.so)
 
-ICU_LIBS := data i18n io le lx test tu uc
-ICU := $(foreach ARCH, $(ARCHES32), $(foreach NAME, $(ICU_LIBS), icuuc/lib/$(ARCH)/libicu$(NAME).a))
+ICU_LIBS := icudata icui18n icuio icutest icutu icuuc iculx icu-le-hb harfbuzz
+ICU := $(foreach ARCH, $(ARCHES32) $(ARCHES64), $(foreach NAME, $(ICU_LIBS), icuuc/lib/$(ARCH)/lib$(NAME).a))
 
 OPENSSL := $(foreach ARCH, $(ARCHES32) $(ARCHES64), openssl/lib-$(ARCH)/libcrypto.so.sdl.1.so openssl/lib-$(ARCH)/libssl.so.sdl.1.so)
 
@@ -20,14 +20,15 @@ prebuilt-libraries: $(LIBS)
 $(ICONV) $(ICU):
 	cd iconv/src  && \
 	./build.sh  && \
-	for ARCH in $(ARCHES32); do  \
-		mkdir -p ../lib/$$ARCH  ; \
+	for ARCH in $(ARCHES32) $(ARCHES64); do  \
+		mkdir -p ../lib/$$ARCH ../include ; \
 		cp -f $$ARCH/libiconv.so $$ARCH/libcharset.so ../lib/$$ARCH/  ; \
 		cp -f $$ARCH/include/*.h ../include/  ; \
-		mkdir -p ../../icuuc/lib/$$ARCH ../../icuuc/include/layout ../../icuuc/include/unicode  ; \
-		cp -f $$ARCH/libicu*.a ../../icuuc/lib/$$ARCH/  ; \
-		cp -f $$ARCH/include/layout/*.h ../../icuuc/include/layout/  ; \
+		mkdir -p ../../icuuc/lib/$$ARCH ../../icuuc/include/unicode ../../icuuc/include/layout  ; \
+		cp -f $$ARCH/libicu*.a $$ARCH/libharfbuzz.a ../../icuuc/lib/$$ARCH/  ; \
 		cp -f $$ARCH/include/unicode/*.h ../../icuuc/include/unicode/  ; \
+		cp -f $$ARCH/include/layout/*.h ../../icuuc/include/layout/  ; \
+		cp -f $$ARCH/include/icu-le-hb/layout/*.h ../../icuuc/include/layout/  ; \
 	done
 
 $(OPENSSL):
