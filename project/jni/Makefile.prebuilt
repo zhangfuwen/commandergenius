@@ -1,7 +1,7 @@
 # Makefile to build precompiled libraries, which cannot be built using standard NDK makefiles
 # TODO: libboost, libffmpeg, libpython (used only in GemRB)
 
-ARCHES32 := armeabi-v7a x86
+ARCHES32 := armeabi armeabi-v7a x86
 ARCHES64 := arm64-v8a x86_64
 
 ICONV := $(foreach ARCH, $(ARCHES32) $(ARCHES64), iconv/lib/$(ARCH)/libiconv.so iconv/lib/$(ARCH)/libcharset.so)
