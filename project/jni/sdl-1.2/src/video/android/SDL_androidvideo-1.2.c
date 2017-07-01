@@ -130,7 +130,7 @@ int ANDROID_ToggleFullScreen(_THIS, int fullscreen)
 	return 1;
 }
 
-enum { SDL_NUMMODES = 61 };
+enum { SDL_NUMMODES = 63 };
 static SDL_Rect *SDL_modelist[SDL_NUMMODES+1];
 
 //#define SDL_modelist		(this->hidden->SDL_modelist)
@@ -352,7 +352,9 @@ int ANDROID_VideoInit(_THIS, SDL_PixelFormat *vformat)
 	SDL_modelist[58]->w = 720; SDL_modelist[58]->h = 400; // Virtual wide-screen mode
 	SDL_modelist[59]->w = 480; SDL_modelist[59]->h = 272; // PSP
 	SDL_modelist[60]->w = 996; SDL_modelist[60]->h = 560; // For OpenTTD
-	SDL_modelist[61] = NULL;
+	SDL_modelist[61]->w = 1280; SDL_modelist[61]->h = 800; // for Basilisk2
+	SDL_modelist[62]->w = 1366; SDL_modelist[62]->h = 768; // for Basilisk2
+	SDL_modelist[63] = NULL;
 	// If you going to add another video mode, increase SDL_NUMMODES constant
 	
 	SDL_VideoInit_1_3(NULL, 0);

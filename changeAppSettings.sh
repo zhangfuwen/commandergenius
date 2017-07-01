@@ -319,6 +319,9 @@ echo >> AndroidAppSettings.cfg
 echo "# Immersive mode - Android will hide on-screen Home/Back keys. Looks bad if you invoke Android keyboard. (y) / (n)" >> AndroidAppSettings.cfg
 echo ImmersiveMode=$ImmersiveMode >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
+echo "# Hide Android system mouse cursor image when USB mouse is attached (y) or (n) - the app must draw it's own mouse cursor" >> AndroidAppSettings.cfg
+echo HideSystemMousePointer=$HideSystemMousePointer >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
 echo "# Application implements Android-specific routines to put to background, and will not draw anything to screen" >> AndroidAppSettings.cfg
 echo "# between SDL_ACTIVEEVENT lost / gained notifications - you should check for them" >> AndroidAppSettings.cfg
 echo "# rigth after SDL_Flip(), if (n) then SDL_Flip() will block till app in background (y) or (n)" >> AndroidAppSettings.cfg
@@ -431,6 +434,9 @@ echo AdmobBannerSize=$AdmobBannerSize >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Google Play Game Services application ID, required for cloud saves to work" >> AndroidAppSettings.cfg
 echo GooglePlayGameServicesId=$GooglePlayGameServicesId >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
+echo "# The app will open files with following extension, file path will be added to commandline params" >> AndroidAppSettings.cfg
+echo AppOpenFileExtension=\'$AppOpenFileExtension\' >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 fi
 
@@ -834,10 +840,25 @@ if [ "$AccessInternet" = "n" ]; then
 	$SEDI "/==INTERNET==/ d" project/AndroidManifest.xml
 fi
 
+if [ -z "$AppOpenFileExtension" ]; then
+	$SEDI "/==OPENFILE==/ d" project/AndroidManifest.xml
+else
+	EXTS="`for EXT in $AppOpenFileExtension; do echo -n '\\\\1'$EXT'\\\\2' ; done`"
+	echo "EXTS $EXTS"
+	#$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
+	$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
+fi
+
 if [ "$ImmersiveMode" = "n" ]; then
 	ImmersiveMode=false
 else
 	ImmersiveMode=true
+fi
+
+if [ "$HideSystemMousePointer" = "y" ]; then
+	HideSystemMousePointer=true
+else
+	HideSystemMousePointer=false
 fi
 
 GLESLib=-lGLESv1_CM
@@ -909,6 +930,7 @@ $SEDI "s/public static boolean AppUsesMultitouch = .*;/public static boolean App
 $SEDI "s/public static boolean NonBlockingSwapBuffers = .*;/public static boolean NonBlockingSwapBuffers = $NonBlockingSwapBuffers;/" project/src/Globals.java
 $SEDI "s/public static boolean ResetSdlConfigForThisVersion = .*;/public static boolean ResetSdlConfigForThisVersion = $ResetSdlConfigForThisVersion;/" project/src/Globals.java
 $SEDI "s/public static boolean ImmersiveMode = .*;/public static boolean ImmersiveMode = $ImmersiveMode;/" project/src/Globals.java
+$SEDI "s/public static boolean HideSystemMousePointer = .*;/public static boolean HideSystemMousePointer = $HideSystemMousePointer;/" project/src/Globals.java
 $SEDI "s|public static String DeleteFilesOnUpgrade = .*;|public static String DeleteFilesOnUpgrade = \"$DeleteFilesOnUpgrade\";|" project/src/Globals.java
 $SEDI "s/public static int AppTouchscreenKeyboardKeysAmount = .*;/public static int AppTouchscreenKeyboardKeysAmount = $AppTouchscreenKeyboardKeysAmount;/" project/src/Globals.java
 $SEDI "s@public static String\\[\\] AppTouchscreenKeyboardKeysNames = .*;@public static String[] AppTouchscreenKeyboardKeysNames = \"$RedefinedKeysScreenKbNames\".split(\" \");@" project/src/Globals.java
@@ -991,8 +1013,8 @@ else
 		cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/$OUT
 	done
 
-	PLAY_SERVICES_VER=10.2.1
-	SUPPORT_V4_VER=24.0.0
+	PLAY_SERVICES_VER=11.0.0
+	SUPPORT_V4_VER=25.2.0
 	rm -rf project/play-services
 
 	CURDIR=`pwd`
@@ -1007,10 +1029,10 @@ else
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/tasks     -i play-services-tasks-$PLAY_SERVICES_VER    || exit 1
 	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-basement/$PLAY_SERVICES_VER    || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/basement  -i play-services-basement-$PLAY_SERVICES_VER || exit 1
-	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
-	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
-	#cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
-	#$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
+	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
+	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
+	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
+	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
 	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-v4/$SUPPORT_V4_VER || exit 1
 	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-v4 -i support-v4-$SUPPORT_V4_VER || exit 1
 
@@ -1040,7 +1062,9 @@ else
 		echo "android.library.reference.3=play-services/base/play-services-base-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.4=play-services/tasks/play-services-tasks-$PLAY_SERVICES_VER" >> project/local.properties
 		echo "android.library.reference.5=play-services/basement/play-services-basement-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.6=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.6=play-services/support-core-utils/support-core-utils-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.7=play-services/support-compat/support-compat-$SUPPORT_V4_VER" >> project/local.properties
+		echo "android.library.reference.8=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
 	}
 fi
 

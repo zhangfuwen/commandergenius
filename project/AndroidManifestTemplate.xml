@@ -27,6 +27,18 @@
 				<category android:name="android.intent.category.LEANBACK_LAUNCHER" /> <!-- Android TV requires this -->
 				<category android:name="tv.ouya.intent.category.GAME" /> <!-- For that one user who still got an OUYA in his living room and won't throw it away just because someone else decides that it's dead -->
 			</intent-filter>
+			<intent-filter>
+				<!-- ==OPENFILE== --> <action android:name="android.intent.action.VIEW" />
+				<!-- ==OPENFILE== --> <category android:name="android.intent.category.DEFAULT" />
+				<!-- ==OPENFILE== --> <category android:name="android.intent.category.BROWSABLE" />
+				<!-- ==OPENFILE== --> <data android:scheme="file" />
+				<!-- ==OPENFILE== --> <data android:mimeType="*/*" />
+				<!-- ==OPENFILE== --> <data android:host="*" />
+				<!-- ==OPENFILE== --> <data android:pathPattern=".*\\.==OPENFILE-EXT==" />
+				<!-- ==OPENFILE== --> <data android:pathPattern=".*\\..*\\.==OPENFILE-EXT==" />
+				<!-- ==OPENFILE== --> <data android:pathPattern=".*\\..*\\..*\\.==OPENFILE-EXT==" />
+				<!-- ==OPENFILE== --> <data android:pathPattern=".*\\..*\\..*\\..*\\.==OPENFILE-EXT==" />
+			</intent-filter>
 		</activity>
 		<!-- ==ADMOB== --> <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"/>
 		<!-- ==ADMOB== --> <meta-data android:name="com.google.android.gms.version" android:value="4323000" /> <!-- Change this value to the actual Google Play SDK version -->

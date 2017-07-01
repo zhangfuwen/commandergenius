@@ -61,7 +61,7 @@
 #define GL_TEXTURE_LOD_BIAS         0x8501
 #define GL_TEXTURE_CUBE_MAP         0x8513
 #define GL_TEXTURE_GEN_STR          0x8D60
-
+#define GL_CLAMP_TO_BORDER          0x812D
 
 // GL_ARB_point_sprite
 #define GL_POINT_SPRITE             0x8861
@@ -197,6 +197,11 @@
 #define GL_LINEAR               0x2601
 #define GL_EXP                  0x0800
 #define GL_EXP2                 0x0801
+#define GL_FOG_COORDINATE_SOURCE 0x8450
+#define GL_FOG_COORD_SRC        GL_FOG_COORDINATE_SOURCE
+#define GL_FRAGMENT_DEPTH       0x8452
+#define GL_FOG_COORDINATE       0x8451
+#define GL_FOG_COORD            GL_FOG_COORDINATE
 
 // lighting
 #define GL_LIGHTING             0x0B50

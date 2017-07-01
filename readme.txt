@@ -232,16 +232,6 @@ This compiler flags will catch most obvious errors, you may add them to AppCflag
 -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
 Also beware of the NDK - some system headers contain the code that triggers that warnings.
 
-The application will automatically get moved to SD-card on Android 2.2 or newer,
-(or you can install app2sd for older, but rooted phones),
-however the shared libraries have to be stored on the device internal storage,
-and that may be not desired for older phones with very little storage.
-The script app2sd.sh will re-package your .apk file in such a way that
-the shared libraries will not be extracted by Android OS but by application itself,
-and it will remove them from internal storage right after starting up,
-so you still need that space free, but only temporarily.
-However your application will start up slower.
-
 SDL supports AdMob advertisements, you need to set your publisher ID inside AndroidAppSettings.cfg,
 see project test-advertisements for details.
 Also you can hide or reposition your ad from C code, check out file SDL_android.h for details.

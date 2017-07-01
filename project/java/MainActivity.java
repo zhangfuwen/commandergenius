@@ -446,7 +446,10 @@ public class MainActivity extends Activity
 		mGLView.setFocusableInTouchMode(true);
 		mGLView.setFocusable(true);
 		mGLView.requestFocus();
-
+		if (Globals.HideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+		{
+			mGLView.setPointerIcon(android.view.PointerIcon.getSystemIcon(this, android.view.PointerIcon.TYPE_NULL));
+		}
 
 		if( _ad.getView() != null )
 		{

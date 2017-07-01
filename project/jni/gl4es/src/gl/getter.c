@@ -179,6 +179,12 @@ void gl4es_glGetIntegerv(GLenum pname, GLint *params) {
         case GL_MAX_DRAW_BUFFERS_ARB:   // fake...
             *params = 1;
             break;
+        case GL_PACK_ALIGNMENT:
+            *params = glstate->texture.pack_align;
+            break;
+        case GL_UNPACK_ALIGNMENT:
+            *params = glstate->texture.unpack_align;
+            break;
         case GL_UNPACK_ROW_LENGTH:	
 			*params = glstate->texture.unpack_row_length;
 			break;
@@ -310,38 +316,63 @@ void gl4es_glGetIntegerv(GLenum pname, GLint *params) {
         for (dummy=0; dummy<4; dummy++)
                 params[dummy]=glstate->light.ambient[dummy];
         break;
+    case GL_FOG_MODE:
+        *params=glstate->fog.mode;
+        break;
+    case GL_FOG_DENSITY:
+        *params=glstate->fog.density;
+        break;
+    case GL_FOG_START:
+        *params=glstate->fog.start;
+        break;
+    case GL_FOG_END:
+        *params=glstate->fog.end;
+        break;
+    case GL_FOG_INDEX:
+        *params=glstate->fog.start;
+        break;
+    case GL_FOG_COLOR:
+        for (dummy=0; dummy<4; dummy++)
+            params[dummy]=glstate->fog.color[dummy];
+        break;
+    case GL_FOG_COORD_SRC:
+        *params=glstate->fog.coord_src;
+        break;
     case GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB:
         *params=hardext.maxsize;
         break;
     case GL_SHRINK_HINT_GL4ES:
         *params=globals4es.texshrink;
         break;
-    case GL_ALPHAHACK_HINT_GL4ES: 
+    case GL_ALPHAHACK_HINT_GL4ES:
         *params=globals4es.alphahack;
         break;
-    case GL_RECYCLEFBO_HINT_GL4ES: 
+    case GL_RECYCLEFBO_HINT_GL4ES:
         *params=globals4es.recyclefbo;
         break;
-    case GL_MIPMAP_HINT_GL4ES: 
+    case GL_MIPMAP_HINT_GL4ES:
         *params=globals4es.automipmap;
         break;
-    case GL_TEXDUMP_HINT_GL4ES: 
+    case GL_TEXDUMP_HINT_GL4ES:
         *params=globals4es.texdump;
         break;
-    case GL_COPY_HINT_GL4ES: 
+    case GL_COPY_HINT_GL4ES:
         *params=globals4es.copytex;
         break;
-    case GL_NOLUMAPHA_HINT_GL4ES: 
+    case GL_NOLUMAPHA_HINT_GL4ES:
         *params=globals4es.nolumalpha;
         break;
-    case GL_BLENDHACK_HINT_GL4ES: 
+    case GL_BLENDHACK_HINT_GL4ES:
         *params=globals4es.blendhack;
         break;
-    case GL_BATCH_HINT_GL4ES: 
+    case GL_BATCH_HINT_GL4ES:
         *params=globals4es.batch;
         break;
-    case GL_NOERROR_HINT_GL4ES: 
+    case GL_NOERROR_HINT_GL4ES:
         *params=globals4es.noerror;
+        break;
+    case GL_AVOID16BITS_HINT_GL4ES:
+        *params=globals4es.avoid16bits;
         break;
     default:
         errorGL();
@@ -369,6 +400,12 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
             break;
         case GL_AUX_BUFFERS:
             *params = 0;
+            break;
+        case GL_PACK_ALIGNMENT:
+            *params = glstate->texture.pack_align;
+            break;
+        case GL_UNPACK_ALIGNMENT:
+            *params = glstate->texture.unpack_align;
             break;
         case GL_UNPACK_ROW_LENGTH:	
             *params = glstate->texture.unpack_row_length;
@@ -489,6 +526,27 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
         case GL_LIGHT_MODEL_AMBIENT:
             memcpy(params, glstate->light.ambient, 4*sizeof(GLfloat));
             break;
+        case GL_FOG_MODE:
+            *params=glstate->fog.mode;
+            break;
+        case GL_FOG_DENSITY:
+            *params=glstate->fog.density;
+            break;
+        case GL_FOG_START:
+            *params=glstate->fog.start;
+            break;
+        case GL_FOG_END:
+            *params=glstate->fog.end;
+            break;
+        case GL_FOG_INDEX:
+            *params=glstate->fog.start;
+            break;
+        case GL_FOG_COLOR:
+            memcpy(params, glstate->fog.color, 4*sizeof(GLfloat));
+            break;
+        case GL_FOG_COORD_SRC:
+            *params=glstate->fog.coord_src;
+            break;
         case GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB:
             *params=hardext.maxsize;
             break;
@@ -530,6 +588,9 @@ void gl4es_glGetFloatv(GLenum pname, GLfloat *params) {
             break;
         case GL_BEGINEND_HINT_GL4ES:
             *params=globals4es.beginend;
+            break;
+        case GL_AVOID16BITS_HINT_GL4ES:
+            *params=globals4es.avoid16bits;
             break;
         default:
             errorGL();

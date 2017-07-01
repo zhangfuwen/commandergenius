@@ -349,7 +349,7 @@ static void ProcessMultitouchGesture( int x, int y, int action, int pointerId )
 			}
 			else
 			{
-				int distMaxDiff = SDL_ANDROID_sFakeWindowHeight / ( 1 + (1 + multitouchGestureSensitivity) * 2 );
+				int distMaxDiff = SDL_ANDROID_sFakeWindowHeight / ( 2 + (1 + multitouchGestureSensitivity) * 3 );
 				int angleMaxDiff = atan2i_PI * 2 / 3 / ( 1 + (1 + multitouchGestureSensitivity) * 2 );
 				int wheelThreshold = SDL_ANDROID_sFakeWindowHeight / MULTITOUCH_MOUSE_WHEEL_DIST;
 				if( dist - multitouchGestureDist > distMaxDiff )

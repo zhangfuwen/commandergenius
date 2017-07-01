@@ -8,6 +8,7 @@
 #include "buffers.h"
 #include "queries.h"
 #include "light.h"
+#include "fog.h"
 
 typedef struct _glstack_t glstack_t;
 typedef struct _glclientstack_t glclientstack_t;
@@ -51,6 +52,8 @@ typedef struct {
            pack_skip_pixels,
            pack_skip_rows,
            pack_image_height;
+    GLuint  pack_align,
+            unpack_align;            
     GLboolean pack_lsb_first;
     gltexture_t *bound[MAX_TEX][ENABLED_TEXTURE_LAST];
     GLboolean pscoordreplace[MAX_TEX];
@@ -158,7 +161,7 @@ typedef struct {
     enable_state_t enable;
     map_state_t *map_grid;
     map_states_t map1, map2;
-    renderlist_t **lists;
+    khash_t(gllisthead) *headlists;
     texgen_state_t texgen[MAX_TEX];
     texture_state_t texture;
     GLfloat color[4];
@@ -193,6 +196,7 @@ typedef struct {
     int emulatedWin;
     int shared_cnt;
     light_state_t light;
+    fog_t fog;
     material_state_t material;
     int immediateMV;
 } glstate_t;

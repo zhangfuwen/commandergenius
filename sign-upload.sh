@@ -1,10 +1,12 @@
 #!/bin/sh
 # Set path to your Android keystore and your keystore alias here, or put them in your environment
-[ -z "$ANDROID_KEYSTORE_FILE" ] && ANDROID_KEYSTORE_FILE=~/.android/debug.keystore
-[ -z "$ANDROID_KEYSTORE_ALIAS" ] && ANDROID_KEYSTORE_ALIAS=androiddebugkey
+[ -z "$ANDROID_UPLOAD_KEYSTORE_FILE" ] && ANDROID_UPLOAD_KEYSTORE_FILE=~/.android/upload.jks
+[ -z "$ANDROID_UPLOAD_KEYSTORE_ALIAS" ] && ANDROID_UPLOAD_KEYSTORE_ALIAS=androiddebugkey
 
 APPNAME=`grep AppName AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---'`
 APPVER=`grep AppVersionName AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---'`
+
+if false; then
 
 cd project/bin
 
@@ -15,7 +17,8 @@ zip -d Signed.apk "META-INF/*"
 # Sign with the new certificate
 echo Using keystore $ANDROID_KEYSTORE_FILE and alias $ANDROID_KEYSTORE_ALIAS
 stty -echo
-jarsigner -verbose -tsa http://timestamp.digicert.com -keystore $ANDROID_KEYSTORE_FILE -sigalg MD5withRSA -digestalg SHA1 Signed.apk $ANDROID_KEYSTORE_ALIAS || exit 1
+read PW
+jarsigner -verbose -tsa http://timestamp.digicert.com -keystore $ANDROID_KEYSTORE_FILE -sigalg MD5withRSA -digestalg SHA1 Signed.apk $ANDROID_KEYSTORE_ALIAS -storepass "$PW" -keypass "$PW" || exit 1
 stty echo
 echo
 rm -f MainActivity-debug.apk
@@ -33,9 +36,11 @@ cp -f ../obj/local/armeabi-v7a/*.so ../debuginfo/$DEBUGINFODIR/armeabi-v7a
 cp -f MainActivity-debug.apk ../debuginfo/$DEBUGINFODIR/$APPNAME-$APPVER.apk
 fi
 
-if false; then
-if [ -n "$ANDROID_UPLOAD_KEYSTORE_FILE" ]; then
 cd ../..
+
+fi
+
+if [ -n "$ANDROID_UPLOAD_KEYSTORE_FILE" ]; then
 cp -f $APPNAME-$APPVER.apk $APPNAME-$APPVER-upload1.apk
 # Sign with the upload certificate
 echo Using keystore $ANDROID_UPLOAD_KEYSTORE_FILE and alias $ANDROID_UPLOAD_KEYSTORE_ALIAS
@@ -46,5 +51,4 @@ echo
 rm -f $APPNAME-$APPVER-upload.apk
 zipalign 4 $APPNAME-$APPVER-upload1.apk $APPNAME-$APPVER-upload.apk
 rm -f $APPNAME-$APPVER-upload1.apk
-fi
 fi
