@@ -1,5 +1,6 @@
  src/game/server/*.cpp
  src/game/server/*/*.cpp
+ src/game/server/*/*/*.cpp
  src/game/*.cpp
  src/engine/server/*.cpp
  src/engine/shared/*.cpp
