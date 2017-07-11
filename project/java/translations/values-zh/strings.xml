@@ -4,7 +4,7 @@
 
 
     <string name="init">初始化中</string>
-    <string name="please_wait">正在下载数据,请稍等</string>
+    <string name="please_wait">正在下载数据,请稍候</string>
 
     <string name="device_config">设备配置</string>
     <string name="device_change_cfg">更改设备配置</string>
@@ -26,7 +26,7 @@
     <string name="storage_question">数据文件安装位置</string>
     <string name="optional_downloads">下载</string>
     <string name="downloads">下载</string>
-    <string name="ok">好</string>
+    <string name="ok">完成</string>
     <string name="cancel">取消</string>
 
     <string name="controls_arrows">箭头 / 操纵杆 / 方向键</string>
@@ -163,6 +163,7 @@
 
     <string name="display_size_mouse">鼠标仿真模式</string>
     <string name="display_size">显示仿真鼠标的大小</string>
+    <string name="display_size_desktop">桌面版，无仿真</string>
     <string name="display_size_large">大（适用于平板电脑）</string>
     <string name="display_size_small">小，放大镜</string>
     <string name="display_size_small_touchpad">小，触摸模式</string>
@@ -196,6 +197,8 @@
     <string name="gamehelper_unknown_error">未知错误。</string>
     <string name="accessing_network">正在访问网络，请稍候</string>
 
+    <string name="google_play_game_services_app_id" translatable="false">==GOOGLEPLAYGAMESERVICES_APP_ID==</string>
+    
     <string name="restarting_please_wait">重新启动中，请稍候。</string>
 
     <string name="notification_app_is_running">%s 正在运行中</string>
