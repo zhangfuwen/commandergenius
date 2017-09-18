@@ -943,6 +943,11 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 		}
 	}
 
+	public void setSystemMousePointerVisible(int visible)
+	{
+		context.setSystemMousePointerVisible(visible);
+	}
+
 	public void restartMyself(String restartParams)
 	{
 		Intent intent = new Intent(context, RestartMainActivity.class);

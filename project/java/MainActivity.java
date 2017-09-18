@@ -1617,6 +1617,13 @@ public class MainActivity extends Activity
 		}
 	}
 
+    public void setSystemMousePointerVisible(int visible) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+		{
+			mGLView.setPointerIcon(android.view.PointerIcon.getSystemIcon(this, (visible == 0) ? android.view.PointerIcon.TYPE_NULL : android.view.PointerIcon.TYPE_DEFAULT));
+		}
+    }
+
 	public FrameLayout getVideoLayout() { return _videoLayout; }
 
 	DemoGLSurfaceView mGLView = null;
