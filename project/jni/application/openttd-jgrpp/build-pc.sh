@@ -11,7 +11,7 @@ cd openttd-pc
 export CFLAGS=-O0
 export CXXFLAGS=-O0
 
-[ -e Makefile ] || ../src/configure --enable-debug || exit 1
+[ -e Makefile ] || ../src/configure --enable-debug --cpu-type=64 || exit 1
 make -j8 VERBOSE=1 || exit 1
 cd bin
 

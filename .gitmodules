@@ -71,3 +71,7 @@
 	url = https://github.com/pelya/Ninslash.git
 	branch = master
 	update = merge
+[submodule "project/jni/application/openttd-jgrpp/src"]
+	path = project/jni/application/openttd-jgrpp/src
+	url = https://github.com/pelya/OpenTTD-JGR-patchpack.git
+	branch = jgrpp
