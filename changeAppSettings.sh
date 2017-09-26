@@ -809,6 +809,10 @@ else
 	cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/Advertisement.java
 fi
 
+cat project/app/build-template.gradle | \
+	sed 's/applicationId .*/applicationId "'"$AppFullName"'"/' > \
+	project/app/build.gradle
+
 echo "-keep class $AppFullName.** { *; }" > project/proguard-local.cfg
 
 if [ "$AppRecordsAudio" = "n" -o -z "$AppRecordsAudio" ] ; then
@@ -844,8 +848,6 @@ if [ -z "$AppOpenFileExtension" ]; then
 	$SEDI "/==OPENFILE==/ d" project/AndroidManifest.xml
 else
 	EXTS="`for EXT in $AppOpenFileExtension; do echo -n '\\\\1'$EXT'\\\\2' ; done`"
-	echo "EXTS $EXTS"
-	#$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
 	$SEDI "s/\(.*\)==OPENFILE-EXT==\(.*\)/$EXTS/g" project/AndroidManifest.xml
 fi
 
@@ -1095,6 +1097,7 @@ done
 done
 rm -rf project/bin/classes
 rm -rf project/bin/res
+rm -rf project/app/build
 
 # Generate OUYA icon, for that one user who still got an OUYA in his living room and won't throw it away just because someone else decides that it's dead
 rm -rf project/res/drawable-xhdpi/ouya_icon.png

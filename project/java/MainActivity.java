@@ -392,7 +392,7 @@ public class MainActivity extends Activity
 			layout.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 			layout.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 			ImageView borderLeft = new ImageView(this);
-			borderLeft.setId(R.drawable.b1); // Any random ID
+			borderLeft.setId(R.id.left); // Any random ID
 			borderLeft.setImageResource(R.drawable.tv_border_left);
 			borderLeft.setScaleType(ImageView.ScaleType.FIT_XY);
 			view.addView(borderLeft, layout);
@@ -401,7 +401,7 @@ public class MainActivity extends Activity
 			layout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 			layout.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 			ImageView borderRight = new ImageView(this);
-			borderRight.setId(R.drawable.b2);
+			borderRight.setId(R.id.right);
 			borderRight.setImageResource(R.drawable.tv_border_left);
 			borderRight.setScaleType(ImageView.ScaleType.FIT_XY);
 			borderRight.setScaleX(-1f);
@@ -412,7 +412,7 @@ public class MainActivity extends Activity
 			layout.addRule(RelativeLayout.RIGHT_OF, borderLeft.getId());
 			layout.addRule(RelativeLayout.LEFT_OF, borderRight.getId());
 			ImageView borderTop = new ImageView(this);
-			borderTop.setId(R.drawable.b3);
+			borderTop.setId(R.id.top);
 			borderTop.setImageResource(R.drawable.tv_border_top);
 			borderTop.setScaleType(ImageView.ScaleType.FIT_XY);
 			view.addView(borderTop, layout);
@@ -422,7 +422,7 @@ public class MainActivity extends Activity
 			layout.addRule(RelativeLayout.RIGHT_OF, borderLeft.getId());
 			layout.addRule(RelativeLayout.LEFT_OF, borderRight.getId());
 			ImageView borderBottom = new ImageView(this);
-			borderBottom.setId(R.drawable.b4);
+			borderBottom.setId(R.id.bottom);
 			borderBottom.setImageResource(R.drawable.tv_border_top);
 			borderBottom.setScaleType(ImageView.ScaleType.FIT_XY);
 			borderBottom.setScaleY(-1f);
@@ -867,8 +867,8 @@ public class MainActivity extends Activity
 		screenKeyboard.setText(oldText);
 		screenKeyboard.setSelection(screenKeyboard.getText().length());
 		screenKeyboard.setOnKeyListener(new simpleKeyListener(this));
-		screenKeyboard.setBackgroundColor(this.getColor(android.R.color.primary_text_light));
-		screenKeyboard.setTextColor(this.getColor(android.R.color.background_light)); // Just to be sure about gamma
+		screenKeyboard.setBackgroundColor(this.getResources().getColor(android.R.color.primary_text_light));
+		screenKeyboard.setTextColor(this.getResources().getColor(android.R.color.background_light)); // Just to be sure about gamma
 		if( isRunningOnOUYA() && Globals.TvBorders )
 			screenKeyboard.setPadding(100, 100, 100, 100); // Bad bad HDMI TVs all have cropped borders
 		_screenKeyboard = screenKeyboard;

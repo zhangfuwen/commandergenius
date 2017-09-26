@@ -93,7 +93,10 @@ else
 fi
 
 [ -e project/local.properties ] || {
-	android update project -p project -t android-25 || exit 1
+	android update project -p project -t android-25 || {
+		echo "Create file project/local.properties and put there sdk.dir=/path/to/android/sdk"
+		exit 1
+	}
 	rm -f project/src/Globals.java
 }
 
@@ -177,32 +180,28 @@ cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU nice -n19 ndk-build -j
 	{	if $build_release ; then \
 			$quick_rebuild && { \
 				ln -s -f libs lib ; \
-				zip -u -r bin/MainActivity-release-unsigned.apk lib assets || exit 1 ; \
-			} || ant release || exit 1 ; \
+				zip -u -r app/build/outputs/apk/app-release-unsigned.apk lib assets || exit 1 ; \
+			} || ./gradlew assembleRelease || exit 1 ; \
 			[ '!' -x jni/application/src/AndroidPostBuild.sh ] || {
 				cd jni/application/src ; \
-				./AndroidPostBuild.sh `pwd`/../../../bin/MainActivity-release-unsigned.apk || exit 1 ; \
+				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/app-release-unsigned.apk || exit 1 ; \
 				cd ../../.. ; \
 			} || exit 1 ; \
-			jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -sigalg MD5withRSA -digestalg SHA1 bin/MainActivity-release-unsigned.apk androiddebugkey || exit 1 ; \
-			rm -f bin/MainActivity-debug.apk ; \
-			zipalign 4 bin/MainActivity-release-unsigned.apk bin/MainActivity-debug.apk || exit 1 ; \
+			jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -sigalg MD5withRSA -digestalg SHA1 app/build/outputs/apk/app-release-unsigned.apk androiddebugkey || exit 1 ; \
+			rm -f app/build/outputs/apk/app-release.apk ; \
+			zipalign 4 app/build/outputs/apk/app-release-unsigned.apk app/build/outputs/apk/app-release.apk || exit 1 ; \
 		else \
-			$quick_rebuild && { \
-				ln -s -f libs lib ; \
-				zip -u -r bin/MainActivity-debug-unaligned.apk lib assets || exit 1 ; \
-				jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -sigalg MD5withRSA -digestalg SHA1 bin/MainActivity-debug-unaligned.apk androiddebugkey || exit 1 ; \
-				rm -f bin/MainActivity-debug.apk ; \
-				zipalign 4 bin/MainActivity-debug-unaligned.apk bin/MainActivity-debug.apk || exit 1 ; \
-			} || ant debug || exit 1 ; \
+			./gradlew assembleDebug && \
+			mv -f app/build/outputs/apk/app-debug.apk app/build/outputs/apk/app-release.apk \
+			|| exit 1 ; \
 		fi ; } && \
 	{	if $sign_apk; then cd .. && ./sign.sh && cd project ; else true ; fi ; } && \
 	{	$install_apk && [ -n "`adb devices | tail -n +2`" ] && \
-		{	cd bin && adb install -r MainActivity-debug.apk | grep 'Failure' && \
-			adb uninstall `grep AppFullName ../../AndroidAppSettings.cfg | sed 's/.*=//'` && adb install -r MainActivity-debug.apk ; } ; \
+		{	adb install -r app/build/outputs/apk/app-release.apk | grep 'Failure' && \
+			adb uninstall `grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'` && adb install -r app/build/outputs/apk/app-release.apk ; } ; \
 		true ; } && \
 	{	$run_apk && { \
-			ActivityName="`grep AppFullName ../../AndroidAppSettings.cfg | sed 's/.*=//'`/.MainActivity" ; \
+			ActivityName="`grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'`/.MainActivity" ; \
 			RUN_APK="adb shell am start -n $ActivityName" ; \
 			echo "Running $ActivityName on the USB-connected device:" ; \
 			echo "$RUN_APK" ; \
