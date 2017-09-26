@@ -1252,7 +1252,7 @@ SDL_AndroidTextInputAsyncStatus_t SDLCALL SDL_ANDROID_GetScreenKeyboardTextInput
 		SDL_ANDROID_AsyncTextInputActive = 0;
 		return SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED;
 	}
-	if( !SDL_ANDROID_IsScreenKeyboardShownFlag && !SDL_ANDROID_AsyncTextInputActive )
+	if( !SDL_ANDROID_IsScreenKeyboardShownFlag )
 	{
 		SDL_ANDROID_AsyncTextInputActive = 1;
 		SDL_ANDROID_CallJavaShowScreenKeyboard(textBuf, textBuf, textBufSize, 1);

@@ -867,8 +867,8 @@ public class MainActivity extends Activity
 		screenKeyboard.setText(oldText);
 		screenKeyboard.setSelection(screenKeyboard.getText().length());
 		screenKeyboard.setOnKeyListener(new simpleKeyListener(this));
-		screenKeyboard.setBackgroundColor(Color.BLACK); // Full opaque - do not show semi-transparent edit box, it's confusing
-		screenKeyboard.setTextColor(Color.WHITE); // Just to be sure about gamma
+		screenKeyboard.setBackgroundColor(this.getColor(android.R.color.primary_text_light));
+		screenKeyboard.setTextColor(this.getColor(android.R.color.background_light)); // Just to be sure about gamma
 		if( isRunningOnOUYA() && Globals.TvBorders )
 			screenKeyboard.setPadding(100, 100, 100, 100); // Bad bad HDMI TVs all have cropped borders
 		_screenKeyboard = screenKeyboard;

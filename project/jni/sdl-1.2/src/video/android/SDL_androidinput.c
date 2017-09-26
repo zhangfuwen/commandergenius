@@ -1035,6 +1035,7 @@ JAVA_EXPORT_NAME(DemoRenderer_nativeTextInputFinished) ( JNIEnv*  env, jobject t
 		textInputBuffer[0] = 0;
 	textInputBuffer = NULL;
 	SDL_ANDROID_TextInputFinished = 1;
+	SDL_ANDROID_IsScreenKeyboardShownFlag = 0;
 }
 
 JNIEXPORT void JNICALL

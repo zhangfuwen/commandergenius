@@ -442,7 +442,6 @@ int main(int argc, char* argv[])
 	int accel[5], screenjoy[4], gamepads[4][8];
 	SDL_Surface	*mouse[4];
 	int screenKeyboardShown = 0;
-	int asyncTextInput = 0;
 	char asyncTextInputBuf[256];
 
 
@@ -699,7 +698,6 @@ int main(int argc, char* argv[])
 					if(evt.key.keysym.sym == SDLK_2)
 					{
 						__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Async text input started");
-						asyncTextInput = 1;
 						asyncTextInputBuf[0] = 0;
 						SDL_ANDROID_GetScreenKeyboardTextInputAsync(asyncTextInputBuf, sizeof(asyncTextInputBuf));
 					}
@@ -758,12 +756,11 @@ int main(int argc, char* argv[])
 			__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Screen keyboard shown: %d -> %d", screenKeyboardShown, SDL_IsScreenKeyboardShown(NULL));
 			screenKeyboardShown = SDL_IsScreenKeyboardShown(NULL);
 		}
-		if( asyncTextInput )
+		if( SDL_IsScreenKeyboardShown(NULL) )
 		{
-			if( SDL_ANDROID_GetScreenKeyboardTextInputAsync(asyncTextInputBuf, sizeof(asyncTextInputBuf)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED)
+			if(SDL_ANDROID_GetScreenKeyboardTextInputAsync(asyncTextInputBuf, sizeof(asyncTextInputBuf)) == SDL_ANDROID_TEXTINPUT_ASYNC_FINISHED)
 			{
 				__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Async text input: %s", asyncTextInputBuf);
-				asyncTextInput = 0;
 			}
 		}
 
