@@ -842,6 +842,8 @@ public class MainActivity extends Activity
 						}
 						t.setText(t.getText().toString().substring(0, start) + t.getText().toString().substring(end));
 						t.setSelection(start);
+						t.setBackgroundColor(this.getResources().getColor(android.R.color.primary_text_light));
+						t.setTextColor(this.getResources().getColor(android.R.color.background_light));
 						return true;
 					}
 				}
@@ -868,7 +870,7 @@ public class MainActivity extends Activity
 		screenKeyboard.setSelection(screenKeyboard.getText().length());
 		screenKeyboard.setOnKeyListener(new simpleKeyListener(this));
 		screenKeyboard.setBackgroundColor(this.getResources().getColor(android.R.color.primary_text_light));
-		screenKeyboard.setTextColor(this.getResources().getColor(android.R.color.background_light)); // Just to be sure about gamma
+		screenKeyboard.setTextColor(this.getResources().getColor(android.R.color.background_light));
 		if( isRunningOnOUYA() && Globals.TvBorders )
 			screenKeyboard.setPadding(100, 100, 100, 100); // Bad bad HDMI TVs all have cropped borders
 		_screenKeyboard = screenKeyboard;
