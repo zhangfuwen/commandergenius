@@ -877,9 +877,8 @@ public class MainActivity extends Activity
 		screenKeyboard.setInputType(InputType.TYPE_CLASS_TEXT);
 		screenKeyboard.setFocusableInTouchMode(true);
 		screenKeyboard.setFocusable(true);
-		screenKeyboard.requestFocus();
-		_inputManager.showSoftInput(screenKeyboard, InputMethodManager.SHOW_IMPLICIT);
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		//_inputManager.showSoftInput(screenKeyboard, InputMethodManager.SHOW_IMPLICIT);
+		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		// Hack to try to force on-screen keyboard
 		final EditText keyboard = screenKeyboard;
 		keyboard.postDelayed( new Runnable()
@@ -887,8 +886,7 @@ public class MainActivity extends Activity
 				public void run()
 				{
 					keyboard.requestFocus();
-					//_inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-					_inputManager.showSoftInput(keyboard, InputMethodManager.SHOW_FORCED);
+					//_inputManager.showSoftInput(keyboard, InputMethodManager.SHOW_FORCED);
 					// Hack from Stackoverflow, to force text input on Ouya
 					keyboard.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN , 0, 0, 0));
 					keyboard.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
@@ -896,11 +894,12 @@ public class MainActivity extends Activity
 					{
 						public void run()
 						{
+							keyboard.requestFocus();
 							keyboard.setSelection(keyboard.getText().length());
 						}
 					}, 100 );
 				}
-			}, 500 );
+			}, 300 );
 	};
 
 	public void hideScreenKeyboard()
