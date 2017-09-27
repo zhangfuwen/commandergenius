@@ -79,26 +79,14 @@ NDK_TOOLCHAIN_VERSION=$GCCVER
 # export PATH=$PATH:~/src/endless_space/android-ndk-r7
 NDKBUILDPATH=$PATH
 export `grep "AppFullName=" AndroidAppSettings.cfg`
-if ( grep "package $AppFullName;" project/src/Globals.java > /dev/null 2>&1 && \
-		[ "`readlink AndroidAppSettings.cfg`" -ot "project/src/Globals.java" ] && \
-		[ -z "`find project/java/* project/AndroidManifestTemplate.xml -cnewer project/src/Globals.java`" ] ) ; then true ; else
+if [ -e project/local.properties ] && \
+	( grep "package $AppFullName;" project/src/Globals.java > /dev/null 2>&1 && \
+	[ "`readlink AndroidAppSettings.cfg`" -ot "project/src/Globals.java" ] && \
+	[ -z "`find project/java/* project/AndroidManifestTemplate.xml -cnewer project/src/Globals.java`" ] ) ; then true ; else
 	./changeAppSettings.sh -a || exit 1
 	sleep 1
 	touch project/src/Globals.java
 fi
-if $build_release ; then
-	sed -i 's/android:debuggable="true"/android:debuggable="false"/g' project/AndroidManifest.xml
-else
-	sed -i 's/android:debuggable="false"/android:debuggable="true"/g' project/AndroidManifest.xml
-fi
-
-[ -e project/local.properties ] || {
-	android update project -p project -t android-25 || {
-		echo "Create file project/local.properties and put there sdk.dir=/path/to/android/sdk"
-		exit 1
-	}
-	rm -f project/src/Globals.java
-}
 
 MYARCH=linux-x86_64
 if [ -z "$NCPU" ]; then

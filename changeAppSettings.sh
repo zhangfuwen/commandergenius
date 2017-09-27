@@ -997,16 +997,15 @@ done
 cd ../../..
 
 SDK_DIR=`grep '^sdk.dir' project/local.properties | sed 's/.*=//'`
+[ -z "$SDK_DIR" ] && SDK_DIR=`which android | sed 's@/tools/android$@@'`
 mkdir -p project/libs
+echo "sdk.dir=$SDK_DIR" > project/local.properties
+echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
 
 if [ "$GooglePlayGameServicesId" = "n" -o -z "$GooglePlayGameServicesId" ] ; then
 	$SEDI "/==GOOGLEPLAYGAMESERVICES==/ d" project/AndroidManifest.xml
+	$SEDI "/==GOOGLEPLAYGAMESERVICES==/ d" project/app/build.gradle
 	GooglePlayGameServicesId=""
-	grep '=play-services' project/local.properties > /dev/null && {
-		echo "sdk.dir=$SDK_DIR" > project/local.properties
-		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
-		rm -f project/libs/android-support-v4.jar
-	}
 else
 	for F in $JAVA_SRC_PATH/googleplaygameservices/*.java; do
 		OUT=`echo $F | sed 's@.*/@@'` # basename tool is not available everywhere
@@ -1015,58 +1014,16 @@ else
 		cat $F | sed "s/^package .*;/package $AppFullName;/" >> project/src/$OUT
 	done
 
-	PLAY_SERVICES_VER=11.0.0
-	SUPPORT_V4_VER=25.2.0
-	rm -rf project/play-services
-
-	CURDIR=`pwd`
-
-	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-games/$PLAY_SERVICES_VER       || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/games     -i play-services-games-$PLAY_SERVICES_VER    || exit 1
-	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-drive/$PLAY_SERVICES_VER       || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/drive     -i play-services-drive-$PLAY_SERVICES_VER    || exit 1
-	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-base/$PLAY_SERVICES_VER        || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/base      -i play-services-base-$PLAY_SERVICES_VER     || exit 1
-	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-tasks/$PLAY_SERVICES_VER       || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/tasks     -i play-services-tasks-$PLAY_SERVICES_VER    || exit 1
-	cd $SDK_DIR/extras/google/m2repository/com/google/android/gms/play-services-basement/$PLAY_SERVICES_VER    || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/basement  -i play-services-basement-$PLAY_SERVICES_VER || exit 1
-	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-core-utils/$SUPPORT_V4_VER || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-core-utils -i support-core-utils-$SUPPORT_V4_VER || exit 1
-	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-compat/$SUPPORT_V4_VER || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-compat -i support-compat-$SUPPORT_V4_VER || exit 1
-	cd $SDK_DIR/extras/android/m2repository/com/android/support/support-v4/$SUPPORT_V4_VER || exit 1
-	$CURDIR/aar2jar.py -o $CURDIR/project/play-services/support-v4 -i support-v4-$SUPPORT_V4_VER || exit 1
-
-	cd $CURDIR
-
-	ln -s -f $SDK_DIR/extras/android/m2repository/com/android/support/support-annotations/$SUPPORT_V4_VER/support-annotations-$SUPPORT_V4_VER.jar project/libs/android-support-v4.jar || exit 1
-
 	$SEDI "s/==GOOGLEPLAYGAMESERVICES_APP_ID==/$GooglePlayGameServicesId/g" project/res/values/strings.xml
-	grep "play-services-games-$PLAY_SERVICES_VER" project/local.properties > /dev/null || {
 
-		PROGUARD=`which android`
-		PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
-		java -jar $PROGUARD | grep 'ProGuard, version 5.3.2' || {
-			echo "Error: ProGuard is too old"
-			echo "You need to update ProGuard. Download it here:"
-			echo "https://sourceforge.net/projects/proguard/files/proguard/5.3/proguard5.3.2.tar.gz"
-			echo "Unpack it, then place file proguard.jar to $PROGUARD"
-			exit 1
-		}
-
-		
-		# Ant is way too smart, and adds current project path in front of the ${sdk.dir}
-		echo "sdk.dir=$SDK_DIR" > project/local.properties
-		echo 'proguard.config=proguard.cfg;proguard-local.cfg' >> project/local.properties
-		echo "android.library.reference.1=play-services/games/play-services-games-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.2=play-services/drive/play-services-drive-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.3=play-services/base/play-services-base-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.4=play-services/tasks/play-services-tasks-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.5=play-services/basement/play-services-basement-$PLAY_SERVICES_VER" >> project/local.properties
-		echo "android.library.reference.6=play-services/support-core-utils/support-core-utils-$SUPPORT_V4_VER" >> project/local.properties
-		echo "android.library.reference.7=play-services/support-compat/support-compat-$SUPPORT_V4_VER" >> project/local.properties
-		echo "android.library.reference.8=play-services/support-v4/support-v4-$SUPPORT_V4_VER" >> project/local.properties
+	PROGUARD=`which android`
+	PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
+	java -jar $PROGUARD | grep 'ProGuard, version 5.3' || {
+		echo "Error: ProGuard is too old"
+		echo "You need to update ProGuard. Download it here:"
+		echo "https://sourceforge.net/projects/proguard/files/proguard/5.3/proguard5.3.3.zip"
+		echo "Unpack it, then place file proguard.jar to $PROGUARD"
+		exit 1
 	}
 fi
 
