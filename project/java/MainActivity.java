@@ -842,8 +842,6 @@ public class MainActivity extends Activity
 						}
 						t.setText(t.getText().toString().substring(0, start) + t.getText().toString().substring(end));
 						t.setSelection(start);
-						t.setBackgroundColor(getResources().getColor(android.R.color.primary_text_light));
-						t.setTextColor(getResources().getColor(android.R.color.background_light));
 						return true;
 					}
 				}
