@@ -18,9 +18,9 @@ cd bin
 export LD_LIBRARY_PATH=/usr/local/lib
 
 if [ -z "$1" ]; then
-	./openttd -d 2 -r 854x480 -g opntitle.sav
+	./openttd -d 2 -r 854x480 -b 16bpp-simple -g opntitle.sav
 else
-	#valgrind --track-fds=yes --log-file=valgrind.log --leak-check=full \
-	gdb -ex run --args \
-	./openttd -d 2 -r 854x480 -g opntitle.sav
+	#gdb -ex run --args \
+	valgrind --track-fds=yes --log-file=valgrind.log --leak-check=full --read-var-info=yes \
+	./openttd -d 2 -r 854x480 -b 16bpp-simple # -g opntitle.sav
 fi
