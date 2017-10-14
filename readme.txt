@@ -11,8 +11,8 @@ Installation
 ============
 
 Install latest Android SDK and NDK from http://developer.android.com/index.html
-Add both to your PATH env variable 0 you sohuld be albe to run commands 'ndk-build' and 'android'.
-You will need to install Java Ant too.
+Add both to your PATH env variable 0 you should be able to run commands 'ndk-build' and 'android'.
+You will need to install Gradle also.
 it is recommended to install OpenJDK and its development files.
 On RPM based distros they are usually called java-x.x.x-openjdk and java-x.x.x-openjdk-devel.
 On Debian or Ubuntu you install them like this: sudo apt-get install openjdk-8-jdk ant
@@ -29,10 +29,12 @@ How to compile demo application
 ===============================
 
 Launch commands
+
 	rm project/jni/application/src
 	ln -s ballfield project/jni/application/src
 	./changeAppSettings.sh -a
 	android update project -p project
+	
 Then edit file build.sh if needed to add NDK dir to your PATH, then launch it.
 It will compile a bunch of libs under project/libs/armeabi,
 create Android package file project/bin/MainActivity-debug.apk,
