@@ -61,6 +61,28 @@ to compile it remove project/jni/application/src symlink and make new one pointi
 Note that GL ES is NOT pure OpenGL - there are no glBegin() and glEnd() call and other widely used functions,
 and generally it will take a lot of effort to port OpenGL application to GL ES.
 
+
+Licensing issues when using gradle 
+==================================
+
+cd into android-sdk-linux/tools/bin
+
+
+and
+
+./sdkmanager --licenses
+
+if that does not work you need to update
+
+./sdkmanager --update
+
+Accept the license with 'y'. It might download additional stuff, yet not sure, why...
+
+Retry with 
+
+./sdkmanager --licenses
+
+
 How to compile a specific SDL based application
 ===============================================
 . build/envsetup.sh
