@@ -75,3 +75,6 @@
 	path = project/jni/application/openttd-jgrpp/src
 	url = https://github.com/pelya/OpenTTD-JGR-patchpack.git
 	branch = jgrpp
+[submodule "project/jni/application/liero/src"]
+	path = project/jni/application/liero/src
+	url = https://github.com/pelya/liero-android.git
