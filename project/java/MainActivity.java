@@ -177,6 +177,9 @@ public class MainActivity extends Activity
 		}
 		
 		setContentView(_videoLayout);
+		_videoLayout.setFocusable(true);
+		_videoLayout.setFocusableInTouchMode(true);
+		_videoLayout.requestFocus();
 
 		class Callback implements Runnable
 		{
