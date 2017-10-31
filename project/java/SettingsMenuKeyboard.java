@@ -276,10 +276,10 @@ class SettingsMenuKeyboard extends SettingsMenu
 		void run (final MainActivity p)
 		{
 			p.setText(p.getResources().getString(R.string.remap_hwkeys_press));
-			p.keyListener = new KeyRemapTool(p);
+			p.getVideoLayout().setOnKeyListener(new KeyRemapTool(p));
 		}
 
-		public static class KeyRemapTool implements MainActivity.KeyEventsListener
+		public static class KeyRemapTool implements View.OnKeyListener
 		{
 			MainActivity p;
 			public KeyRemapTool(MainActivity _p)
@@ -287,9 +287,10 @@ class SettingsMenuKeyboard extends SettingsMenu
 				p = _p;
 			}
 			
-			public void onKeyEvent(final int keyCode)
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
-				p.keyListener = null;
+				p.getVideoLayout().setOnKeyListener(null);
 				int keyIndex = keyCode;
 				if( keyIndex < 0 )
 					keyIndex = 0;
@@ -336,6 +337,7 @@ class SettingsMenuKeyboard extends SettingsMenu
 				AlertDialog alert = builder.create();
 				alert.setOwnerActivity(p);
 				alert.show();
+				return true;
 			}
 			public void ShowAllKeys(final int KeyIndex)
 			{
@@ -624,12 +626,10 @@ class SettingsMenuKeyboard extends SettingsMenu
 		{
 			p.setText(p.getResources().getString(R.string.screenkb_custom_layout_help));
 			CustomizeScreenKbLayoutTool tool = new CustomizeScreenKbLayoutTool(p);
-			p.touchListener = tool;
-			p.keyListener = tool;
 			Globals.TouchscreenKeyboardSize = Globals.TOUCHSCREEN_KEYBOARD_CUSTOM;
 		}
 
-		static class CustomizeScreenKbLayoutTool implements MainActivity.TouchEventsListener, MainActivity.KeyEventsListener
+		static class CustomizeScreenKbLayoutTool implements View.OnTouchListener, View.OnKeyListener
 		{
 			MainActivity p;
 			FrameLayout layout = null;
@@ -658,6 +658,11 @@ class SettingsMenuKeyboard extends SettingsMenu
 				p = _p;
 				layout = new FrameLayout(p);
 				p.getVideoLayout().addView(layout);
+				layout.setFocusable(true);
+				layout.setFocusableInTouchMode(true);
+				layout.requestFocus();
+				layout.setOnTouchListener(this);
+				layout.setOnKeyListener(this);
 				boundary = new ImageView(p);
 				boundary.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
 				boundary.setScaleType(ImageView.ScaleType.MATRIX);
@@ -744,7 +749,7 @@ class SettingsMenuKeyboard extends SettingsMenu
 				}
 				boundary.bringToFront();
 				if( currentButton == -1 )
-					onKeyEvent( KeyEvent.KEYCODE_BACK ); // All buttons disabled - do not show anything
+					onKey( null, KeyEvent.KEYCODE_BACK, null ); // All buttons disabled - do not show anything
 				else
 					setupButton(currentButton);
 			}
@@ -777,7 +782,8 @@ class SettingsMenuKeyboard extends SettingsMenu
 				p.setText(p.getResources().getString(R.string.screenkb_custom_layout_help) + "\n" + buttonText);
 			}
 
-			public void onTouchEvent(final MotionEvent ev)
+			@Override
+			public boolean onTouch(View v, MotionEvent ev)
 			{
 				if( ev.getAction() == MotionEvent.ACTION_DOWN )
 				{
@@ -842,18 +848,19 @@ class SettingsMenuKeyboard extends SettingsMenu
 					m.setRectToRect(src, dst, Matrix.ScaleToFit.FILL);
 					boundary.setImageMatrix(m);
 				}
+				return true;
 			}
 
-			public void onKeyEvent(final int keyCode)
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
 				if( keyCode == KeyEvent.KEYCODE_BACK )
 				{
 					p.getVideoLayout().removeView(layout);
 					layout = null;
-					p.touchListener = null;
-					p.keyListener = null;
 					goBack(p);
 				}
+				return true;
 			}
 		}
 	}

@@ -387,7 +387,7 @@ abstract class DifferentTouchInput
 		}
 		public void processGenericEvent(final MotionEvent event)
 		{
-			// Joysticks are supported since Honeycomb, but I don't care about it, because very little devices have it
+			// Joysticks are supported since Honeycomb, but I don't care about it, because very few devices have it
 			if( (event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK )
 			{
 				// event.getAxisValue(AXIS_HAT_X) and event.getAxisValue(AXIS_HAT_Y) are joystick arrow keys, on Nvidia Shield and some other joysticks
@@ -983,6 +983,75 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 		setEGLConfigChooser(Globals.VideoDepthBpp, Globals.NeedDepthBuffer, Globals.NeedStencilBuffer, Globals.NeedGles2, Globals.NeedGles3);
 		mRenderer = new DemoRenderer(context);
 		setRenderer(mRenderer);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, final KeyEvent event)
+	{
+		if( keyCode == KeyEvent.KEYCODE_BACK )
+		{
+			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
+			{
+				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
+				nativeMouseButtonsPressed(2, 1);
+				return true;
+			}
+			else if( mParent.keyboardWithoutTextInputShown )
+			{
+				return true;
+			}
+		}
+		//if( context._screenKeyboard != null && context._screenKeyboard.onKeyDown(keyCode, event) )
+		//	return true;
+
+		if( nativeKey( keyCode, 1, event.getUnicodeChar() ) == 0 )
+			return super.onKeyDown(keyCode, event);
+
+		return true;
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, final KeyEvent event)
+	{
+		if( keyCode == KeyEvent.KEYCODE_BACK )
+		{
+			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
+			{
+				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
+				nativeMouseButtonsPressed(2, 0);
+				return true;
+			}
+			else if( mParent.keyboardWithoutTextInputShown )
+			{
+				mParent.showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
+				return true;
+			}
+		}
+		//if( _screenKeyboard != null && _screenKeyboard.onKeyUp(keyCode, event) )
+		//	return true;
+
+		if( nativeKey( keyCode, 0, event.getUnicodeChar() ) == 0 )
+			return super.onKeyUp(keyCode, event);
+
+		if( keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU )
+			DimSystemStatusBar.get().dim(mParent._videoLayout);
+
+		return true;
+	}
+
+	@Override
+	public boolean onKeyMultiple(int keyCode, int repeatCount, final KeyEvent event)
+	{
+		if( event.getCharacters() != null )
+		{
+			// International text input
+			for(int i = 0; i < event.getCharacters().length(); i++ )
+			{
+				nativeKey( event.getKeyCode(), 1, event.getCharacters().codePointAt(i) );
+				nativeKey( event.getKeyCode(), 0, event.getCharacters().codePointAt(i) );
+			}
+		}
+		return true;
 	}
 
 	@Override

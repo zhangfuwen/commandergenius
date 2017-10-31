@@ -267,7 +267,7 @@ class SettingsMenuMouse extends SettingsMenu
 					dialog.dismiss();
 					Globals.LeftClickMethod = item;
 					if( item == Mouse.LEFT_CLICK_WITH_KEY )
-						p.keyListener = new KeyRemapToolMouseClick(p, true);
+						p.getVideoLayout().setOnKeyListener(new KeyRemapToolMouseClick(p, true));
 					else if( item == Mouse.LEFT_CLICK_WITH_TIMEOUT || item == Mouse.LEFT_CLICK_WITH_TAP_OR_TIMEOUT )
 						showLeftClickTimeoutConfig(p);
 					else
@@ -343,7 +343,7 @@ class SettingsMenuMouse extends SettingsMenu
 					Globals.RightClickMethod = item;
 					dialog.dismiss();
 					if( item == Mouse.RIGHT_CLICK_WITH_KEY )
-						p.keyListener = new KeyRemapToolMouseClick(p, false);
+						p.getVideoLayout().setOnKeyListener(new KeyRemapToolMouseClick(p, false));
 					else if( item == Mouse.RIGHT_CLICK_WITH_TIMEOUT )
 						showRightClickTimeoutConfig(p);
 					else
@@ -393,7 +393,7 @@ class SettingsMenuMouse extends SettingsMenu
 		}
 	}
 
-	public static class KeyRemapToolMouseClick implements MainActivity.KeyEventsListener
+	public static class KeyRemapToolMouseClick implements View.OnKeyListener
 	{
 		MainActivity p;
 		boolean leftClick;
@@ -404,9 +404,10 @@ class SettingsMenuMouse extends SettingsMenu
 			this.leftClick = leftClick;
 		}
 		
-		public void onKeyEvent(final int keyCode)
+		@Override
+		public boolean onKey(View v, int keyCode, KeyEvent event)
 		{
-			p.keyListener = null;
+			p.getVideoLayout().setOnKeyListener(null);
 			int keyIndex = keyCode;
 			if( keyIndex < 0 )
 				keyIndex = 0;
@@ -419,6 +420,7 @@ class SettingsMenuMouse extends SettingsMenu
 				Globals.RightClickKey = keyIndex;
 
 			goBack(p);
+			return true;
 		}
 	}
 
@@ -686,10 +688,10 @@ class SettingsMenuMouse extends SettingsMenu
 		void run (final MainActivity p)
 		{
 			p.setText(p.getResources().getString(R.string.measurepressure_touchplease));
-			p.touchListener = new TouchMeasurementTool(p);
+			p.getVideoLayout().setOnTouchListener(new TouchMeasurementTool(p));
 		}
 
-		public static class TouchMeasurementTool implements MainActivity.TouchEventsListener
+		public static class TouchMeasurementTool implements View.OnTouchListener
 		{
 			MainActivity p;
 			ArrayList<Integer> force = new ArrayList<Integer>();
@@ -701,7 +703,8 @@ class SettingsMenuMouse extends SettingsMenu
 				p = _p;
 			}
 
-			public void onTouchEvent(final MotionEvent ev)
+			@Override
+			public boolean onTouch(View v, MotionEvent ev)
 			{
 				force.add(new Integer((int)(ev.getPressure() * 1000.0)));
 				radius.add(new Integer((int)(ev.getSize() * 1000.0)));
@@ -712,12 +715,13 @@ class SettingsMenuMouse extends SettingsMenu
 				
 				if( force.size() >= maxEventAmount )
 				{
-					p.touchListener = null;
+					p.getVideoLayout().setOnTouchListener(null);
 					Globals.ClickScreenPressure = getAverageForce();
 					Globals.ClickScreenTouchspotSize = getAverageRadius();
 					Log.i("SDL", "SDL: measured average force " + Globals.ClickScreenPressure + " radius " + Globals.ClickScreenTouchspotSize);
 					goBack(p);
 				}
+				return true;
 			}
 
 			int getAverageForce()
@@ -756,11 +760,11 @@ class SettingsMenuMouse extends SettingsMenu
 			Globals.TouchscreenCalibration[2] = 0;
 			Globals.TouchscreenCalibration[3] = 0;
 			ScreenEdgesCalibrationTool tool = new ScreenEdgesCalibrationTool(p);
-			p.touchListener = tool;
-			p.keyListener = tool;
+			p.getVideoLayout().setOnTouchListener(tool);
+			p.getVideoLayout().setOnKeyListener(tool);
 		}
 
-		static class ScreenEdgesCalibrationTool implements MainActivity.TouchEventsListener, MainActivity.KeyEventsListener
+		static class ScreenEdgesCalibrationTool implements View.OnTouchListener, View.OnKeyListener
 		{
 			MainActivity p;
 			ImageView img;
@@ -783,7 +787,8 @@ class SettingsMenuMouse extends SettingsMenu
 				p.getVideoLayout().addView(img);
 			}
 
-			public void onTouchEvent(final MotionEvent ev)
+			@Override
+			public boolean onTouch(View v, MotionEvent ev)
 			{
 				if( Globals.TouchscreenCalibration[0] == Globals.TouchscreenCalibration[1] &&
 					Globals.TouchscreenCalibration[1] == Globals.TouchscreenCalibration[2] &&
@@ -808,14 +813,17 @@ class SettingsMenuMouse extends SettingsMenu
 										Globals.TouchscreenCalibration[2], Globals.TouchscreenCalibration[3]);
 				m.setRectToRect(src, dst, Matrix.ScaleToFit.FILL);
 				img.setImageMatrix(m);
+				return true;
 			}
 
-			public void onKeyEvent(final int keyCode)
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event)
 			{
-				p.touchListener = null;
-				p.keyListener = null;
+				p.getVideoLayout().setOnTouchListener(null);
+				p.getVideoLayout().setOnKeyListener(null);
 				p.getVideoLayout().removeView(img);
 				goBack(p);
+				return true;
 			}
 		}
 	}

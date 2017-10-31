@@ -205,7 +205,12 @@ public class MainActivity extends Activity
 							loaded.release();
 							loadedLibraries.release();
 							if( _btn != null )
+							{
 								_btn.setEnabled(true);
+								_btn.setFocusable(true);
+								_btn.setFocusableInTouchMode(true);
+								_btn.requestFocus();
+							}
 						}
 					}
 					Callback2 cb = new Callback2();
@@ -850,18 +855,6 @@ public class MainActivity extends Activity
 			}
 		};
 		EditText screenKeyboard = new EditText(this);
-		// This code does not work
-		/*
-		screenKeyboard.setMaxLines(100);
-		ViewGroup.LayoutParams layout = _screenKeyboard.getLayoutParams();
-		if( layout != null )
-		{
-			layout.width = ViewGroup.LayoutParams.FILL_PARENT;
-			layout.height = ViewGroup.LayoutParams.FILL_PARENT;
-			screenKeyboard.setLayoutParams(layout);
-		}
-		screenKeyboard.setGravity(android.view.Gravity.BOTTOM | android.view.Gravity.LEFT);
-		*/
 		String hint = _screenKeyboardHintMessage;
 		screenKeyboard.setHint(hint != null ? hint : getString(R.string.text_edit_click_here));
 		screenKeyboard.setText(oldText);
@@ -1046,6 +1039,7 @@ public class MainActivity extends Activity
 		}
 	}
 
+	/*
 	@Override
 	public boolean onKeyDown(int keyCode, final KeyEvent event)
 	{
@@ -1116,99 +1110,14 @@ public class MainActivity extends Activity
 			return _btn.onKeyUp(keyCode, event);
 		return true;
 	}
-
-	@Override
-	public boolean onKeyMultiple(int keyCode, int repeatCount, final KeyEvent event)
-	{
-		if( _screenKeyboard != null )
-		{
-			_screenKeyboard.onKeyMultiple(keyCode, repeatCount, event);
-			return true;
-		}
-		else if( mGLView != null && event.getCharacters() != null )
-		{
-			// International text input
-			for(int i = 0; i < event.getCharacters().length(); i++ )
-			{
-				mGLView.nativeKey( event.getKeyCode(), 1, event.getCharacters().codePointAt(i) );
-				mGLView.nativeKey( event.getKeyCode(), 0, event.getCharacters().codePointAt(i) );
-			}
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean onKeyLongPress (int keyCode, KeyEvent event)
-	{
-		if( _screenKeyboard != null )
-		{
-			_screenKeyboard.onKeyLongPress(keyCode, event);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean dispatchTouchEvent(final MotionEvent ev)
-	{
-		//Log.i("SDL", "dispatchTouchEvent: " + ev.getAction() + " coords " + ev.getX() + ":" + ev.getY() );
-		if(_screenKeyboard != null && _screenKeyboard.dispatchTouchEvent(ev))
-			return true;
-
-		if( _ad.getView() != null && // User clicked the advertisement, ignore when user moved finger from game screen to advertisement or touches screen with several fingers
-			((ev.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN ||
-			(ev.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) &&
-			_ad.getView().getLeft() <= (int)ev.getX() &&
-			_ad.getView().getRight() > (int)ev.getX() &&
-			_ad.getView().getTop() <= (int)ev.getY() &&
-			_ad.getView().getBottom() > (int)ev.getY() )
-			return super.dispatchTouchEvent(ev);
-		else
-		if(mGLView != null)
-			mGLView.onTouchEvent(ev);
-		else
-		if( _btn != null )
-			return _btn.dispatchTouchEvent(ev);
-		else
-		if( touchListener != null )
-			touchListener.onTouchEvent(ev);
-		return true;
-	}
+	*/
 	
-	@Override
-	public boolean dispatchGenericMotionEvent (MotionEvent ev)
-	{
-		//Log.i("SDL", "dispatchGenericMotionEvent: " + ev.getAction() + " coords " + ev.getX() + ":" + ev.getY() );
-		// This code fails to run for Android 1.6, so there will be no generic motion event for Andorid screen keyboard
-		/*
-		if(_screenKeyboard != null)
-			_screenKeyboard.dispatchGenericMotionEvent(ev);
-		else
-		*/
-		if(mGLView != null)
-			mGLView.onGenericMotionEvent(ev);
-		return true;
-	}
-
 	//private Configuration oldConfig = null;
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)
 	{
 		super.onConfigurationChanged(newConfig);
 		updateScreenOrientation();
-		/*
-		if (oldConfig != null)
-		{
-			int diff = newConfig.diff(oldConfig);
-			Log.i("SDL", "onConfigurationChanged(): " + " diff " + diff +
-					((diff & ActivityInfo.CONFIG_ORIENTATION) == ActivityInfo.CONFIG_ORIENTATION ? " orientation" : "") +
-					((diff & ActivityInfo.CONFIG_SCREEN_SIZE) == ActivityInfo.CONFIG_SCREEN_SIZE ? " screen size" : "") +
-					((diff & ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE) == ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE ? " smallest screen size" : "") +
-					" " + newConfig.toString());
-		}
-		oldConfig = new Configuration(newConfig);
-		*/
 	}
 
 	public void updateScreenOrientation()
@@ -1644,18 +1553,6 @@ public class MainActivity extends Activity
 	private boolean sdlInited = false;
 	public static boolean ApplicationLibraryLoaded = false;
 
-	public interface TouchEventsListener
-	{
-		public void onTouchEvent(final MotionEvent ev);
-	}
-
-	public interface KeyEventsListener
-	{
-		public void onKeyEvent(final int keyCode);
-	}
-
-	public TouchEventsListener touchListener = null;
-	public KeyEventsListener keyListener = null;
 	boolean _isPaused = false;
 	private InputMethodManager _inputManager = null;
 

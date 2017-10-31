@@ -29,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.os.Environment;
+import android.view.View;
 
 import android.widget.TextView;
 import java.net.URLConnection;
@@ -186,7 +187,8 @@ class DataDownloader extends Thread
 	@Override
 	public void run()
 	{
-		Parent.keyListener = new BackKeyListener(Parent);
+		Parent.getVideoLayout().setOnKeyListener(new BackKeyListener(Parent));
+
 		String [] downloadFiles = Globals.DataDownloadUrl;
 		int total = 0;
 		int count = 0;
@@ -217,7 +219,7 @@ class DataDownloader extends Thread
 			}
 		}
 		DownloadComplete = true;
-		Parent.keyListener = null;
+		Parent.getVideoLayout().setOnKeyListener(null);
 		initParent();
 	}
 
@@ -803,7 +805,7 @@ class DataDownloader extends Thread
 				Parent.getPackageName() + "/" + url.substring("obb:".length()) + "." + Parent.getPackageName() + ".obb";
 	}
 
-	public class BackKeyListener implements MainActivity.KeyEventsListener
+	public class BackKeyListener implements View.OnKeyListener
 	{
 		MainActivity p;
 		public BackKeyListener(MainActivity _p)
@@ -811,7 +813,8 @@ class DataDownloader extends Thread
 			p = _p;
 		}
 
-		public void onKeyEvent(final int keyCode)
+		@Override
+		public boolean onKey(View v, int keyCode, KeyEvent event)
 		{
 			if( DownloadFailed )
 				System.exit(1);
@@ -844,6 +847,7 @@ class DataDownloader extends Thread
 			AlertDialog alert = builder.create();
 			alert.setOwnerActivity(p);
 			alert.show();
+			return true;
 		}
 	}
 
