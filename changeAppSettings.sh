@@ -358,7 +358,7 @@ echo "# 9 = Nintendo64 from RetroArch" >> AndroidAppSettings.cfg
 echo TouchscreenKeysTheme=$TouchscreenKeysTheme >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Redefine gamepad keys to SDL keysyms, button order is:" >> AndroidAppSettings.cfg
-echo "# A B X Y L1 R1 L2 R2 LThumb RThumb" >> AndroidAppSettings.cfg
+echo "# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right" >> AndroidAppSettings.cfg
 echo RedefinedKeysGamepad=\"$RedefinedKeysGamepad\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# How long to show startup menu button, in msec, 0 to disable startup menu" >> AndroidAppSettings.cfg

@@ -361,7 +361,6 @@ abstract class DifferentTouchInput
 	}
 	private static class IcsTouchInput extends GingerbreadTouchInput
 	{
-		float hatX = 0.0f, hatY = 0.0f;
 		private static class Holder
 		{
 			private static final IcsTouchInput sInstance = new IcsTouchInput();
@@ -392,33 +391,11 @@ abstract class DifferentTouchInput
 			if( (event.getSource() & InputDevice.SOURCE_CLASS_JOYSTICK) == InputDevice.SOURCE_CLASS_JOYSTICK )
 			{
 				// event.getAxisValue(AXIS_HAT_X) and event.getAxisValue(AXIS_HAT_Y) are joystick arrow keys, on Nvidia Shield and some other joysticks
-				if( event.getAxisValue(MotionEvent.AXIS_HAT_X) != hatX )
-				{
-					hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
-					if( hatX == 0.0f )
-					{
-						DemoGLSurfaceView.nativeKey(KeyEvent.KEYCODE_DPAD_LEFT, 0, 0);
-						DemoGLSurfaceView.nativeKey(KeyEvent.KEYCODE_DPAD_RIGHT, 0, 0);
-					}
-					else
-						DemoGLSurfaceView.nativeKey(hatX < 0.0f ? KeyEvent.KEYCODE_DPAD_LEFT : KeyEvent.KEYCODE_DPAD_RIGHT, 1, 0);
-				}
-				if( event.getAxisValue(MotionEvent.AXIS_HAT_Y) != hatY )
-				{
-					hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
-					if( hatY == 0.0f )
-					{
-						DemoGLSurfaceView.nativeKey(KeyEvent.KEYCODE_DPAD_UP, 0, 0);
-						DemoGLSurfaceView.nativeKey(KeyEvent.KEYCODE_DPAD_DOWN, 0, 0);
-					}
-					else
-						DemoGLSurfaceView.nativeKey(hatY < 0.0f ? KeyEvent.KEYCODE_DPAD_UP : KeyEvent.KEYCODE_DPAD_DOWN, 1, 0);
-				}
 				DemoGLSurfaceView.nativeGamepadAnalogJoystickInput(
 					event.getAxisValue(MotionEvent.AXIS_X), event.getAxisValue(MotionEvent.AXIS_Y),
 					event.getAxisValue(MotionEvent.AXIS_Z), event.getAxisValue(MotionEvent.AXIS_RZ),
-					 event.getAxisValue(MotionEvent.AXIS_LTRIGGER), event.getAxisValue(MotionEvent.AXIS_RTRIGGER),
-					(hatX == 0.0f && hatY == 0.0f) ? 0 : 1 );
+					event.getAxisValue(MotionEvent.AXIS_LTRIGGER), event.getAxisValue(MotionEvent.AXIS_RTRIGGER),
+					event.getAxisValue(MotionEvent.AXIS_HAT_X), event.getAxisValue(MotionEvent.AXIS_HAT_Y) );
 				return;
 			}
 			// Process mousewheel
@@ -1098,7 +1075,7 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	public static native void nativeHardwareMouseDetected( int detected );
 	public static native void nativeMouseButtonsPressed( int buttonId, int pressedState );
 	public static native void nativeMouseWheel( int scrollX, int scrollY );
-	public static native void nativeGamepadAnalogJoystickInput( float stick1x, float stick1y, float stick2x, float stick2y, float ltrigger, float rtrigger, int usingHat );
+	public static native void nativeGamepadAnalogJoystickInput( float stick1x, float stick1y, float stick2x, float stick2y, float ltrigger, float rtrigger, float dpadx, float dpady );
 	public static native void nativeScreenVisibleRect( int x, int y, int w, int h );
 	public static native void nativeScreenKeyboardShown( int shown );
 }
