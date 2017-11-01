@@ -314,6 +314,10 @@ GLES_CreateRenderer(SDL_Window * window, Uint32 flags)
     data->GL_OES_draw_texture_supported = SDL_FALSE;
     data->useDrawTexture = SDL_FALSE;
 #else
+#ifdef ANDROID
+    data->GL_OES_draw_texture_supported = SDL_TRUE;
+    data->useDrawTexture = SDL_TRUE;
+#else
     if (SDL_GL_ExtensionSupported("GL_OES_draw_texture")) {
         data->GL_OES_draw_texture_supported = SDL_TRUE;
         data->useDrawTexture = SDL_TRUE;
@@ -321,9 +325,6 @@ GLES_CreateRenderer(SDL_Window * window, Uint32 flags)
         data->GL_OES_draw_texture_supported = SDL_FALSE;
         data->useDrawTexture = SDL_FALSE;
     }
-#ifdef ANDROID
-    data->GL_OES_draw_texture_supported = SDL_TRUE;
-    data->useDrawTexture = SDL_TRUE;
 #endif
 #endif
 
