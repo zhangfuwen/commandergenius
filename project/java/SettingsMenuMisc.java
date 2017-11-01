@@ -469,10 +469,14 @@ class SettingsMenuMisc extends SettingsMenu
 			text.setPadding(0, 5, 0, 20);
 			text.setTextSize(20.0f);
 			text.setGravity(Gravity.CENTER);
+			text.setFocusable(false);
+			text.setFocusableInTouchMode(false);
 			AlertDialog.Builder builder = new AlertDialog.Builder(p);
 			ScrollView scroll = new ScrollView(p);
+			scroll.setFocusable(false);
+			scroll.setFocusableInTouchMode(false);
 			scroll.addView(text, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-			Button ok = new Button(p);
+			final Button ok = new Button(p);
 			final AlertDialog alertDismiss[] = new AlertDialog[1];
 			ok.setOnClickListener(new View.OnClickListener()
 			{
@@ -485,7 +489,6 @@ class SettingsMenuMisc extends SettingsMenu
 			LinearLayout layout = new LinearLayout(p);
 			layout.setOrientation(LinearLayout.VERTICAL);
 			layout.addView(scroll);
-			//layout.addView(text);
 			layout.addView(ok);
 			if( buttonName.length() > 0 )
 			{
