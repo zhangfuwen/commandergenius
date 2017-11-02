@@ -283,7 +283,7 @@ starting from Galaxy S II, but older devices do no have it - it is emulated with
 SDL also supports gamepad - you can plug PS3/Xbox gamepad to almost any tablet, some devices have built-in gamepad.
 Gamepad stick events are sent as SDL_JOYAXISMOTION, with event.jaxis.which == 2 and event.jaxis.axis from 0 to 3.
 Gamepad analog L1/R1 buttons are sent as SDL_JOYAXISMOTION, with event.jaxis.which == 2 and event.jaxis.axis from 4 to 5.
-Other gamepad buttons generate key events, which are taken from RedefinedKeysScreenKb in AndroidAppSettings.cfg.
+Other gamepad buttons generate key events, which are taken from RedefinedKeysGamepad in AndroidAppSettings.cfg.
 
 
 How to compile your own application using automake/configure scripts
