@@ -831,6 +831,7 @@ public class MainActivity extends Activity
 					_parent.hideScreenKeyboard();
 					return true;
 				}
+				/*
 				if (keyCode == KeyEvent.KEYCODE_DEL || keyCode == KeyEvent.KEYCODE_CLEAR)
 				{
 					// EditText deletes two characters at a time, here's a hacky fix
@@ -853,11 +854,13 @@ public class MainActivity extends Activity
 						return true;
 					}
 				}
+				*/
 				//Log.i("SDL", "Key " + keyCode + " flags " + event.getFlags() + " action " + event.getAction());
 				return false;
 			}
 		};
-		EditText screenKeyboard = new EditText(this);
+		EditText screenKeyboard = new EditText(this, null,
+			android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP ? android.R.style.TextAppearance_Material_Widget_EditText : android.R.style.TextAppearance_Widget_EditText);
 		String hint = _screenKeyboardHintMessage;
 		screenKeyboard.setHint(hint != null ? hint : getString(R.string.text_edit_click_here));
 		screenKeyboard.setText(oldText);
