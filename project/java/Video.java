@@ -65,6 +65,7 @@ import android.view.Display;
 import android.net.Uri;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.hardware.input.InputManager;
 
 
 class Mouse
@@ -395,7 +396,8 @@ abstract class DifferentTouchInput
 					event.getAxisValue(MotionEvent.AXIS_X), event.getAxisValue(MotionEvent.AXIS_Y),
 					event.getAxisValue(MotionEvent.AXIS_Z), event.getAxisValue(MotionEvent.AXIS_RZ),
 					event.getAxisValue(MotionEvent.AXIS_LTRIGGER), event.getAxisValue(MotionEvent.AXIS_RTRIGGER),
-					event.getAxisValue(MotionEvent.AXIS_HAT_X), event.getAxisValue(MotionEvent.AXIS_HAT_Y) );
+					event.getAxisValue(MotionEvent.AXIS_HAT_X), event.getAxisValue(MotionEvent.AXIS_HAT_Y),
+					processGamepadDeviceId(event.getDevice()) );
 				return;
 			}
 			// Process mousewheel
@@ -548,6 +550,78 @@ abstract class DifferentTouchInput
 					Log.i("SDL", "Hover hoverX " + hoverX + " tapX " + tapX + " hoverY " + hoverX + " tapY " + tapY + " hoverTouchDistance " + hoverTouchDistance);
 				}
 			}
+		}
+	}
+
+	private static int gamepadIds[] = new int[4]; // Maximum 4 gamepads at the moment
+
+	public static int processGamepadDeviceId(InputDevice device)
+	{
+		if( device == null )
+			return 0;
+		int source = device.getSources();
+		if( (source & InputDevice.SOURCE_CLASS_JOYSTICK) != InputDevice.SOURCE_CLASS_JOYSTICK &&
+			(source & InputDevice.SOURCE_GAMEPAD) != InputDevice.SOURCE_GAMEPAD )
+		{
+			return 0;
+		}
+		int deviceId = device.getId();
+		for( int i = 0; i < gamepadIds.length; i++ )
+		{
+			if (gamepadIds[i] == deviceId)
+				return i + 1;
+		}
+		for( int i = 0; i < gamepadIds.length; i++ )
+		{
+			if (gamepadIds[i] == 0)
+			{
+				Log.i("SDL", "libSDL: gamepad added: deviceId " + deviceId + " gamepadId " + (i + 1));
+				gamepadIds[i] = deviceId;
+				return i + 1;
+			}
+		}
+		return 0;
+	}
+
+	public static void registerInputManagerCallbacks(Context context)
+	{
+		if( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN )
+		{
+			JellyBeanInputManager.Holder.sInstance.register(context);
+		}
+	}
+
+	private static class JellyBeanInputManager
+	{
+		private static class Holder
+		{
+			private static final JellyBeanInputManager sInstance = new JellyBeanInputManager();
+		}
+		private static class Listener implements InputManager.InputDeviceListener
+		{
+			public void onInputDeviceAdded(int deviceId)
+			{
+			}
+			public void onInputDeviceChanged(int deviceId)
+			{
+				onInputDeviceRemoved(deviceId);
+			}
+			public void onInputDeviceRemoved(int deviceId)
+			{
+				for( int i = 0; i < gamepadIds.length; i++ )
+				{
+					if (gamepadIds[i] == deviceId)
+					{
+						Log.i("SDL", "libSDL: gamepad removed: deviceId " + deviceId + " gamepadId "+ (i + 1));
+						gamepadIds[i] = 0;
+					}
+				}
+			}
+		}
+		public void register(Context context)
+		{
+			InputManager manager = (InputManager) context.getSystemService(Context.INPUT_SERVICE);
+			manager.registerInputDeviceListener(new Listener(), null);
 		}
 	}
 }
@@ -977,12 +1051,14 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 }
 
 class DemoGLSurfaceView extends GLSurfaceView_SDL {
+
 	public DemoGLSurfaceView(MainActivity context) {
 		super(context);
 		mParent = context;
 		setEGLConfigChooser(Globals.VideoDepthBpp, Globals.NeedDepthBuffer, Globals.NeedStencilBuffer, Globals.NeedGles2, Globals.NeedGles3);
 		mRenderer = new DemoRenderer(context);
 		setRenderer(mRenderer);
+		DifferentTouchInput.registerInputManagerCallbacks(context);
 	}
 
 	@Override
@@ -1001,10 +1077,8 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 				return true;
 			}
 		}
-		//if( context._screenKeyboard != null && context._screenKeyboard.onKeyDown(keyCode, event) )
-		//	return true;
 
-		if( nativeKey( keyCode, 1, event.getUnicodeChar() ) == 0 )
+		if( nativeKey( keyCode, 1, event.getUnicodeChar(), DifferentTouchInput.processGamepadDeviceId(event.getDevice()) ) == 0 )
 			return super.onKeyDown(keyCode, event);
 
 		return true;
@@ -1027,14 +1101,12 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 				return true;
 			}
 		}
-		//if( _screenKeyboard != null && _screenKeyboard.onKeyUp(keyCode, event) )
-		//	return true;
 
-		if( nativeKey( keyCode, 0, event.getUnicodeChar() ) == 0 )
+		if( nativeKey( keyCode, 0, event.getUnicodeChar(), DifferentTouchInput.processGamepadDeviceId(event.getDevice()) ) == 0 )
 			return super.onKeyUp(keyCode, event);
 
-		if( keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU )
-			DimSystemStatusBar.get().dim(mParent._videoLayout);
+		//if( keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU )
+		//	DimSystemStatusBar.get().dim(mParent._videoLayout);
 
 		return true;
 	}
@@ -1047,8 +1119,8 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 			// International text input
 			for(int i = 0; i < event.getCharacters().length(); i++ )
 			{
-				nativeKey( event.getKeyCode(), 1, event.getCharacters().codePointAt(i) );
-				nativeKey( event.getKeyCode(), 0, event.getCharacters().codePointAt(i) );
+				nativeKey( event.getKeyCode(), 1, event.getCharacters().codePointAt(i), 0 );
+				nativeKey( event.getKeyCode(), 0, event.getCharacters().codePointAt(i), 0 );
 			}
 		}
 		return true;
@@ -1140,11 +1212,11 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	MainActivity mParent;
 
 	public static native void nativeMotionEvent( int x, int y, int action, int pointerId, int pressure, int radius );
-	public static native int  nativeKey( int keyCode, int down, int unicode );
+	public static native int  nativeKey( int keyCode, int down, int unicode, int gamepadId );
 	public static native void nativeHardwareMouseDetected( int detected );
 	public static native void nativeMouseButtonsPressed( int buttonId, int pressedState );
 	public static native void nativeMouseWheel( int scrollX, int scrollY );
-	public static native void nativeGamepadAnalogJoystickInput( float stick1x, float stick1y, float stick2x, float stick2y, float ltrigger, float rtrigger, float dpadx, float dpady );
+	public static native void nativeGamepadAnalogJoystickInput( float stick1x, float stick1y, float stick2x, float stick2y, float ltrigger, float rtrigger, float dpadx, float dpady, int gamepadId );
 	public static native void nativeScreenVisibleRect( int x, int y, int w, int h );
 	public static native void nativeScreenKeyboardShown( int shown );
 }

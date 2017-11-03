@@ -57,6 +57,8 @@ If you compile this code with SDL 1.3 or newer, or use in some other way, the li
 
 SDLKey SDL_android_keymap[KEYCODE_LAST+1];
 
+SDLKey SDL_android_gamepad_keymap[SDL_ANDROID_MAX_GAMEPADS][KEYCODE_LAST+1];
+
 static inline SDL_scancode TranslateKey(int scancode)
 {
 	if ( scancode >= KEYCODE_LAST + 1 )
@@ -273,7 +275,7 @@ static void ClearOldTouchPointers( int action, int pointerId )
 		secondMousePointerId = -1;
 		for( i = 0; i < MAX_MULTITOUCH_POINTERS; i++ )
 		{
-			if( touchPointers[i] |= TOUCH_PTR_MOUSE )
+			if( touchPointers[i] != TOUCH_PTR_MOUSE )
 			{
 				if( firstMousePointerId == -1 )
 					firstMousePointerId = i;
@@ -960,7 +962,7 @@ void SDL_ANDROID_WarpMouse(int x, int y)
 };
 
 JNIEXPORT jint JNICALL
-JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeKey) ( JNIEnv*  env, jobject thiz, jint key, jint action, jint unicode )
+JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeKey) ( JNIEnv*  env, jobject thiz, jint key, jint action, jint unicode, jint gamepadId )
 {
 	SDL_scancode keycode;
 	int unshifted = unicode;
@@ -970,6 +972,8 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeKey) ( JNIEnv*  env, jobject thiz, jint
 	if( !SDL_CurrentVideoSurface )
 		return 1;
 #endif
+
+	//__android_log_print(ANDROID_LOG_INFO, "libSDL", "%s: gamepadId %d", __FUNCTION__, gamepadId);
 
 	if( key == rightClickKey && rightClickMethod == RIGHT_CLICK_WITH_KEY )
 	{
@@ -985,7 +989,7 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeKey) ( JNIEnv*  env, jobject thiz, jint
 	keycode = TranslateKey(key);
 	//__android_log_print(ANDROID_LOG_INFO, "libSDL","nativeKey %d action %d translated %d unicode %d", key, action, keycode, unicode);
 
-	if( keycode == SDLK_NO_REMAP || (keycode == SDLK_UNKNOWN && unicode == 0) )
+	if( (int)keycode == SDLK_NO_REMAP || (keycode == SDLK_UNKNOWN && unicode == 0) )
 		return 0;
 
 	if( keycode == SDLK_UNKNOWN || unicode != unshifted )
@@ -1416,8 +1420,10 @@ JAVA_EXPORT_NAME(Settings_nativeSetAccelerometerSettings) ( JNIEnv*  env, jobjec
 JNIEXPORT void JNICALL
 JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeGamepadAnalogJoystickInput) (JNIEnv* env, jobject thiz,
 	jfloat stick1x, jfloat stick1y, jfloat stick2x, jfloat stick2y, jfloat ltrigger, jfloat rtrigger,
-	jfloat dpadx, jfloat dpady)
+	jfloat dpadx, jfloat dpady, jint gamepadId)
 {
+	//__android_log_print(ANDROID_LOG_INFO, "libSDL","%s: gamepadId %d", __FUNCTION__, gamepadId);
+
 	if( SDL_ANDROID_CurrentJoysticks[JOY_GAMEPAD1] )
 	{
 		SDL_ANDROID_MainThreadPushJoystickAxis(JOY_GAMEPAD1, 0, NORMALIZE_FLOAT_32767(stick1x));
@@ -1449,43 +1455,43 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeGamepadAnalogJoystickInput) (JNIEnv* en
 	// Translate to up/down/left/right
 	if( dpadx < -0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_14))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_14)), 0 );
+		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_14))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_14)), 0 );
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_14))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_14)), 0 );
+		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_14))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_14)), 0 );
 	}
 	if( dpadx > 0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_15))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_15)), 0 );
+		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_15))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_15)), 0 );
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_15))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_15)), 0 );
+		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_15))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_15)), 0 );
 	}
 	if( dpady < -0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_12))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_12)), 0 );
+		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_12))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_12)), 0 );
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_12))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_12)), 0 );
+		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_12))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_12)), 0 );
 	}
 	if( dpady > 0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_13))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_13)), 0 );
+		if( !SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_13))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_13)), 0 );
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_13))] )
-			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_KEYCODE_13)), 0 );
+		if( SDL_GetKeyboardState(NULL)[SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_13))] )
+			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_13)), 0 );
 	}
 }
 
@@ -1680,30 +1686,74 @@ JAVA_EXPORT_NAME(Settings_nativeInitKeymap) ( JNIEnv*  env, jobject thiz )
 	SDL_android_init_keymap(SDL_android_keymap);
 }
 
+void SDL_ANDROID_SetIndividualGamepadKeymap(int GamepadId,
+	int A, int B, int X, int Y, int L1, int R1, int L2, int R2, int LThumb, int RThumb,
+	int Start, int Select, int Up, int Down, int Left, int Right)
+{
+	/*
+		Arguments are SDL keycodes. Use the SDLK_ constants.
+		Pass zero to leave a button mapping untouched.
+
+		On OUYA:
+			O = A
+			U = X
+			Y = Y
+			A = B
+		C and Z do not exist, they also do not exist on any gamepad I've seen (PS3/XBox/SHIELD)
+	*/
+
+	if( GamepadId < 0 || GamepadId >= SDL_ANDROID_MAX_GAMEPADS )
+		return;
+
+	if (A)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_A] =      A;
+	if (A)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_3] =      A;
+	if (B)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_B] =      B;
+	if (B)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_2] =      B;
+	if (X)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_X] =      X;
+	if (X)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_4] =      X;
+	if (Y)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_Y] =      Y;
+	if (Y)      SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_1] =      Y;
+	if (L1)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_L1] =     L1;
+	if (L1)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_5] =      L1;
+	if (R1)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_R1] =     R1;
+	if (R1)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_6] =      R1;
+	if (L2)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_L2] =     L2;
+	if (L2)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_7] =      L2;
+	if (R2)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_R2] =     R2;
+	if (R2)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_8] =      R2;
+	if (LThumb) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_THUMBL] = LThumb;
+	if (LThumb) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_11] =     LThumb;
+	if (RThumb) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_THUMBR] = RThumb;
+	if (RThumb) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_12] =     RThumb;
+	if (Start)  SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_START] =  Start;
+	if (Start)  SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_9] =      Start;
+	if (Select) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_SELECT] = Select;
+	if (Select) SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_10] =     Select;
+	if (Up)     SDL_android_gamepad_keymap[GamepadId][KEYCODE_DPAD_UP] =       Up;
+	if (Down)   SDL_android_gamepad_keymap[GamepadId][KEYCODE_DPAD_DOWN] =     Down;
+	if (Left)   SDL_android_gamepad_keymap[GamepadId][KEYCODE_DPAD_LEFT] =     Left;
+	if (Right)  SDL_android_gamepad_keymap[GamepadId][KEYCODE_DPAD_RIGHT] =    Right;
+
+	if( GamepadId == 0 )
+	{
+		int i;
+		for( i = KEYCODE_BUTTON_A; i <= KEYCODE_BUTTON_SELECT; i++ )
+		{
+			SDL_android_keymap[i] = SDL_android_gamepad_keymap[GamepadId][i];
+		}
+		for( i = KEYCODE_BUTTON_1; i <= KEYCODE_BUTTON_12; i++ )
+		{
+			SDL_android_keymap[i] = SDL_android_gamepad_keymap[GamepadId][i];
+		}
+	}
+}
+
 void SDL_ANDROID_SetGamepadKeymap(int A, int B, int X, int Y, int L1, int R1, int L2, int R2, int LThumb, int RThumb)
 {
-        /*
-        Arguments are SDL keycodes. Use the SDLK_ constants.
-        Pass zero to leave a button mapping untouched.
-
-        On OUYA: O = A
-                 U = X
-                 Y = Y
-                 A = B
-                 C and Z do not exist, they also do not exist on any gamepad I've seen (PS3/XBox/SHIELD)
-        */
-	if (A) SDL_android_keymap[KEYCODE_BUTTON_A] = A;
-	if (B) SDL_android_keymap[KEYCODE_BUTTON_B] = B;
-	//if (C) SDL_android_keymap[KEYCODE_BUTTON_C] = C;
-	if (X) SDL_android_keymap[KEYCODE_BUTTON_X] = X;
-	if (Y) SDL_android_keymap[KEYCODE_BUTTON_Y] = Y;
-	//if (Z) SDL_android_keymap[KEYCODE_BUTTON_Z] = Z;
-	if (L1) SDL_android_keymap[KEYCODE_BUTTON_L1] = L1;
-	if (R1) SDL_android_keymap[KEYCODE_BUTTON_R1] = R1;
-	if (L2) SDL_android_keymap[KEYCODE_BUTTON_L2] = L2;
-	if (R2) SDL_android_keymap[KEYCODE_BUTTON_R2] = R2;
-	if (LThumb) SDL_android_keymap[KEYCODE_BUTTON_THUMBL] = LThumb;
-	if (RThumb) SDL_android_keymap[KEYCODE_BUTTON_THUMBR] = RThumb;
+	for( int i = 0; i < SDL_ANDROID_MAX_GAMEPADS; i++ )
+	{
+		SDL_ANDROID_SetIndividualGamepadKeymap(i, A, B, X, Y, L1, R1, L2, R2, LThumb, RThumb, 0, 0, 0, 0, 0, 0);
+	}
 }
 
 void SDL_ANDROID_SetAndroidKeycode(int Android_Key, int Sdl_Key)

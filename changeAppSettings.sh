@@ -705,7 +705,7 @@ done
 
 KEY2=0
 for KEY in $RedefinedKeysGamepad; do
-	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_KEYCODE_$KEY2=$KEY"
+	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_0_KEYCODE_$KEY2=$KEY"
 	KEY2=`expr $KEY2 '+' 1`
 done
 
