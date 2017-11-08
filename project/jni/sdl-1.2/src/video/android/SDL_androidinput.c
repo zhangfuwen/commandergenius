@@ -1764,7 +1764,8 @@ void SDL_ANDROID_SetIndividualGamepadKeymap(int GamepadId,
 
 void SDL_ANDROID_SetGamepadKeymap(int A, int B, int X, int Y, int L1, int R1, int L2, int R2, int LThumb, int RThumb)
 {
-	for( int i = 0; i < SDL_ANDROID_MAX_GAMEPADS; i++ )
+	int i;
+	for( i = 0; i < SDL_ANDROID_MAX_GAMEPADS; i++ )
 	{
 		SDL_ANDROID_SetIndividualGamepadKeymap(i, A, B, X, Y, L1, R1, L2, R2, LThumb, RThumb, 0, 0, 0, 0, 0, 0);
 	}

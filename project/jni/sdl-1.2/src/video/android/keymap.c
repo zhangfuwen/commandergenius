@@ -259,9 +259,11 @@ void SDL_android_init_keymap(SDLKey *SDL_android_keymap)
   keymap[KEYCODE_MOUSE_X1] = SDL_KEY(MOUSE_X1);
   keymap[KEYCODE_MOUSE_X2] = SDL_KEY(MOUSE_X2);
 
-  for( int gamepadId = 0; gamepadId < SDL_ANDROID_MAX_GAMEPADS; gamepadId++ )
+  int gamepadId;
+  for( gamepadId = 0; gamepadId < SDL_ANDROID_MAX_GAMEPADS; gamepadId++ )
   {
-    for( int i = 0; i < KEYCODE_LAST+1; i++ )
+    int i;
+    for( i = 0; i < KEYCODE_LAST+1; i++ )
     {
       SDL_android_gamepad_keymap[gamepadId][i] = SDL_android_keymap[i];
     }
