@@ -405,6 +405,7 @@ JNIEXPORT jint JNICALL JAVA_EXPORT_NAME(AudioThread_nativeAudioInitJavaCallbacks
 	JavaDeinitAudio = (*jniEnv)->GetMethodID(jniEnv, JavaAudioThreadClass, "deinitAudio", "()I");
 	JavaPauseAudioPlayback = (*jniEnv)->GetMethodID(jniEnv, JavaAudioThreadClass, "pauseAudioPlayback", "()I");
 	JavaResumeAudioPlayback = (*jniEnv)->GetMethodID(jniEnv, JavaAudioThreadClass, "resumeAudioPlayback", "()I");
+	return 0;
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)

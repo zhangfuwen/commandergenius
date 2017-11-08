@@ -286,7 +286,6 @@ void SDL_android_init_keymap(SDLKey *SDL_android_keymap)
     SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_0_KEYCODE_15))
   );
 
-/*
   SDL_ANDROID_SetIndividualGamepadKeymap(   1,
     SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_1_KEYCODE_0)),
     SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_1_KEYCODE_1)),
@@ -343,7 +342,6 @@ void SDL_android_init_keymap(SDLKey *SDL_android_keymap)
     SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_3_KEYCODE_14)),
     SDL_KEY(SDL_KEY_VAL(SDL_ANDROID_GAMEPAD_3_KEYCODE_15))
   );
-*/
 }
 
 unsigned char SDL_android_keysym_to_scancode[SDLK_LAST] = {

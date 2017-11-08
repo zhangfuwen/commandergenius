@@ -361,6 +361,15 @@ echo "# Redefine gamepad keys to SDL keysyms, button order is:" >> AndroidAppSet
 echo "# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right" >> AndroidAppSettings.cfg
 echo RedefinedKeysGamepad=\"$RedefinedKeysGamepad\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
+echo "# Redefine keys for the second gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
+echo RedefinedKeysSecondGamepad=\"$RedefinedKeysSecondGamepad\" >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
+echo "# Redefine keys for the third gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
+echo RedefinedKeysThirdGamepad=\"$RedefinedKeysThirdGamepad\" >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
+echo "# Redefine keys for the fourth gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg
+echo RedefinedKeysFourthGamepad=\"$RedefinedKeysFourthGamepad\" >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
 echo "# How long to show startup menu button, in msec, 0 to disable startup menu" >> AndroidAppSettings.cfg
 echo StartupMenuButtonTimeout=$StartupMenuButtonTimeout >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
@@ -706,6 +715,24 @@ done
 KEY2=0
 for KEY in $RedefinedKeysGamepad; do
 	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_0_KEYCODE_$KEY2=$KEY"
+	KEY2=`expr $KEY2 '+' 1`
+done
+
+KEY2=0
+for KEY in $RedefinedKeysSecondGamepad; do
+	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_1_KEYCODE_$KEY2=$KEY"
+	KEY2=`expr $KEY2 '+' 1`
+done
+
+KEY2=0
+for KEY in $RedefinedKeysThirdGamepad; do
+	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_2_KEYCODE_$KEY2=$KEY"
+	KEY2=`expr $KEY2 '+' 1`
+done
+
+KEY2=0
+for KEY in $RedefinedKeysFourthGamepad; do
+	RedefinedKeycodesGamepad="$RedefinedKeycodesGamepad -DSDL_ANDROID_GAMEPAD_3_KEYCODE_$KEY2=$KEY"
 	KEY2=`expr $KEY2 '+' 1`
 done
 
