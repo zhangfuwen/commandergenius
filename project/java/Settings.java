@@ -85,6 +85,7 @@ public class Settings
 	static boolean settingsLoaded = false;
 	static boolean settingsChanged = false;
 	static final int SETTINGS_FILE_VERSION = 5;
+	static boolean convertButtonSizeFromOldSdlVersion = false;
 
 	static void Save(final MainActivity p)
 	{
@@ -187,6 +188,8 @@ public class Settings
 			out.writeBoolean(Globals.AutoDetectOrientation);
 			out.writeBoolean(Globals.TvBorders);
 			out.writeBoolean(Globals.ForceHardwareMouse);
+			convertButtonSizeFromOldSdlVersion = false;
+			out.writeBoolean(convertButtonSizeFromOldSdlVersion);
 
 			out.close();
 			settingsLoaded = true;
@@ -270,6 +273,7 @@ public class Settings
 			// ICS update sends events in a proper way
 			Globals.RemapHwKeycode[112] = SDL_1_2_Keycodes.SDLK_UNKNOWN;
 		}
+		convertButtonSizeFromOldSdlVersion = false;
 
 		try {
 			ObjectInputStream settingsFile = new ObjectInputStream(new FileInputStream( p.getFilesDir().getAbsolutePath() + "/" + SettingsFileName ));
@@ -281,6 +285,7 @@ public class Settings
 			Globals.UseAccelerometerAsArrowKeys = settingsFile.readBoolean();
 			Globals.UseTouchscreenKeyboard = settingsFile.readBoolean();
 			Globals.TouchscreenKeyboardSize = settingsFile.readInt();
+			convertButtonSizeFromOldSdlVersion = true; // Will be changed to false if we read the remainder of the config file
 			Globals.AccelerometerSensitivity = settingsFile.readInt();
 			Globals.AccelerometerCenterPos = settingsFile.readInt();
 			settingsFile.readInt();
@@ -381,6 +386,7 @@ public class Settings
 			Globals.AutoDetectOrientation = settingsFile.readBoolean();
 			Globals.TvBorders = settingsFile.readBoolean();
 			Globals.ForceHardwareMouse = settingsFile.readBoolean();
+			convertButtonSizeFromOldSdlVersion = settingsFile.readBoolean();
 
 			settingsLoaded = true;
 
@@ -403,12 +409,18 @@ public class Settings
 			return;
 			
 		} catch( FileNotFoundException e ) {
-				Log.i("SDL", "libSDL: settings file not found: " + e);
+			Log.i("SDL", "libSDL: settings file not found: " + e);
 		} catch( SecurityException e ) {
-				Log.i("SDL", "libSDL: settings file cannot be opened: " + e);
-		} catch ( IOException e ) {
-				Log.i("SDL", "libSDL: settings file cannot be read: " + e);
+			Log.i("SDL", "libSDL: settings file cannot be opened: " + e);
+		} catch( IOException e ) {
+			Log.i("SDL", "libSDL: settings file cannot be read: " + e);
 			DeleteFilesOnUpgrade(p);
+			if (convertButtonSizeFromOldSdlVersion && Globals.TouchscreenKeyboardSize + 1 < Globals.TOUCHSCREEN_KEYBOARD_CUSTOM)
+			{
+				Globals.TouchscreenKeyboardSize ++; // New default button size is bigger, but we are keeping old button size for existing installations
+				//if (Globals.AppTouchscreenKeyboardKeysAmount <= 4 && Globals.TouchscreenKeyboardSize + 1 < Globals.TOUCHSCREEN_KEYBOARD_CUSTOM)
+				//	Globals.TouchscreenKeyboardSize ++; // If there are only 4 buttons they are even bigger
+			}
 			if( Globals.ResetSdlConfigForThisVersion )
 			{
 				Log.i("SDL", "libSDL: old cfg version unknown or too old, our version " + p.getApplicationVersion() + " and we need to clean up config file");
@@ -593,7 +605,8 @@ public class Settings
 											Globals.TouchscreenKeyboardDrawSize,
 											Globals.TouchscreenKeyboardTheme,
 											Globals.TouchscreenKeyboardTransparency,
-											Globals.FloatingScreenJoystick ? 1 : 0 );
+											Globals.FloatingScreenJoystick ? 1 : 0,
+											Globals.AppTouchscreenKeyboardKeysAmount );
 				SetupTouchscreenKeyboardGraphics(p);
 				for( int i = 0; i < Globals.RemapScreenKbKeycode.length; i++ )
 					nativeSetKeymapKeyScreenKb(i, SDL_Keys.values[Globals.RemapScreenKbKeycode[i]]);
@@ -967,7 +980,7 @@ public class Settings
 	private static native void nativeSetCompatibilityHacks();
 	private static native void nativeSetVideoMultithreaded();
 	private static native void nativeSetVideoForceSoftwareMode();
-	private static native void nativeSetupScreenKeyboard(int size, int drawsize, int theme, int transparency, int floatingScreenJoystick);
+	private static native void nativeSetupScreenKeyboard(int size, int drawsize, int theme, int transparency, int floatingScreenJoystick, int buttonAmount);
 	private static native void nativeSetupScreenKeyboardButtons(byte[] img);
 	private static native void nativeInitKeymap();
 	private static native int  nativeGetKeymapKey(int key);

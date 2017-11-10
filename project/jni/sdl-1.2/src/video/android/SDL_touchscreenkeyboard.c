@@ -34,6 +34,8 @@ If you compile this code with SDL 1.3 or newer, or use in some other way, the li
 #include <string.h> // for memset()
 #include <netinet/in.h>
 
+#define GL_GLEXT_PROTOTYPES 1
+
 #include "SDL_opengles.h"
 
 #include "SDL_config.h"
@@ -748,15 +750,15 @@ void shrinkButtonRect(SDL_Rect s, SDL_Rect * d)
 		return;
 	}
 
-	d->w = s.w * 2 / (buttonDrawSize+2);
-	d->h = s.h * 2 / (buttonDrawSize+2);
+	d->w = s.w * 2 / (buttonDrawSize+3);
+	d->h = s.h * 2 / (buttonDrawSize+3);
 	d->x = s.x + s.w / 2 - d->w / 2;
 	d->y = s.y + s.h / 2 - d->h / 2;
 }
 
 JNIEXPORT void JNICALL 
 JAVA_EXPORT_NAME(Settings_nativeSetupScreenKeyboard) ( JNIEnv* env, jobject thiz,
-		jint size, jint drawsize, jint theme, jint _transparency, jint _floatingScreenJoystick )
+		jint size, jint drawsize, jint theme, jint _transparency, jint _floatingScreenJoystick, jint buttonAmount )
 {
 	int i, ii;
 	int nbuttons1row, nbuttons2row;
@@ -782,9 +784,14 @@ JAVA_EXPORT_NAME(Settings_nativeSetupScreenKeyboard) ( JNIEnv* env, jobject thiz
 		case 4: transparency = 255.0f/255.0f; break;
 		default: transparency = 192.0f/255.0f; break;
 	}
-	
+
+	// Screen height fits three buttons at max size
+	int buttonSizePixels = SDL_ANDROID_sRealWindowHeight * (8 - size) / 8 / 3;
+	if (buttonAmount <= 4) // Screen height fits two buttons at max size
+		buttonSizePixels = SDL_ANDROID_sRealWindowHeight * (8 - size) / 8 * 3 / 8; // BIGGER BUTTONS ARE BETTER BUTTONS
+
 	// Arrows to the lower-left part of screen
-	arrows[0].w = SDL_ANDROID_sRealWindowWidth / (size + 3) * 2 / 2;
+	arrows[0].w = buttonSizePixels * 2; // JOYSTICK SIZE XXL
 	arrows[0].h = arrows[0].w;
 	// Move to the screen edge
 	arrows[0].x = 0;
@@ -821,7 +828,7 @@ JAVA_EXPORT_NAME(Settings_nativeSetupScreenKeyboard) ( JNIEnv* env, jobject thiz
 	{
 		// Custom button ordering
 		int iii = ii + i*2;
-		buttons[iii].w = SDL_ANDROID_sRealWindowWidth / (size + 3) / 2;
+		buttons[iii].w = buttonSizePixels;
 		buttons[iii].h = buttons[iii].w;
 		// Move to the screen edge
 		buttons[iii].x = SDL_ANDROID_sRealWindowWidth - buttons[iii].w * (ii + 1);
@@ -1315,6 +1322,7 @@ int SDLCALL SDL_ANDROID_SetScreenKeyboardButtonStayPressedAfterTouch(int buttonI
 int SDLCALL SDL_ANDROID_SetScreenKeyboardTransparency(int alpha)
 {
 	transparency = (float)alpha / 255.0f;
+	return 0;
 }
 
 static int ScreenKbRedefinedByUser = 0;
@@ -1374,6 +1382,7 @@ extern DECLSPEC int SDL_ANDROID_ScreenKeyboardUpdateToNewVideoMode(int oldx, int
 		pos2.h = (pos.y + pos.h) * newy / oldy - pos2.y;
 		SDL_ANDROID_SetScreenKeyboardButtonPos(i, &pos2);
 	}
+	return 0;
 }
 
 /**

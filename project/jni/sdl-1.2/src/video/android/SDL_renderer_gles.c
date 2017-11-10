@@ -30,6 +30,8 @@ If you compile this code with SDL 1.3 or newer, or use in some other way, the li
 
 #if SDL_VIDEO_RENDER_OGL_ES
 
+#define GL_GLEXT_PROTOTYPES 1
+
 #if SDL_VERSION_ATLEAST(1,3,0)
 #include "SDL_video.h"
 #include "SDL_opengles.h"
