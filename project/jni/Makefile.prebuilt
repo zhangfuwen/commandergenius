@@ -33,3 +33,27 @@ $(ICONV) $(ICU):
 
 $(OPENSSL):
 	cd openssl && ./compile.sh
+
+BOOST_LIBS := atomic chrono container context coroutine date_time exception filesystem \
+				graph iostreams log log_setup \
+				prg_exec_monitor program_options random regex serialization signals stacktrace_basic stacktrace_noop \
+				system test_exec_monitor thread timer type_erasure unit_test_framework wave wserialization
+
+# boost_math is broken on armeabi with NDK r16-beta2 toolchain
+# math_c99 math_c99f math_c99l math_tr1 math_tr1f math_tr1l
+
+BOOST := $(foreach ARCH, $(ARCHES32) $(ARCHES64), $(foreach NAME, $(BOOST_LIBS), boost/lib/$(ARCH)/libboost_$(NAME).a))
+
+$(BOOST):
+	rm -rf boost/include boost/lib ; \
+	cd boost/src && \
+	./build-android.sh --boost=1.65.1 --arch=$(shell echo $(foreach ARCH, $(ARCHES32) $(ARCHES64),$(ARCH),) | tr -d ' ') && \
+	for ARCH in $(ARCHES32) $(ARCHES64); do  \
+		mkdir -p ../lib/$$ARCH ../include ; \
+		$(foreach NAME, $(BOOST_LIBS), cp -f build/out/$$ARCH/lib/libboost_$(NAME)-clang-mt-1_65_1.a ../lib/$$ARCH/libboost_$(NAME).a || exit 1 ;) \
+		cp -r -f build/out/$$ARCH/include/boost-1_65_1/* ../include/ || exit 1 ; \
+	done || exit 1 ; \
+	$(foreach NAME, $(BOOST_LIBS), ln -sf boost ../../boost_$(NAME) ;)
+
+.PHONY: boost
+boost: $(BOOST)
