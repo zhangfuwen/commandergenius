@@ -358,7 +358,7 @@ echo "# 9 = Nintendo64 from RetroArch" >> AndroidAppSettings.cfg
 echo TouchscreenKeysTheme=$TouchscreenKeysTheme >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Redefine gamepad keys to SDL keysyms, button order is:" >> AndroidAppSettings.cfg
-echo "# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right" >> AndroidAppSettings.cfg
+echo "# A B X Y L1 R1 L2 R2 LThumb RThumb Start Select Up Down Left Right LThumbUp LThumbDown LThumbLeft LThumbRight RThumbUp RThumbDown RThumbLeft RThumbRight" >> AndroidAppSettings.cfg
 echo RedefinedKeysGamepad=\"$RedefinedKeysGamepad\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Redefine keys for the second gamepad, same as the first gamepad if not set:" >> AndroidAppSettings.cfg

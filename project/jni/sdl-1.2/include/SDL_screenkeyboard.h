@@ -169,16 +169,24 @@ extern DECLSPEC int SDLCALL SDL_IsScreenKeyboardShown(void *unused);
 
 enum
 {
-	SDL_ANDROID_MAX_GAMEPADS = 4, // Maximum amount of gamepads supported
+	SDL_ANDROID_MAX_GAMEPADS      = 4, /* Maximum amount of gamepads supported */
+	SDL_ANDROID_FIRST_GAMEPAD_ID  = 2, /* Joystick ID for SDL_JoystickOpen() and for SDL_Event event.jaxis.which */
+	SDL_ANDROID_SECOND_GAMEPAD_ID = 3, /* Joystick ID for SDL_JoystickOpen() and for SDL_Event event.jaxis.which */
+	SDL_ANDROID_THIRD_GAMEPAD_ID  = 4, /* Joystick ID for SDL_JoystickOpen() and for SDL_Event event.jaxis.which */
+	SDL_ANDROID_FOURTH_GAMEPAD_ID = 5, /* Joystick ID for SDL_JoystickOpen() and for SDL_Event event.jaxis.which */
 };
 
 /* Remap SDL keycodes returned by gamepad buttons.
    Pass the SDLK_ constants, or 0 to leave old value.
    On OUYA: O = A, U = X, Y = Y, A = B.
-   GamepadId is from 0 to 3, up to SDL_ANDROID_MAX_GAMEPADS */
+   GamepadId is from 0 to 3, up to SDL_ANDROID_MAX_GAMEPADS
+   Analog thumb joysticks will send keycodes instead of joystick events
+   only if SDL_JoystickOpen() was NOT called for joystick IDs from 2 to 5. */
 extern DECLSPEC void SDLCALL SDL_ANDROID_SetIndividualGamepadKeymap(int GamepadId,
 	int A, int B, int X, int Y, int L1, int R1, int L2, int R2, int LThumb, int RThumb,
-	int Start, int Select, int Up, int Down, int Left, int Right);
+	int Start, int Select, int Up, int Down, int Left, int Right,
+	int LThumbUp, int LThumbDown, int LThumbLeft, int LThumbRight,
+	int RThumbUp, int RThumbDown, int RThumbLeft, int RThumbRight);
 
 /* Deprecated API, will change keymap for all gamepads */
 extern DECLSPEC void SDLCALL SDL_ANDROID_SetGamepadKeymap(int A, int B, int X, int Y, int L1, int R1, int L2, int R2, int LThumb, int RThumb);

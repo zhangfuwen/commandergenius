@@ -280,9 +280,10 @@ with value 32767 equal to 0.25 rad/s. Multiple events will be sent at once, if t
 You will need to set AppUsesGyroscope=y in AndroidAppSettings.cfg to use it, and call SDL_JoystickOpen(1).
 Gyroscope hardware is much more precise and less noisy than accelerometer, it is present on newer devices
 starting from Galaxy S II, but older devices do no have it - it is emulated with accelerometer + compass.
-SDL also supports gamepad - you can plug PS3/Xbox gamepad to almost any tablet, some devices have built-in gamepad.
-Gamepad stick events are sent as SDL_JOYAXISMOTION, with event.jaxis.which == 2 and event.jaxis.axis from 0 to 3.
-Gamepad analog L1/R1 buttons are sent as SDL_JOYAXISMOTION, with event.jaxis.which == 2 and event.jaxis.axis from 4 to 5.
+SDL also supports gamepads - you can plug PS3/Xbox gamepad to almost any tablet, some devices have built-in gamepad.
+Gamepad stick events are sent as SDL_JOYAXISMOTION, with event.jaxis.which from 2 to 5 and event.jaxis.axis from 0 to 3.
+Gamepad analog L1/R1 buttons are sent as SDL_JOYAXISMOTION, with event.jaxis.which from 2 to 5 and event.jaxis.axis from 4 to 5.
+The gamepad where any button was pressed becomes the first gamepad. Maximum 4 gamepads are supported.
 Other gamepad buttons generate key events, which are taken from RedefinedKeysGamepad in AndroidAppSettings.cfg.
 
 

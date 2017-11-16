@@ -31,6 +31,7 @@ If you compile this code with SDL 1.3 or newer, or use in some other way, the li
 #include "SDL_mouse.h"
 #include "SDL_mutex.h"
 #include "SDL_thread.h"
+#include "SDL_timer.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 #include "../../events/SDL_events_c.h"
@@ -519,7 +520,7 @@ SDL_Surface *ANDROID_SetVideoMode(_THIS, SDL_Surface *current,
 	/* Set up the new mode framebuffer */
 	SDL_CurrentVideoSurface = current;
 
-	UpdateScreenUnderFingerRect(0,0);
+	SDL_ANDROID_UpdateScreenUnderFingerRect(0,0);
 	SDL_ANDROID_ShowScreenUnderFingerRect.w = SDL_ANDROID_ShowScreenUnderFingerRect.h = 0;
 	SDL_ANDROID_SetHoverDeadzone();
 	SDL_ANDROID_currentMouseX = SDL_ANDROID_sFakeWindowWidth / 2;

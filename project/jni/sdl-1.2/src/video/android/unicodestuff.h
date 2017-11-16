@@ -46,7 +46,7 @@ static inline SDL_keysym asciiToKeysym(int ascii, int unicode)
 	if ( ascii < SDLK_LAST )
 		keysym.scancode = SDL_android_keysym_to_scancode[ascii];
 	keysym.sym = ascii;
-	if (keysym.sym < 0 || keysym.sym >= SDLK_LAST)
+	if (keysym.sym >= SDLK_LAST)
 		keysym.sym = SDLK_UNKNOWN;
 	keysym.mod = KMOD_NONE;
 	keysym.unicode = 0;
