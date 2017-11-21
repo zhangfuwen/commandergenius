@@ -1111,6 +1111,11 @@ fi
 
 echo Compiling prebuilt libraries
 
-make -C project/jni -f Makefile.prebuilt
+if echo "$CompiledLibraries" | grep -E 'iconv|charset|icu|crypto|ssl' > /dev/null; then
+	make -C project/jni -f Makefile.prebuilt
+fi
+if echo "$CompiledLibraries" | grep 'boost' > /dev/null; then
+	make -C project/jni -f Makefile.prebuilt boost
+fi
 
 echo Done
