@@ -1771,6 +1771,7 @@ void SDL_ANDROID_SetIndividualGamepadKeymap(int GamepadId,
 	if (A)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_3] =      A;
 	if (B)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_B] =      B;
 	if (B)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_2] =      B;
+	if (B)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_C] =      B;
 	if (X)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_X] =      X;
 	if (X)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_4] =      X;
 	if (Y)           SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_Y] =      Y;
@@ -1779,6 +1780,7 @@ void SDL_ANDROID_SetIndividualGamepadKeymap(int GamepadId,
 	if (L1)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_5] =      L1;
 	if (R1)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_R1] =     R1;
 	if (R1)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_6] =      R1;
+	if (R1)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_Z] =      R1;
 	if (L2)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_L2] =     L2;
 	if (L2)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_7] =      L2;
 	if (R2)          SDL_android_gamepad_keymap[GamepadId][KEYCODE_BUTTON_R2] =     R2;
