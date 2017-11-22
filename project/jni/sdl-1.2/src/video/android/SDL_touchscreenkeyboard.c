@@ -796,6 +796,8 @@ JAVA_EXPORT_NAME(Settings_nativeSetupScreenKeyboard) ( JNIEnv* env, jobject thiz
 	// Move to the screen edge
 	arrows[0].x = 0;
 	arrows[0].y = SDL_ANDROID_sRealWindowHeight - arrows[0].h;
+	if (size <= 2)
+		arrows[0].y = SDL_ANDROID_sRealWindowHeight - arrows[0].h * 3 / 4;
 
 	arrowsExtended[0].w = arrows[0].w * 2;
 	arrowsExtended[0].h = arrows[0].h * 2;
