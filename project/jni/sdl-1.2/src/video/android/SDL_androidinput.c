@@ -1427,6 +1427,10 @@ JAVA_EXPORT_NAME(Settings_nativeSetAccelerometerSettings) ( JNIEnv*  env, jobjec
 	accelerometerCenterPos = centerPos;
 }
 
+static char dpadPressed[SDL_ANDROID_MAX_GAMEPADS][4];
+static char stick1Pressed[SDL_ANDROID_MAX_GAMEPADS][4];
+static char stick2Pressed[SDL_ANDROID_MAX_GAMEPADS][4];
+
 JNIEXPORT void JNICALL
 JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeGamepadAnalogJoystickInput) (JNIEnv* env, jobject thiz,
 	jfloat stick1x, jfloat stick1y, jfloat stick2x, jfloat stick2y, jfloat ltrigger, jfloat rtrigger,
@@ -1442,43 +1446,51 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeGamepadAnalogJoystickInput) (JNIEnv* en
 	// Translate analog dpad values to keypresses
 	if( dpady < -0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_UP]] )
+		if( !dpadPressed[gamepadId][0] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_UP], 0 );
+		dpadPressed[gamepadId][0] = 1;
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_UP]] )
+		if( dpadPressed[gamepadId][0] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_UP], 0 );
+		dpadPressed[gamepadId][0] = 0;
 	}
 	if( dpady > 0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_DOWN]] )
+		if( !dpadPressed[gamepadId][1] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_DOWN], 0 );
+		dpadPressed[gamepadId][1] = 1;
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_DOWN]] )
+		if( dpadPressed[gamepadId][1] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_DOWN], 0 );
+		dpadPressed[gamepadId][1] = 0;
 	}
 	if( dpadx < -0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_LEFT]] )
+		if( !dpadPressed[gamepadId][2] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_LEFT], 0 );
+		dpadPressed[gamepadId][2] = 1;
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_LEFT]] )
+		if( dpadPressed[gamepadId][2] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_LEFT], 0 );
+		dpadPressed[gamepadId][2] = 0;
 	}
 	if( dpadx > 0.5f )
 	{
-		if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_RIGHT]] )
+		if( !dpadPressed[gamepadId][3] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_RIGHT], 0 );
+		dpadPressed[gamepadId][3] = 1;
 	}
 	else
 	{
-		if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_RIGHT]] )
+		if( dpadPressed[gamepadId][3] )
 			SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_DPAD_RIGHT], 0 );
+		dpadPressed[gamepadId][3] = 0;
 	}
 
 	if( SDL_ANDROID_CurrentJoysticks[JOY_GAMEPAD1 + gamepadId] )
@@ -1509,83 +1521,100 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeGamepadAnalogJoystickInput) (JNIEnv* en
 		// Translate analog sticks to keypresses
 		if( stick1y < -0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_UP]] )
+			if( !stick1Pressed[gamepadId][0] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_UP], 0 );
+			stick1Pressed[gamepadId][0] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_UP]] )
+			if( stick1Pressed[gamepadId][0] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_UP], 0 );
+			stick1Pressed[gamepadId][0] = 0;
 		}
 		if( stick1y > 0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_DOWN]] )
+			if( !stick1Pressed[gamepadId][1] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_DOWN], 0 );
+			stick1Pressed[gamepadId][1] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_DOWN]] )
+			if( stick1Pressed[gamepadId][1] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_DOWN], 0 );
+			stick1Pressed[gamepadId][1] = 0;
 		}
 		if( stick1x < -0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_LEFT]] )
+			if( !stick1Pressed[gamepadId][2] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_LEFT], 0 );
+			stick1Pressed[gamepadId][2] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_LEFT]] )
+			if( stick1Pressed[gamepadId][2] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_LEFT], 0 );
+			stick1Pressed[gamepadId][2] = 0;
 		}
 		if( stick1x > 0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_RIGHT]] )
+			if( !stick1Pressed[gamepadId][3] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_RIGHT], 0 );
+			stick1Pressed[gamepadId][3] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_RIGHT]] )
+			if( stick1Pressed[gamepadId][3] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_LTHUMB_RIGHT], 0 );
+			stick1Pressed[gamepadId][3] = 0;
 		}
+
 		if( stick2y < -0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_UP]] )
+			if( !stick2Pressed[gamepadId][0] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_UP], 0 );
+			stick2Pressed[gamepadId][0] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_UP]] )
+			if( stick2Pressed[gamepadId][0] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_UP], 0 );
+			stick2Pressed[gamepadId][0] = 0;
 		}
 		if( stick2y > 0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_DOWN]] )
+			if( !stick2Pressed[gamepadId][1] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_DOWN], 0 );
+			stick2Pressed[gamepadId][1] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_DOWN]] )
+			if( stick2Pressed[gamepadId][1] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_DOWN], 0 );
+			stick2Pressed[gamepadId][1] = 0;
 		}
 		if( stick2x < -0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_LEFT]] )
+			if( !stick2Pressed[gamepadId][2] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_LEFT], 0 );
+			stick2Pressed[gamepadId][2] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_LEFT]] )
+			if( stick2Pressed[gamepadId][2] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_LEFT], 0 );
+			stick2Pressed[gamepadId][2] = 0;
 		}
 		if( stick2x > 0.5f )
 		{
-			if( !SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_RIGHT]] )
+			if( !stick2Pressed[gamepadId][3] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_PRESSED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_RIGHT], 0 );
+			stick2Pressed[gamepadId][3] = 1;
 		}
 		else
 		{
-			if( SDL_GetKeyboardState(NULL)[SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_RIGHT]] )
+			if( stick2Pressed[gamepadId][3] )
 				SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_android_gamepad_keymap[gamepadId][KEYCODE_RTHUMB_RIGHT], 0 );
+			stick2Pressed[gamepadId][3] = 0;
 		}
 	}
 }
