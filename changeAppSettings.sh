@@ -1061,28 +1061,18 @@ fi
 if [ -e project/jni/application/src/project.patch ]; then patch -p1 --dry-run -f -R < project/jni/application/src/project.patch > /dev/null 2>&1 || patch -p1 --no-backup-if-mismatch < project/jni/application/src/project.patch || exit 1 ; fi
 
 echo Cleaning up dependencies
+
 rm -rf project/libs/*/* project/gen
-for OUT in obj; do
-rm -rf project/$OUT/local/*/objs*/sdl_main/* project/$OUT/local/*/libsdl_main.so
-rm -rf project/$OUT/local/*/libsdl-*.so
-rm -rf project/$OUT/local/*/libsdl_*.so
-rm -rf project/$OUT/local/*/objs*/sdl-*/src/*/android
-rm -rf project/$OUT/local/*/objs*/sdl-*/src/video/SDL_video.o
-rm -rf project/$OUT/local/*/objs*/sdl-*/SDL_renderer_gles.o
-rm -rf project/$OUT/local/*/objs*/sdl_*
+rm -rf project/obj/local/*/objs*/sdl_main/* project/$OUT/local/*/libsdl_main.so
+rm -rf project/obj/local/*/libsdl-*.so
+rm -rf project/obj/local/*/libsdl_*.so
+rm -rf project/obj/local/*/objs*/sdl-*/src/*/android
+rm -rf project/obj/local/*/objs*/sdl-*/src/video/SDL_video.o
+rm -rf project/obj/local/*/objs*/sdl-*/SDL_renderer_gles.o
+rm -rf project/obj/local/*/objs*/sdl_*
 rm -rf project/obj/local/*/objs*/lzma/src/XZInputStream.o
 rm -rf project/obj/local/*/objs*/liblzma.so
-# Do not rebuild several huge libraries that do not depend on SDL version
-for LIB in freetype intl jpeg png lua mad tremor xerces xml2 curl lua mikmod \
-			boost boost_signals boost_thread boost_filesystem boost_date_time boost_system boost_regex boost_iostreams boost_program_options \
-			ffmpeg swscale avcodec avdevice avresample avutil avfilter swresample avformat; do
-	for ARCH in armeabi armeabi-v7a; do
-		if [ -e "project/$OUT/local/$ARCH/objs*/$LIB" ] ; then
-			find project/$OUT/local/$ARCH/objs*/$LIB -name "*.o" | xargs touch -c
-		fi
-	done
-done
-done
+
 rm -rf project/bin/classes
 rm -rf project/bin/res
 rm -rf project/app/build
