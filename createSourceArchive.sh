@@ -11,6 +11,8 @@ which pxz > /dev/null && ARCHIVER=pxz && EXT=xz || echo "Install pxz for faster 
 # TODO: Boost, Python and ffmpeg are stored in repository as precompiled binaries, the proper way to fix that is to build them using scripts, and remove that binaries
 # --exclude="*.a" --exclude="*.so"
 tar -c --exclude-vcs --exclude="*.o" --exclude="*.d" --exclude="*.dep" \
+--exclude="libboost_*.a" --exclude="libcharset.so" --exclude="libiconv.so" \
+--exclude="libicu*.a" --exclude="libharfbuzz.a" --exclude="libcrypto.so*" --exclude="libssl.so*" \
 `git ls-files --exclude-standard | grep -v '^project/jni/application/.*'` \
 `find  project/jni/application -maxdepth 1 -type f -o -type l` \
 project/jni/application/src \

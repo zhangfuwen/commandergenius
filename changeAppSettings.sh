@@ -1105,7 +1105,7 @@ fi
 
 echo Compiling prebuilt libraries
 
-if echo "$CompiledLibraries" | grep -E 'iconv|charset|icu|crypto|ssl' > /dev/null; then
+if echo "$CompiledLibraries" | grep -E 'iconv|charset|icu|crypto|ssl|harfbuzz' > /dev/null; then
 	make -C project/jni -f Makefile.prebuilt
 fi
 if echo "$CompiledLibraries" | grep 'boost' > /dev/null; then
