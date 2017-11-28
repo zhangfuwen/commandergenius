@@ -749,7 +749,11 @@ else
 fi
 
 LibrariesToLoad="\\\"sdl_native_helpers\\\", \\\"sdl-$LibSdlVersion\\\""
-StaticLibraries=`grep 'APP_AVAILABLE_STATIC_LIBS' project/jni/SettingsTemplate.mk | sed 's/.*=\(.*\)/\1/'`
+StaticLibraries="`echo '
+include project/jni/SettingsTemplate.mk
+all:
+	@echo $(APP_AVAILABLE_STATIC_LIBS)
+.PHONY: all' | make -s -f -`"
 for lib in $CompiledLibraries; do
 	process=true
 	for lib1 in $StaticLibraries; do
