@@ -148,6 +148,9 @@ LDFLAGS="
 $SHARED $UNRESOLVED
 -L$LOCAL_PATH/../../obj/local/$ARCH
 $APP_SHARED_LIBS
+-L$NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH
+-L$NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH
+-L$NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH
 $NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libc++_static.a
 $NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH/libc++abi.a
 $NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH/libandroid_support.a
