@@ -31,11 +31,13 @@ fi
 ARCH=armeabi-v7a
 
 APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@'`
+
 APP_AVAILABLE_STATIC_LIBS="`echo '
-include $LOCAL_PATH/../Settings.mk
+include $(LOCAL_PATH)/../Settings.mk
 all:
 	@echo $(APP_AVAILABLE_STATIC_LIBS)
-.PHONY: all' | make -s -f -`"
+.PHONY: all' | make LOCAL_PATH=$LOCAL_PATH -s -f -`"
+
 APP_SHARED_LIBS=$(
 echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
 	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS application sdl_main stlport stdout-test | grep "\\\\b$LIB\\\\b"`
