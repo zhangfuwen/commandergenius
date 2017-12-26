@@ -31,7 +31,11 @@ fi
 ARCH=x86
 
 APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@'`
-APP_AVAILABLE_STATIC_LIBS=`grep 'APP_AVAILABLE_STATIC_LIBS [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@'`
+APP_AVAILABLE_STATIC_LIBS="`echo '
+include $LOCAL_PATH/../Settings.mk
+all:
+	@echo $(APP_AVAILABLE_STATIC_LIBS)
+.PHONY: all' | make -s -f -`"
 APP_SHARED_LIBS=$(
 echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
 	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS application sdl_main stlport stdout-test | grep "\\\\b$LIB\\\\b"`
@@ -46,24 +50,6 @@ echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
 	fi
 done
 )
-
-
-MISSING_INCLUDE=
-MISSING_LIB=
-
-CFLAGS="\
--fpic -ffunction-sections -funwind-tables -no-canonical-prefixes \
--fstack-protector-strong -O2 -g -DNDEBUG \
--fomit-frame-pointer -fstrict-aliasing -funswitch-loops \
--finline-limit=300 \
--DANDROID -Wall -Wno-unused -Wa,--noexecstack -Wformat -Werror=format-security \
--isystem$NDK/platforms/$PLATFORMVER/arch-x86/usr/include \
--isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include \
--isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/libs/$ARCH/include \
--isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include/backward \
--isystem$LOCAL_PATH/../sdl-1.2/include \
-`echo $APP_MODULES | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"` \
-$MISSING_INCLUDE $CFLAGS"
 
 if [ -z "$SHARED_LIBRARY_NAME" ]; then
 	SHARED_LIBRARY_NAME=libapplication.so
@@ -80,11 +66,30 @@ if [ -n "$ALLOW_UNRESOLVED_SYMBOLS" ]; then
 	UNRESOLVED=
 fi
 
+APP_SHARED_LIBS="`echo $APP_SHARED_LIBS | sed \"s@\([-a-zA-Z0-9_.]\+\)@$LOCAL_PATH/../../obj/local/$ARCH/lib\1.so@g\"`"
+APP_MODULES_INCLUDE="`echo $APP_MODULES | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"`"
+
+if [ -z "$CLANG" ]; then
+
+CFLAGS="\
+-fpic -ffunction-sections -funwind-tables -no-canonical-prefixes \
+-fstack-protector-strong -O2 -g -DNDEBUG \
+-fomit-frame-pointer -fstrict-aliasing -funswitch-loops \
+-finline-limit=300 \
+-DANDROID -Wall -Wno-unused -Wa,--noexecstack -Wformat -Werror=format-security \
+-isystem$NDK/platforms/$PLATFORMVER/arch-x86/usr/include \
+-isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include \
+-isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/libs/$ARCH/include \
+-isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include/backward \
+-isystem$LOCAL_PATH/../sdl-1.2/include \
+$APP_MODULES_INCLUDE \
+$CFLAGS"
+
 LDFLAGS="\
 $SHARED \
 --sysroot=$NDK/platforms/$PLATFORMVER/arch-x86 \
 -L$LOCAL_PATH/../../obj/local/$ARCH \
-`echo $APP_SHARED_LIBS | sed \"s@\([-a-zA-Z0-9_.]\+\)@$LOCAL_PATH/../../obj/local/$ARCH/lib\1.so@g\"` \
+$APP_SHARED_LIBS \
 -L$NDK/platforms/$PLATFORMVER/arch-x86/usr/lib \
 -lc -lm -lGLESv1_CM -ldl -llog -lz \
 -L$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/libs/$ARCH \
@@ -92,29 +97,69 @@ $SHARED \
 -no-canonical-prefixes $UNRESOLVED -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
 -Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings \
 -lsupc++ \
-$MISSING_LIB $LDFLAGS"
+$LDFLAGS"
 
 CC="$NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-gcc"
 CXX="$NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-g++"
 CPP="$NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-cpp $CFLAGS"
 
-if [ -n "$CLANG" ]; then
+else # CLANG
 
-CFLAGS="\
--gcc-toolchain $NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH \
--target i686-none-linux-android -Wno-invalid-command-line-argument -Wno-unused-command-line-argument \
+CFLAGS="
+-ffunction-sections
+-funwind-tables
+-fstack-protector-strong
+-Wno-invalid-command-line-argument
+-Wno-unused-command-line-argument
+-no-canonical-prefixes
+-I$NDK/sources/cxx-stl/llvm-libc++/include
+-I$NDK/sources/cxx-stl/llvm-libc++abi/include
+-I$NDK/sources/android/support/include
+-DANDROID
+-Wa,--noexecstack
+-Wformat
+-Werror=format-security
+-DNDEBUG
+-O2
+-g
+-gcc-toolchain
+$NDK/toolchains/x86-4.9/prebuilt/$MYARCH
+-target
+i686-none-linux-android
+-fPIC
+-mstackrealign
+--sysroot $NDK/platforms/android-14/arch-x86
+-isystem $NDK/sysroot/usr/include
+-isystem $NDK/sysroot/usr/include/i686-linux-android
+-D__ANDROID_API__=15
+$APP_MODULES_INCLUDE
 $CFLAGS"
 
-LDFLAGS="$LDFLAGS \
--lgcc \
--gcc-toolchain $NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH \
--target i686-none-linux-android"
+CFLAGS="`echo $CFLAGS | tr '\n' ' '`"
+
+LDFLAGS="
+--sysroot $NDK/platforms/android-14/arch-x86
+$SHARED $UNRESOLVED
+-L$LOCAL_PATH/../../obj/local/$ARCH
+$APP_SHARED_LIBS
+$NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libc++_static.a
+$NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH/libc++abi.a
+$NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH/libandroid_support.a
+-latomic -Wl,--exclude-libs,libatomic.a
+-gcc-toolchain
+$NDK/toolchains/x86-4.9/prebuilt/$MYARCH
+-target i686-none-linux-android -no-canonical-prefixes
+-Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel -Wl,--fatal-warnings
+-lc -lm -lstdc++ -ldl -llog -lz
+$LDFLAGS"
+
+LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"
 
 CC="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/clang"
 CXX="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/clang++"
 CPP="$CC -E $CFLAGS"
 
-fi
+fi # CLANG
 
 env PATH=$NDK/toolchains/$ARCH-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin:$LOCAL_PATH:$PATH \
 CFLAGS="$CFLAGS" \

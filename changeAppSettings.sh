@@ -1048,6 +1048,7 @@ else
 	$SEDI "s/==GOOGLEPLAYGAMESERVICES_APP_ID==/$GooglePlayGameServicesId/g" project/res/values/strings.xml
 
 	PROGUARD=`which android`
+	[ -z "$PROGUARD" ] && PROGUARD=$ANDROID_SDK_ROOT/tools/android
 	PROGUARD=`dirname $PROGUARD`/proguard/lib/proguard.jar
 	java -jar $PROGUARD | grep 'ProGuard, version 5.3' || {
 		echo "Error: ProGuard is too old"
