@@ -10,6 +10,7 @@ export ARCH=$1
 
 CPU_TYPE=32
 [ "$ARCH" = "arm64-v8a" ] && CPU_TYPE=64
+[ "$ARCH" = "x86_64" ] && CPU_TYPE=64
 
 [ -e openttd-$VER-$1/objs/lang/english.lng ] || {
 	sh -c "cd openttd-$VER-$1 && ../src/configure --without-freetype --without-png --without-zlib --without-lzo2 --without-lzma --endian=LE --cpu-type=$CPU_TYPE && make lang && make -C objs/release endian_target.h depend && make -C objs/setting" || exit 1
@@ -27,6 +28,6 @@ uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i p
 
 # clang arm hack
 LIBATOMIC=
-echo $1 | grep 'arm' && LIBATOMIC=-latomic
+echo $1 | grep 'armeabi-v7a' && LIBATOMIC="-lunwind"
 
-env CLANG=1 LIBATOMIC=$LIBATOMIC ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' LIBS='-lsdl-1.2 -llzo2 -lpng -ltimidity -lfontconfig -lfreetype -lexpat -licui18n -liculx -licu-le-hb -lharfbuzz -licuuc -licudata -lgcc -lz -lc -lgnustl_static -lsupc++ $LIBATOMIC'" && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1
+env CLANG=1 LIBATOMIC=$LIBATOMIC ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' LIBS='-lsdl-1.2 -llzo2 -lpng -ltimidity -lfontconfig -lfreetype -lexpat -licui18n -liculx -licu-le-hb -lharfbuzz -licuuc -licudata -lgcc -lz -lc -lc++_static -lc++abi -landroid_support $LIBATOMIC'" && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1
