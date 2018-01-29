@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cp -f keen.raw ../../../res/raw/
+
 [ -e AndroidData/data.zip.xz ] && exit 0
 cd src/share/gamedir
 rm -f ../data.zip
