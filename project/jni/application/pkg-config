@@ -99,6 +99,9 @@ while test $# -gt 0; do
         openssl|ssl|libssl)
           echo -l:libssl.so.sdl.1.so -l:libcrypto.so.sdl.1.so
           ;;
+        expat|libexpat)
+          echo -lexpat-sdl
+          ;;
         *)
           echo -l$PKG
           ;;

@@ -41,6 +41,7 @@ echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
 			crypto) echo crypto.so.sdl.1;;
 			ssl) echo ssl.so.sdl.1;;
 			curl) echo curl-sdl;;
+			expat) echo expat-sdl;;
 			*) echo $LIB;;
 		esac
 	fi

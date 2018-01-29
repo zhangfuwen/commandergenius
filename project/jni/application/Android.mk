@@ -67,6 +67,7 @@ SDL_APP_LIB_DEPENDS-$(TARGET_ARCH_ABI) += $(foreach LIB, $(LOCAL_STATIC_LIBRARIE
 obj/local/$(TARGET_ARCH_ABI)/libcrypto.so: obj/local/$(TARGET_ARCH_ABI)/libcrypto.so.sdl.0.so
 obj/local/$(TARGET_ARCH_ABI)/libssl.so: obj/local/$(TARGET_ARCH_ABI)/libssl.so.sdl.0.so
 obj/local/$(TARGET_ARCH_ABI)/libcurl.so: obj/local/$(TARGET_ARCH_ABI)/libcurl-sdl.so
+obj/local/$(TARGET_ARCH_ABI)/libexpat.so: obj/local/$(TARGET_ARCH_ABI)/libexpat-sdl.so
 
 include $(BUILD_SHARED_LIBRARY)
 
