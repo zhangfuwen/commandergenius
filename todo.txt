@@ -27,6 +27,8 @@ TODO, which will get actually done
 
 - SDL: support for mounting OBB files as directories: https://developer.android.com/google/play/expansion-files.html
 
+- SDL: CompatibilityHacksTextInputEmulatesHwKeyboard is broken.
+
 - Debian: proot crashes on Shield TV arm64 box.
 
 - Debian: add harldink simulation to proot, for Android 6.
