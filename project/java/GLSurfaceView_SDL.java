@@ -1015,7 +1015,7 @@ public class GLSurfaceView_SDL extends SurfaceView implements SurfaceHolder.Call
 			mRenderMode = RENDERMODE_CONTINUOUSLY;
 			mRenderer = renderer;
 			mRenderer.setSwapBuffersCallback(this);
-			setName("GLThread");
+			setName("SDLVideoThread");
 		}
 
 		@Override
