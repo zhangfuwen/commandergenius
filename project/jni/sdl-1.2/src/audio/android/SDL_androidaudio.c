@@ -212,6 +212,7 @@ static int ANDROIDAUD_OpenAudio (_THIS, SDL_AudioSpec *spec)
 		return (-1);
 	}
 
+	__android_log_print(ANDROID_LOG_INFO, "libSDL", "ANDROIDAUD_OpenAudio(): Requesting audio: freq %d channels %d format %s bufsize %d", audioFormat->freq, audioFormat->channels, bytesPerSample == 2 ? "S16" : "S8", audioFormat->size);
 	// The returned audioBufferSize may be huge, up to 100 Kb for 44100 because user may have selected large audio buffer to get rid of choppy sound
 	audioBufferSize = (*jniEnv)->CallIntMethod( jniEnv, JavaAudioThread, JavaInitAudio, 
 					(jint)audioFormat->freq, (jint)audioFormat->channels, 
