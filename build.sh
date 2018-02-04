@@ -175,9 +175,9 @@ cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU nice -n19 ndk-build -j
 				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/app-release-unsigned.apk || exit 1 ; \
 				cd ../../.. ; \
 			} || exit 1 ; \
-			jarsigner -verbose -keystore ~/.android/debug.keystore -storepass android -sigalg MD5withRSA -digestalg SHA1 app/build/outputs/apk/app-release-unsigned.apk androiddebugkey || exit 1 ; \
 			rm -f app/build/outputs/apk/app-release.apk ; \
 			zipalign 4 app/build/outputs/apk/app-release-unsigned.apk app/build/outputs/apk/app-release.apk || exit 1 ; \
+			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/app-release.apk || exit 1 ; \
 		else \
 			./gradlew assembleDebug && \
 			mv -f app/build/outputs/apk/app-debug.apk app/build/outputs/apk/app-release.apk \
