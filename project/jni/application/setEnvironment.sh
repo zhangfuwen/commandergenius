@@ -58,7 +58,9 @@ CFLAGS="\
 -mthumb -O2 -g -DNDEBUG \
 -fomit-frame-pointer -fno-strict-aliasing -finline-limit=300 \
 -DANDROID -Wall -Wno-unused -Wa,--noexecstack -Wformat -Werror=format-security \
--isystem$NDK/platforms/$PLATFORMVER/arch-arm/usr/include \
+-isystem$NDK/sysroot/usr/include \
+-isystem$NDK/sysroot/usr/include/arm-linux-androideabi \
+-D__ANDROID_API__=`echo $PLATFORMVER | grep -o '[0-9]*'` \
 -isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include \
 -isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/libs/$ARCH/include \
 -isystem$NDK/sources/cxx-stl/gnu-libstdc++/$NDK_TOOLCHAIN_VERSION/include/backward \
