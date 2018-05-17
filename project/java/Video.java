@@ -695,30 +695,8 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 				if (mWidth != 0 && mHeight != 0 && (mWidth != ww || mHeight != hh))
 				{
 					Log.i("SDL", "libSDL: DemoRenderer.onWindowResize(): screen size changed from " + mWidth + "x" + mHeight + " to " + ww + "x" + hh);
-					if (Globals.SwVideoMode &&
-						(Math.abs(display.getWidth() - ww) > display.getWidth() / 10 ||
-						Math.abs(display.getHeight() - hh) > display.getHeight() / 10))
-					{
-						Log.i("SDL", "Multiwindow detected - enabling screen orientation autodetection");
-						Globals.AutoDetectOrientation = true;
-						context.setScreenOrientation();
-						DemoRenderer.super.ResetVideoSurface();
-						DemoRenderer.super.onWindowResize(ww, hh);
-					}
-					else
-					{
-						Log.i("SDL", "System button bar hidden - re-init video to avoid black bar at the top");
-						DemoRenderer.super.ResetVideoSurface();
-						DemoRenderer.super.onWindowResize(ww, hh);
-					}
-				}
-				if (mWidth == 0 && mHeight == 0)
-				{
-					if ((ww > hh) != (display.getWidth() > display.getHeight()))
-					{
-						Log.i("SDL", "Multiwindow detected - app window size " + ww + "x" + hh + " but display dimensions are " + display.getWidth() + "x" + display.getHeight());
-						Globals.AutoDetectOrientation = true;
-					}
+					DemoRenderer.super.ResetVideoSurface();
+					DemoRenderer.super.onWindowResize(ww, hh);
 				}
 				if (Globals.AutoDetectOrientation && (ww > hh) != (mWidth > mHeight))
 					Globals.HorizontalOrientation = (ww > hh);
