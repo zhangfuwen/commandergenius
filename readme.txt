@@ -77,7 +77,7 @@ if that does not work you need to update
 
 Accept the license with 'y'. It might download additional stuff, yet not sure, why...
 
-Retry with 
+Retry with
 
 ./sdkmanager --licenses
 
