@@ -17,7 +17,7 @@ prebuilt-libraries: $(LIBS)
 
 .NOTPARALLEL: $(LIBS)
 
-$(ICONV) $(ICU):
+$(ICONV) $(ICU): iconv/src/build.sh
 	cd iconv/src  && \
 	./build.sh  && \
 	for ARCH in $(ARCHES32) $(ARCHES64); do  \
@@ -31,8 +31,11 @@ $(ICONV) $(ICU):
 		cp -f $$ARCH/include/icu-le-hb/layout/*.h ../../icuuc/include/layout/  ; \
 	done
 
-$(OPENSSL):
+$(OPENSSL): openssl/compile.sh
 	cd openssl && ./compile.sh
+
+iconv/src/build.sh openssl/compile.sh:
+	git submodule update --init --recursive
 
 BOOST_LIBS := atomic chrono container context coroutine date_time exception filesystem \
 				graph iostreams log log_setup \
