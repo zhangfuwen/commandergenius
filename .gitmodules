@@ -39,9 +39,6 @@
 [submodule "project/jni/iconv/src"]
 	path = project/jni/iconv/src
 	url = https://github.com/pelya/libiconv-libicu-android.git
-[submodule "project/jni/icuuc/src"]
-	path = project/jni/icuuc/src
-	url = https://github.com/pelya/libiconv-libicu-android.git
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = https://github.com/pelya/openttd-android.git
