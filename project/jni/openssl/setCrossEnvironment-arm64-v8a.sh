@@ -18,10 +18,10 @@ NDK=`which ndk-build`
 NDK=`dirname $NDK`
 NDK=`readlink -f $NDK`
 
-[ -z "$NDK" ] && { echo "You need Andorid NDK r8 or newer installed to run this script" ; exit 1 ; }
+#echo NDK $NDK
 GCCPREFIX=aarch64-linux-android
-GCCVER=${GCCVER:-4.9}
-PLATFORMVER=${PLATFORMVER:-android-21}
+[ -z "$NDK_TOOLCHAIN_VERSION" ] && NDK_TOOLCHAIN_VERSION=4.9
+[ -z "$PLATFORMVER" ] && PLATFORMVER=android-21
 LOCAL_PATH=`dirname $0`
 if which realpath > /dev/null ; then
 	LOCAL_PATH=`realpath $LOCAL_PATH`
@@ -30,52 +30,68 @@ else
 fi
 ARCH=arm64-v8a
 
-CFLAGS="\
--fpic -ffunction-sections -funwind-tables -fstack-protector-strong \
--no-canonical-prefixes \
--O2 -g -DNDEBUG \
--fomit-frame-pointer -fno-strict-aliasing -finline-limit=300 \
--DANDROID -Wall -Wno-unused -Wa,--noexecstack -Wformat -Werror=format-security \
--isystem$NDK/platforms/$PLATFORMVER/arch-arm64/usr/include \
--isystem$NDK/sources/cxx-stl/gnu-libstdc++/$GCCVER/include \
--isystem$NDK/sources/cxx-stl/gnu-libstdc++/$GCCVER/libs/$ARCH/include \
+
+CFLAGS="
+-fexceptions
+-frtti
+-ffunction-sections
+-funwind-tables
+-fstack-protector-strong
+-Wno-invalid-command-line-argument
+-Wno-unused-command-line-argument
+-no-canonical-prefixes
+-I$NDK/sources/cxx-stl/llvm-libc++/include
+-I$NDK/sources/cxx-stl/llvm-libc++abi/include
+-I$NDK/sources/android/support/include
+-DANDROID
+-Wa,--noexecstack
+-Wformat
+-Werror=format-security
+-DNDEBUG
+-O2
+-g
+-gcc-toolchain
+$NDK/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64
+-target
+aarch64-none-linux-android
+-fpic
+--sysroot $NDK/platforms/android-21/arch-arm64
+-isystem $NDK/sysroot/usr/include
+-isystem $NDK/sysroot/usr/include/aarch64-linux-android
+-D__ANDROID_API__=21
 $CFLAGS"
 
-UNRESOLVED="-Wl,--no-undefined"
-SHARED="-Wl,--gc-sections -Wl,-z,nocopyreloc"
-if [ -n "$BUILD_LIBRARY" ]; then
-	[ -z "$SHARED_LIBRARY_NAME" ] && SHARED_LIBRARY_NAME=libapplication.so
-	SHARED="-shared -Wl,-soname,$SHARED_LIBRARY_NAME"
-fi
-if [ -n "$ALLOW_UNRESOLVED_SYMBOLS" ]; then
-	UNRESOLVED=
-fi
+CFLAGS="`echo $CFLAGS | tr '\n' ' '`"
 
-LDFLAGS="\
-$SHARED \
---sysroot=$NDK/platforms/$PLATFORMVER/arch-arm64 \
--L$NDK/platforms/$PLATFORMVER/arch-arm64/usr/lib \
--lc -lm -ldl -lz \
--L$NDK/sources/cxx-stl/gnu-libstdc++/$GCCVER/libs/$ARCH \
--lgnustl_static \
--no-canonical-prefixes $UNRESOLVED -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
--Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings \
--lsupc++ \
+LDFLAGS="
+-shared
+--sysroot $NDK/platforms/android-21/arch-arm64
+$NDK/sources/cxx-stl/llvm-libc++/libs/arm64-v8a/libc++_static.a
+$NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/arm64-v8a/libc++abi.a
+-latomic -Wl,--exclude-libs,libatomic.a
+-gcc-toolchain $NDK/toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64
+-target aarch64-none-linux-android -no-canonical-prefixes
+-Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel -Wl,--fatal-warnings
+-lc -lm -lstdc++
 $LDFLAGS"
 
-env PATH=$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin:$LOCAL_PATH:$PATH \
-ANDROID_DEV=$NDK/platforms/$PLATFORMVER/arch-arm64/usr \
+LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"
+
+CC="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/clang"
+CXX="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/clang++"
+CPP="$CC -E $CFLAGS"
+
+env PATH=$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin:$LOCAL_PATH:$PATH \
 CFLAGS="$CFLAGS" \
-CXXFLAGS="$CXXFLAGS $CFLAGS" \
+CXXFLAGS="$CXXFLAGS $CFLAGS -frtti -fexceptions" \
 LDFLAGS="$LDFLAGS" \
-CC="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-gcc" \
-CXX="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-g++" \
-RANLIB="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-ranlib" \
-LD="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-ld" \
-AR="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-ar" \
-CPP="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-cpp $CFLAGS" \
-CXXCPP="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-cpp -x c++ $CFLAGS" \
-NM="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-nm" \
-AS="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-as" \
-STRIP="$NDK/toolchains/$GCCPREFIX-$GCCVER/prebuilt/$MYARCH/bin/$GCCPREFIX-strip" \
+CC="$CC" \
+CXX="$CXX" \
+RANLIB="$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-ranlib" \
+LD="$CC" \
+AR="$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-ar" \
+CPP="$CPP" \
+NM="$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-nm" \
+AS="$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-as" \
+STRIP="$NDK/toolchains/$GCCPREFIX-$NDK_TOOLCHAIN_VERSION/prebuilt/$MYARCH/bin/$GCCPREFIX-strip" \
 "$@"
