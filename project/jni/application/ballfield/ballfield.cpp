@@ -14,6 +14,7 @@
 #include <math.h>
 #include <android/log.h>
 #include <wchar.h>
+#include <stdexcept>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
@@ -129,7 +130,7 @@ SDL_Surface *clean_alpha(SDL_Surface *s)
 /*
  * Load and convert an antialiazed, zoomed set of sprites.
  */
-SDL_Surface *load_zoomed(char *name, int alpha)
+SDL_Surface *load_zoomed(const char *name, int alpha)
 {
 	SDL_Surface *sprites;
 	SDL_Surface *temp = IMG_Load(name);
@@ -295,7 +296,7 @@ static int ballfield_init_frames(ballfield_t *bf)
 }
 
 
-int ballfield_load_gfx(ballfield_t *bf, char *name, unsigned int color)
+int ballfield_load_gfx(ballfield_t *bf, const char *name, unsigned int color)
 {
 	if(color >= COLORS)
 		return -1;
@@ -408,6 +409,16 @@ void tiled_back(SDL_Surface *back, SDL_Surface *screen, int xo, int yo)
 	r.w = back->w;
 	r.h = back->h;
 	SDL_BlitSurface(back, NULL, screen, &r);
+}
+
+void throw_something_more()
+{
+	throw std::runtime_error("Exception: whoops");
+}
+
+void throw_something()
+{
+	throw_something_more();
 }
 
 /*----------------------------------------------------------
@@ -689,6 +700,11 @@ int main(int argc, char* argv[])
 					{
 						SDL_ANDROID_SetScreenKeyboardButtonShown(SDL_ANDROID_SCREENKEYBOARD_BUTTON_2, 1);
 						SDL_ANDROID_SetMouseEmulationMode(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+						try {
+							throw_something();
+						} catch (const std::exception & e) {
+							__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Got exception: %s", e.what());
+						}
 					}
 					if(evt.key.keysym.sym == SDLK_1)
 					{

@@ -133,17 +133,17 @@ $NDK/toolchains/x86-4.9/prebuilt/$MYARCH
 i686-none-linux-android
 -fPIC
 -mstackrealign
---sysroot $NDK/platforms/android-14/arch-x86
+--sysroot $NDK/sysroot
 -isystem $NDK/sysroot/usr/include
 -isystem $NDK/sysroot/usr/include/i686-linux-android
--D__ANDROID_API__=15
+-D__ANDROID_API__=18
 $APP_MODULES_INCLUDE
 $CFLAGS"
 
 CFLAGS="`echo $CFLAGS | tr '\n' ' '`"
 
 LDFLAGS="
---sysroot $NDK/platforms/android-14/arch-x86
+--sysroot $NDK/platforms/android-18/arch-x86
 $SHARED $UNRESOLVED
 -L$LOCAL_PATH/../../obj/local/$ARCH
 $APP_SHARED_LIBS
@@ -153,12 +153,13 @@ $APP_SHARED_LIBS
 $NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libc++_static.a
 $NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH/libc++abi.a
 $NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH/libandroid_support.a
+-lgcc -Wl,--exclude-libs,libgcc.a
 -latomic -Wl,--exclude-libs,libatomic.a
 -gcc-toolchain
 $NDK/toolchains/x86-4.9/prebuilt/$MYARCH
 -target i686-none-linux-android -no-canonical-prefixes
 -Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel -Wl,--fatal-warnings
--lc -lm -lstdc++ -ldl -llog -lz
+-lc -lm -nostdlib++ -ldl -llog -lz
 $LDFLAGS"
 
 LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"

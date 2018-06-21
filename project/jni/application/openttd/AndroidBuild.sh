@@ -26,12 +26,5 @@ CPU_TYPE=32
 NCPU=4
 uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i processor`
 
-# clang arm hack
-LIBATOMIC=
-echo $1 | grep 'armeabi-v7a' && LIBATOMIC="-lunwind"
+env CLANG=1 ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' "' LIBS="-lsdl-1.2 -llzo2 -lpng -ltimidity -lfontconfig -lfreetype -lexpat-sdl -licui18n -liculx -licu-le-hb -lharfbuzz -licuuc -licudata $LDFLAGS"' && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1
 
-LIBANDROIDSUPPORT=
-[ "$1" = "armeabi-v7a" ] && LIBANDROIDSUPPORT="-landroid_support"
-[ "$1" = "x86" ] && LIBANDROIDSUPPORT="-landroid_support"
-
-env CLANG=1 LIBATOMIC=$LIBATOMIC ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && make -j$NCPU VERBOSE=1 STRIP='' LIBS='-lsdl-1.2 -llzo2 -lpng -ltimidity -lfontconfig -lfreetype -lexpat-sdl -licui18n -liculx -licu-le-hb -lharfbuzz -licuuc -licudata -lgcc -lz -lc -lc++_static -lc++abi $LIBANDROIDSUPPORT $LIBATOMIC'" && cp -f openttd-$VER-$1/objs/release/openttd libapplication-$1.so || exit 1

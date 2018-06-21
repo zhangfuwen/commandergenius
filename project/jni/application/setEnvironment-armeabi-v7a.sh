@@ -130,24 +130,24 @@ CFLAGS="
 -gcc-toolchain
 $NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$MYARCH
 -target
-armv7-none-linux-androideabi15
+armv7-none-linux-androideabi18
 -march=armv7-a
 -mfloat-abi=softfp
 -mfpu=vfpv3-d16
 -mthumb
 -fpic
 -fno-integrated-as
---sysroot $NDK/platforms/android-14/arch-arm
+--sysroot $NDK/sysroot
 -isystem $NDK/sysroot/usr/include
 -isystem $NDK/sysroot/usr/include/arm-linux-androideabi
--D__ANDROID_API__=15
+-D__ANDROID_API__=18
 $APP_MODULES_INCLUDE
 $CFLAGS"
 
 CFLAGS="`echo $CFLAGS | tr '\n' ' '`"
 
 LDFLAGS="
---sysroot $NDK/platforms/android-14/arch-arm
+--sysroot $NDK/platforms/android-18/arch-arm
 $SHARED $UNRESOLVED
 -L$LOCAL_PATH/../../obj/local/$ARCH
 $APP_SHARED_LIBS
@@ -158,12 +158,13 @@ $NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libc++_static.a
 $NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH/libc++abi.a
 $NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH/libandroid_support.a
 $NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libunwind.a
+-lgcc -Wl,--exclude-libs,libgcc.a
 -latomic -Wl,--exclude-libs,libatomic.a
 -gcc-toolchain
 $NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/$MYARCH
--no-canonical-prefixes -target armv7-none-linux-androideabi14
+-no-canonical-prefixes -target armv7-none-linux-androideabi18
 -Wl,--fix-cortex-a8 -Wl,--exclude-libs,libunwind.a -Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel -Wl,--fatal-warnings
--lc -lm -lstdc++ -ldl -llog -lz
+-lc -lm -nostdlib++ -ldl -llog -lz
 $LDFLAGS"
 
 LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"

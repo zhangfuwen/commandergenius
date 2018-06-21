@@ -132,7 +132,7 @@ $NDK/toolchains/aarch64-linux-android-4.9/prebuilt/$MYARCH
 -target
 aarch64-none-linux-android
 -fpic
---sysroot $NDK/platforms/android-21/arch-arm64
+--sysroot $NDK/sysroot
 -isystem $NDK/sysroot/usr/include
 -isystem $NDK/sysroot/usr/include/aarch64-linux-android
 -D__ANDROID_API__=21
@@ -151,12 +151,13 @@ $APP_SHARED_LIBS
 -L$NDK/sources/android/support/../../cxx-stl/llvm-libc++/libs/$ARCH
 $NDK/sources/cxx-stl/llvm-libc++/libs/$ARCH/libc++_static.a
 $NDK/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/$ARCH/libc++abi.a
+-lgcc -Wl,--exclude-libs,libgcc.a
 -latomic -Wl,--exclude-libs,libatomic.a
 -gcc-toolchain
 $NDK/toolchains/aarch64-linux-android-4.9/prebuilt/$MYARCH
 -target aarch64-none-linux-android -no-canonical-prefixes
 -Wl,--build-id -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--warn-shared-textrel -Wl,--fatal-warnings
--lc -lm -lstdc++ -ldl -llog -lz
+-lc -lm -nostdlib++ -ldl -llog -lz
 $LDFLAGS"
 
 LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"
