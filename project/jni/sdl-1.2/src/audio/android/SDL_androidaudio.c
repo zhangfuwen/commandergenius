@@ -240,7 +240,7 @@ static int ANDROIDAUD_OpenAudio (_THIS, SDL_AudioSpec *spec)
 #endif
 
 	SDL_CalculateAudioSpec(audioFormat);
-	__android_log_print(ANDROID_LOG_INFO, "libSDL", "ANDROIDAUD_OpenAudio(): app opened audio bytespersample %d freq %d channels %d bufsize %d, SDL returns bufsize %d", bytesPerSample, audioFormat->freq, (int)audioFormat->channels, audioBufferSize, audioFormat->size);
+	__android_log_print(ANDROID_LOG_INFO, "libSDL", "ANDROIDAUD_OpenAudio(): app opened audio bytespersample %d freq %d channels %d bufsize %d, SDL returns bufsize %d", bytesPerSample, audioFormat->freq, (int)audioFormat->channels, (int)audioBufferSize, audioFormat->size);
 
 #if SDL_VERSION_ATLEAST(1,3,0)
 	return(1);
