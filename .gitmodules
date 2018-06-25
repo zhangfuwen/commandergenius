@@ -18,9 +18,6 @@
 [submodule "project/jni/application/teeworlds/src"]
 	path = project/jni/application/teeworlds/src
 	url = https://github.com/pelya/teeworlds.git
-[submodule "project/jni/application/c-dogs/src"]
-	path = project/jni/application/c-dogs/src
-	url = https://github.com/cxong/cdogs-sdl.git
 [submodule "project/jni/application/xserver/xserver"]
 	path = project/jni/application/xserver/xserver
 	url = https://github.com/pelya/xserver.git
