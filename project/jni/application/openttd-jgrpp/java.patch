@@ -1,0 +1,20 @@
+diff --git a/project/java/Settings.java b/project/java/Settings.java
+index 9e6150a41..77e84dce4 100644
+--- a/project/java/Settings.java
++++ b/project/java/Settings.java
+@@ -521,6 +521,15 @@ public class Settings
+ 			for( String sdpath: SdcardAppPath.get().allPaths(p) )
+ 				deleteRecursivelyAndLog(new File(sdpath + "/" + path ));
+ 		}
++		// Hack to save old config file, which is gettign corrupted on app update
++		try {
++			String cmd = "cp " + Globals.DataDir + "/.openttd/openttd.cfg " + Globals.DataDir + "/.openttd/openttd-backup.cfg";
++			Log.i("SDL", "===============");
++			Log.i("SDL", cmd);
++			int ret = Runtime.getRuntime().exec(cmd).waitFor();
++			Log.i("SDL", "Status: " + String.valueOf(ret));
++			Log.i("SDL", "===============");
++		} catch (Exception e) { }
+ 	}
+ 	public static void DeleteSdlConfigOnUpgradeAndRestart(final MainActivity p)
+ 	{
