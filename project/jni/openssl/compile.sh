@@ -72,5 +72,6 @@ fi
 rm -rf include
 mkdir -p include
 cp -r -L build/armeabi-v7a/include/openssl include/openssl || exit 1
+patch -p0 < opensslconf.h.patch || exit 1
 sed -i.tmp 's@".*/dist/.*"@"."@g' include/openssl/opensslconf.h
 rm -f include/openssl/opensslconf.h.tmp
