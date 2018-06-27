@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_RAWSTR_H
-#define HEADER_CURL_RAWSTR_H
+#ifndef HEADER_CURL_RANGE_H
+#define HEADER_CURL_RANGE_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2018, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,26 +22,9 @@
  *
  ***************************************************************************/
 
-#include <curl/curl.h>
+#include "curl_setup.h"
+#include "urldata.h"
 
-/*
- * Curl_raw_equal() is for doing "raw" case insensitive strings. This is meant
- * to be locale independent and only compare strings we know are safe for
- * this.
- *
- * The function is capable of comparing a-z case insensitively even for
- * non-ascii.
- */
-int Curl_raw_equal(const char *first, const char *second);
-int Curl_raw_nequal(const char *first, const char *second, size_t max);
+CURLcode Curl_range(struct connectdata *conn);
 
-char Curl_raw_toupper(char in);
-
-/* checkprefix() is a shorter version of the above, used when the first
-   argument is zero-byte terminated */
-#define checkprefix(a,b)    Curl_raw_nequal(a,b,strlen(a))
-
-void Curl_strntoupper(char *dest, const char *src, size_t n);
-
-#endif /* HEADER_CURL_RAWSTR_H */
-
+#endif /* HEADER_CURL_RANGE_H */

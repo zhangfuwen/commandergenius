@@ -1,5 +1,5 @@
-#ifndef HEADER_CURL_STREQUAL_H
-#define HEADER_CURL_STREQUAL_H
+#ifndef HEADER_CURL_PATH_H
+#define HEADER_CURL_PATH_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2018, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,10 +22,26 @@
  *
  ***************************************************************************/
 
+#include "curl_setup.h"
 #include <curl/curl.h>
+#include "urldata.h"
 
-#define strequal(a,b) curl_strequal(a,b)
-#define strnequal(a,b,c) curl_strnequal(a,b,c)
+#ifdef WIN32
+#  undef  PATH_MAX
+#  define PATH_MAX MAX_PATH
+#  ifndef R_OK
+#    define R_OK 4
+#  endif
+#endif
 
-#endif /* HEADER_CURL_STREQUAL_H */
+#ifndef PATH_MAX
+#define PATH_MAX 1024 /* just an extra precaution since there are systems that
+                         have their definition hidden well */
+#endif
 
+CURLcode Curl_getworkingpath(struct connectdata *conn,
+                             char *homedir,
+                             char **path);
+
+CURLcode Curl_get_pathname(const char **cpp, char **path, char *homedir);
+#endif
