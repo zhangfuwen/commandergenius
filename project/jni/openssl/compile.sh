@@ -1,7 +1,6 @@
 #!/bin/sh
 
 ARCH_LIST="arm64-v8a x86_64 x86 armeabi-v7a"
-ARCH_LIST="armeabi-v7a"
 
 PARALLEL=true
 

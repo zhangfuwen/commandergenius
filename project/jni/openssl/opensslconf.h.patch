@@ -1,7 +1,7 @@
 diff -u -r include/openssl/opensslconf.h include/openssl/opensslconf.h
 --- include/openssl/opensslconf.h	2018-06-27 21:41:35.243331385 +0300
 +++ include/openssl/opensslconf.h	2018-06-27 22:00:56.341328455 +0300
-@@ -157,8 +157,10 @@
+@@ -157,10 +157,13 @@
  #if !defined(OPENSSL_SYS_UEFI)
  # define BN_LLONG
  /* Only one for the following should be defined */
@@ -13,4 +13,7 @@ diff -u -r include/openssl/opensslconf.h include/openssl/opensslconf.h
 +#else
  # define THIRTY_TWO_BIT
  #endif
++#endif
+ 
+ #define RC4_INT unsigned char
  
