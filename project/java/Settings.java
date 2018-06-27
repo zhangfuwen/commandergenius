@@ -659,6 +659,7 @@ public class Settings
 		nativeSetEnv( "ANDROID_PACKAGE_NAME", p.getPackageName() );
 		nativeSetEnv( "ANDROID_PACKAGE_PATH", p.getPackageCodePath() );
 		nativeSetEnv( "ANDROID_MY_OWN_APP_FILE", p.getPackageResourcePath() ); // This may be different from p.getPackageCodePath() on multi-user systems, but should still be the same .apk file
+		nativeSetEnv( "ANDROID_OBB_DIR", Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/obb/" + p.getPackageName() );
 		try {
 			nativeSetEnv( "ANDROID_APP_NAME", p.getString(p.getApplicationInfo().labelRes) );
 		} catch (Exception eeeeee) {}
