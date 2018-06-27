@@ -1,6 +1,7 @@
 #!/bin/sh
 
 ARCH_LIST="arm64-v8a x86_64 x86 armeabi-v7a"
+ARCH_LIST="armeabi-v7a"
 
 PARALLEL=true
 
@@ -69,6 +70,7 @@ else
 fi
 
 rm -rf include
+mkdir -p include
 cp -r -L build/armeabi-v7a/include/openssl include/openssl || exit 1
 sed -i.tmp 's@".*/dist/.*"@"."@g' include/openssl/opensslconf.h
 rm -f include/openssl/opensslconf.h.tmp
