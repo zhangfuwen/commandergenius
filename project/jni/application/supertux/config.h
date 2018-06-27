@@ -31,4 +31,8 @@
 
 #define HAVE_LIBCURL
 
+#define BUILD_DATA_DIR "data"
+
+#define BUILD_CONFIG_DATA_DIR "data"
+
 #endif /*CONFIG_H*/
