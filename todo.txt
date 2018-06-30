@@ -29,6 +29,8 @@ TODO, which will get actually done
 
 - SDL: CompatibilityHacksTextInputEmulatesHwKeyboard is broken.
 
+- SDL: Commandline edit dialog is broken.
+
 - Debian: proot crashes on Shield TV arm64 box.
 
 - Debian: add harldink simulation to proot, for Android 6.
