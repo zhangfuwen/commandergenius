@@ -785,13 +785,13 @@ int main(int argc, char* argv[])
 		x_speed = 500.0 * sin(t * 0.37);
 		y_speed = 500.0 * sin(t * 0.53);
 		z_speed = 400.0 * sin(t * 0.21);
-		if( SDL_GetKeyState(NULL)[SDLK_LEFT] )
+		if( SDL_GetKeyState(NULL)[SDLK_LEFT] || SDL_GetKeyState(NULL)[SDLK_a] )
 			x_speed -= 100000 * dt;
-		if( SDL_GetKeyState(NULL)[SDLK_RIGHT] )
+		if( SDL_GetKeyState(NULL)[SDLK_RIGHT] || SDL_GetKeyState(NULL)[SDLK_d] )
 			x_speed += 100000 * dt;
-		if( SDL_GetKeyState(NULL)[SDLK_UP] )
+		if( SDL_GetKeyState(NULL)[SDLK_UP] || SDL_GetKeyState(NULL)[SDLK_w] )
 			y_speed -= 100000 * dt;
-		if( SDL_GetKeyState(NULL)[SDLK_DOWN] )
+		if( SDL_GetKeyState(NULL)[SDLK_DOWN] || SDL_GetKeyState(NULL)[SDLK_s] )
 			y_speed += 100000 * dt;
 
 		ballfield_move(balls, x_speed, y_speed, z_speed);

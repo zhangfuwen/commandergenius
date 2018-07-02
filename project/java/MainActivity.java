@@ -689,9 +689,9 @@ public class MainActivity extends Activity
 								if (key > 100000)
 								{
 									key -= 100000;
-									MainActivity.this.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+									mGLView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 								}
-								MainActivity.this.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+								mGLView.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
 							}
 							public void onRelease(int key)
 							{
@@ -705,9 +705,9 @@ public class MainActivity extends Activity
 								{
 									builtinKeyboard.shift = ! builtinKeyboard.shift;
 									if (builtinKeyboard.shift && !builtinKeyboard.alt)
-										MainActivity.this.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
+										mGLView.onKeyDown(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_SHIFT_LEFT));
 									else
-										MainActivity.this.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										mGLView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
 									builtinKeyboard.ChangeKeyboard();
 									return;
 								}
@@ -715,7 +715,7 @@ public class MainActivity extends Activity
 								{
 									builtinKeyboard.alt = ! builtinKeyboard.alt;
 									if (builtinKeyboard.alt)
-										MainActivity.this.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+										mGLView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
 									else
 										builtinKeyboard.shift = false;
 									builtinKeyboard.ChangeKeyboard();
@@ -730,12 +730,12 @@ public class MainActivity extends Activity
 										if (k.on)
 										{
 											builtinKeyboard.stickyKeys.add(key);
-											MainActivity.this.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
+											mGLView.onKeyDown(key, new KeyEvent(KeyEvent.ACTION_DOWN, key));
 										}
 										else
 										{
 											builtinKeyboard.stickyKeys.remove(key);
-											MainActivity.this.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+											mGLView.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
 										}
 										return;
 									}
@@ -748,11 +748,11 @@ public class MainActivity extends Activity
 									shifted = true;
 								}
 
-								MainActivity.this.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
+								mGLView.onKeyUp(key, new KeyEvent(KeyEvent.ACTION_UP, key));
 
 								if (shifted)
 								{
-									MainActivity.this.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
+									mGLView.onKeyUp(KeyEvent.KEYCODE_SHIFT_LEFT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_SHIFT_LEFT));
 									builtinKeyboard.stickyKeys.remove(KeyEvent.KEYCODE_SHIFT_LEFT);
 									for (Keyboard.Key k: builtinKeyboard.getKeyboard().getKeys())
 									{
@@ -774,6 +774,7 @@ public class MainActivity extends Activity
 						_screenKeyboard = builtinKeyboard;
 						FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM);
 						_videoLayout.addView(_screenKeyboard, layout);
+						_videoLayout.bringChildToFront(_screenKeyboard);
 					}
 				}
 			});
@@ -1553,7 +1554,7 @@ public class MainActivity extends Activity
 	public ProgressDialog loadingDialog = null;
 
 	FrameLayout _videoLayout = null;
-	private View _screenKeyboard = null;
+	public View _screenKeyboard = null;
 	private String _screenKeyboardHintMessage = null;
 	static boolean keyboardWithoutTextInputShown = false;
 	private boolean sdlInited = false;

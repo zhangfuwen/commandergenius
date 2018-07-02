@@ -1105,8 +1105,14 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	}
 
 	@Override
-	public boolean onTouchEvent(final MotionEvent event) 
+	public boolean onTouchEvent(final MotionEvent event)
 	{
+		if (mParent.keyboardWithoutTextInputShown && mParent._screenKeyboard != null &&
+			mParent._screenKeyboard.getY() <= event.getY()) {
+			event.offsetLocation(-mParent._screenKeyboard.getX(), -mParent._screenKeyboard.getY());
+			mParent._screenKeyboard.onTouchEvent(event);
+			return true;
+		}
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 		{
 			if (getX() != 0)
