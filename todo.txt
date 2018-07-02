@@ -23,13 +23,7 @@ TODO, which will get actually done
 
 - SDL: add option for non-fullscreen non-immersive mode.
 
-- SDL: new commandline arguments editor adds extra blank parameter at the beginning.
-
 - SDL: support for mounting OBB files as directories: https://developer.android.com/google/play/expansion-files.html
-
-- SDL: CompatibilityHacksTextInputEmulatesHwKeyboard is broken.
-
-- SDL: Commandline edit dialog is broken.
 
 - Debian: proot crashes on Shield TV arm64 box.
 
