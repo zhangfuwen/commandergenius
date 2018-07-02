@@ -557,12 +557,10 @@ class SettingsMenuMisc extends SettingsMenu
 			edit.setFocusableInTouchMode(true);
 			edit.setFocusable(true);
 			if (Globals.CommandLine.length() == 0)
-				Globals.CommandLine = "SDL_app";
-			if (Globals.CommandLine.indexOf(" ") == -1)
-				Globals.CommandLine += " ";
-			edit.setText(Globals.CommandLine.substring(Globals.CommandLine.indexOf(" ")).replace(" ", "\n").replace("	", " "));
+				Globals.CommandLine = "App";
+			edit.setText(Globals.CommandLine.replace(" ", "\n").replace("	", " "));
 			edit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-			edit.setMinLines(2);
+			edit.setMinLines(1);
 			//edit.setMaxLines(100);
 			builder.setView(edit);
 
@@ -570,17 +568,22 @@ class SettingsMenuMisc extends SettingsMenu
 			{
 				public void onClick(DialogInterface dialog, int item) 
 				{
-					Globals.CommandLine = "SDL_app";
+					Globals.CommandLine = "";
 					String args[] = edit.getText().toString().split("\n");
-					boolean firstArg = true;
-					for( String arg: args )
+					if( args.length == 1 )
 					{
-						Globals.CommandLine += " ";
-						if( firstArg )
-							Globals.CommandLine += arg;
-						else
+						Globals.CommandLine = args[0];
+					}
+					else
+					{
+						boolean firstArg = true;
+						for( String arg: args )
+						{
+							if( !firstArg )
+								Globals.CommandLine += " ";
 							Globals.CommandLine += arg.replace(" ", "	");
-						firstArg = false;
+							firstArg = false;
+						}
 					}
 					dialog.dismiss();
 					goBack(p);
