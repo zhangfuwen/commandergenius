@@ -310,8 +310,11 @@ echo "# API is defined in file SDL_android.h: int SDL_ANDROID_OpenAudioRecording
 echo "# This option will add additional permission to Android manifest (y)/(n)" >> AndroidAppSettings.cfg
 echo AppRecordsAudio=$AppRecordsAudio >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
-echo "# Application needs to access SD card. Always disable it, unless you want to access user photos and downloads. (y) / (n)" >> AndroidAppSettings.cfg
+echo "# Application needs read/write access SD card. Always disable it, unless you want to access user photos and downloads. (y) / (n)" >> AndroidAppSettings.cfg
 echo AccessSdCard=$AccessSdCard >> AndroidAppSettings.cfg
+echo >> AndroidAppSettings.cfg
+echo "# Application needs to read it's own OBB file. Enable this if you are using Play Store expansion files. (y) / (n)" >> AndroidAppSettings.cfg
+echo ReadObbFile=$ReadObbFile >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Application needs Internet access. If you disable it, you'll have to bundle all your data files inside .apk (y) / (n)" >> AndroidAppSettings.cfg
 echo AccessInternet=$AccessInternet >> AndroidAppSettings.cfg
@@ -867,8 +870,15 @@ esac
 
 if [ "$AccessSdCard" = "y" ]; then
 	$SEDI "/==NOT_EXTERNAL_STORAGE==/ d" project/AndroidManifest.xml
+	$SEDI "/==READ_OBB==/ d" project/AndroidManifest.xml
 else
-	$SEDI "/==EXTERNAL_STORAGE==/ d" project/AndroidManifest.xml # Disabled by default
+	if [ "$ReadObbFile" = "y" ]; then
+		$SEDI "/==EXTERNAL_STORAGE==/ d" project/AndroidManifest.xml # Disabled by default
+		$SEDI "/==NOT_EXTERNAL_STORAGE==/ d" project/AndroidManifest.xml
+	else
+		$SEDI "/==EXTERNAL_STORAGE==/ d" project/AndroidManifest.xml # Disabled by default
+		$SEDI "/==READ_OBB==/ d" project/AndroidManifest.xml
+	fi
 fi
 
 if [ "$AccessInternet" = "n" ]; then
