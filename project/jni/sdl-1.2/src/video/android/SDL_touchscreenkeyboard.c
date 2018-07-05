@@ -488,7 +488,41 @@ unsigned SDL_ANDROID_processTouchscreenKeyboard(int x, int y, int action, int po
 		joyAmount = 1;
 	
 	if( !touchscreenKeyboardShown )
+	{
+		for( i = 0; i < MAX_BUTTONS; i++ )
+		{
+			if( ! buttons[i].h || ! buttons[i].w )
+				continue;
+			if( pointerInButtonRect[i] != -1 )
+			{
+				pointerInButtonRect[i] = -1;
+				if( i != BUTTON_TEXT_INPUT )
+					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, buttonKeysyms[i], 0 );
+			}
+		}
+		for( j = 0; j < joyAmount; j++ )
+		{
+			if( pointerInButtonRect[BUTTON_ARROWS+j] != -1 )
+			{
+				pointerInButtonRect[BUTTON_ARROWS+j] = -1;
+				if( SDL_ANDROID_joysticksAmount > 0 )
+				{
+					int axis = j < 2 ? j*2 : MAX_MULTITOUCH_POINTERS + 4;
+					SDL_ANDROID_MainThreadPushJoystickAxis( 0, axis, 0 );
+					SDL_ANDROID_MainThreadPushJoystickAxis( 0, axis + 1, 0 );
+				}
+				else
+				{
+					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(UP), 0 );
+					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(DOWN), 0 );
+					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(LEFT), 0 );
+					SDL_ANDROID_MainThreadPushKeyboardKey( SDL_RELEASED, SDL_KEY(RIGHT), 0 );
+					oldArrows = 0;
+				}
+			}
+		}
 		return 0;
+	}
 	
 	if( action == MOUSE_DOWN )
 	{
