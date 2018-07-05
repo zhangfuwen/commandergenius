@@ -112,25 +112,12 @@ $quick_rebuild || rm -r -f project/bin/* # New Android SDK introduced some lame-
 
 strip_libs() {
 	grep "CustomBuildScript=y" ../AndroidAppSettings.cfg > /dev/null && \
-		echo Stripping libapplication-armeabi.so by hand && \
-		rm obj/local/armeabi/libapplication.so && \
-		cp jni/application/src/libapplication-armeabi.so obj/local/armeabi/libapplication.so && \
-		cp jni/application/src/libapplication-armeabi.so libs/armeabi/libapplication.so && \
-		`which ndk-build | sed 's@/ndk-build@@'`/toolchains/arm-linux-androideabi-${NDK_TOOLCHAIN_VERSION}/prebuilt/$MYARCH/bin/arm-linux-androideabi-strip --strip-unneeded libs/armeabi/libapplication.so
-	grep "CustomBuildScript=y" ../AndroidAppSettings.cfg > /dev/null && \
 		grep "MultiABI=" ../AndroidAppSettings.cfg | grep "y\\|all\\|armeabi-v7a" > /dev/null && \
 		echo Stripping libapplication-armeabi-v7a.so by hand && \
 		rm obj/local/armeabi-v7a/libapplication.so && \
 		cp jni/application/src/libapplication-armeabi-v7a.so obj/local/armeabi-v7a/libapplication.so && \
 		cp jni/application/src/libapplication-armeabi-v7a.so libs/armeabi-v7a/libapplication.so && \
 		`which ndk-build | sed 's@/ndk-build@@'`/toolchains/arm-linux-androideabi-${NDK_TOOLCHAIN_VERSION}/prebuilt/$MYARCH/bin/arm-linux-androideabi-strip --strip-unneeded libs/armeabi-v7a/libapplication.so
-	grep "CustomBuildScript=y" ../AndroidAppSettings.cfg > /dev/null && \
-		grep "MultiABI=" ../AndroidAppSettings.cfg | grep "all\\|mips" > /dev/null && \
-		echo Stripping libapplication-mips.so by hand && \
-		rm obj/local/mips/libapplication.so && \
-		cp jni/application/src/libapplication-mips.so obj/local/mips/libapplication.so && \
-		cp jni/application/src/libapplication-mips.so libs/mips/libapplication.so && \
-		`which ndk-build | sed 's@/ndk-build@@'`/toolchains/mipsel-linux-android-${NDK_TOOLCHAIN_VERSION}/prebuilt/$MYARCH/bin/mipsel-linux-android-strip --strip-unneeded libs/mips/libapplication.so
 	grep "CustomBuildScript=y" ../AndroidAppSettings.cfg > /dev/null && \
 		grep "MultiABI=" ../AndroidAppSettings.cfg | grep "all\\|x86" > /dev/null && \
 		echo Stripping libapplication-x86.so by hand && \
@@ -152,13 +139,6 @@ strip_libs() {
 		cp jni/application/src/libapplication-arm64-v8a.so obj/local/arm64-v8a/libapplication.so && \
 		cp jni/application/src/libapplication-arm64-v8a.so libs/arm64-v8a/libapplication.so && \
 		`which ndk-build | sed 's@/ndk-build@@'`/toolchains/aarch64-linux-android-${NDK_TOOLCHAIN_VERSION}/prebuilt/$MYARCH/bin/aarch64-linux-android-strip --strip-unneeded libs/arm64-v8a/libapplication.so
-	grep "CustomBuildScript=y" ../AndroidAppSettings.cfg > /dev/null && \
-		grep "MultiABI=" ../AndroidAppSettings.cfg | grep "all\\|mips64" > /dev/null && \
-		echo Stripping libapplication-mips64.so by hand && \
-		rm obj/local/mips64/libapplication.so && \
-		cp jni/application/src/libapplication-mips64.so obj/local/mips64/libapplication.so && \
-		cp jni/application/src/libapplication-mips64.so libs/mips64/libapplication.so && \
-		`which ndk-build | sed 's@/ndk-build@@'`/toolchains/mips64el-linux-android-${NDK_TOOLCHAIN_VERSION}/prebuilt/$MYARCH/bin/mips64el-linux-android-strip --strip-unneeded libs/mips64/libapplication.so
 	return 0
 }
 
