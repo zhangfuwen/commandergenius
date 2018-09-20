@@ -29,7 +29,7 @@
 ----------------------------------------------------------*/
 
 #define	SCREEN_W	640
-#define	SCREEN_H	256
+#define	SCREEN_H	540
 
 
 #define	BALLS	300
@@ -635,8 +635,8 @@ int main(int argc, char* argv[])
 				continue;
 			r.x = touchPointers[i].x;
 			r.y = touchPointers[i].y;
-			r.w = 50 + touchPointers[i].pressure / 5;
-			r.h = 50 + touchPointers[i].pressure / 5;
+			r.w = 50;// + touchPointers[i].pressure / 5;
+			r.h = 50;// + touchPointers[i].pressure / 5;
 			r.x -= r.w/2;
 			r.y -= r.h/2;
 			SDL_FillRect(screen, &r, colors[i]);

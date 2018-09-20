@@ -996,7 +996,7 @@ public class Settings
 	private static native int  nativeGetKeymapKeyMultitouchGesture(int keynum);
 	private static native void nativeSetKeymapKeyMultitouchGesture(int keynum, int key);
 	private static native void nativeSetMultitouchGestureSensitivity(int sensitivity);
-	private static native void nativeSetTouchscreenCalibration(int x1, int y1, int x2, int y2);
+	public static native void nativeSetTouchscreenCalibration(int x1, int y1, int x2, int y2);
 	public static native void  nativeSetEnv(final String name, final String value);
 	public static native int   nativeChmod(final String name, int mode);
 	public static native void  nativeChdir(final String dir);
