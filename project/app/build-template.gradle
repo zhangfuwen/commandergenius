@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "net.olofson.ballfield"
-        minSdkVersion 9
-        minSdkVersion 14 // ==GOOGLEPLAYGAMESERVICES==
-        targetSdkVersion 26
+        minSdkVersion 16 // Android-15 and older is not supported by NDK r18 anymore
+        targetSdkVersion 28
     }
 
     buildTypes {

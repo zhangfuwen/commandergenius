@@ -146,11 +146,13 @@ echo "# Application user-visible version name (string)" >> AndroidAppSettings.cf
 echo AppVersionName=\"$AppVersionName\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Specify path to download application data in zip archive in the form 'Description|URL|MirrorURL^Description2|URL2|MirrorURL2^...'" >> AndroidAppSettings.cfg
-echo "# If you'll start Description with '!' symbol it will be enabled by default, other downloads should be selected by user from startup config menu" >> AndroidAppSettings.cfg
+echo "# If you'll start Description with '!' symbol it will be enabled by default, '!!' will also hide the entry from the menu, so it cannot be disabled" >> AndroidAppSettings.cfg
 echo "# If the URL in in the form ':dir/file.dat:http://URL/' it will be downloaded as binary BLOB to the application dir and not unzipped" >> AndroidAppSettings.cfg
-echo "# If the URL does not contain 'http://' it is treated as file from 'project/jni/application/src/AndroidData' dir -" >> AndroidAppSettings.cfg
-echo "# these files are put inside .apk package by build system" >> AndroidAppSettings.cfg
-echo "# You can specify Google Play expansion files in the form 'obb:main.12345' or 'obb:patch.12345' where 12345 is the app version, first associated with the file" >> AndroidAppSettings.cfg
+echo "# If the URL does not contain 'http://' or 'https://', it is treated as file from 'project/jni/application/src/AndroidData' dir -" >> AndroidAppSettings.cfg
+echo "# these files are put inside .apk package by the build system" >> AndroidAppSettings.cfg
+echo "# You can specify Google Play expansion files in the form 'obb:main.12345' or 'obb:patch.12345' where 12345 is the app version for obb file" >> AndroidAppSettings.cfg
+echo "# You can use .zip.xz archives for better compression, but you need to add 'lzma' to CompiledLibraries" >> AndroidAppSettings.cfg
+echo "# Generate .zip.xz files like this: zip -0 -r data.zip your-data/* ; xz -8 data.zip" >> AndroidAppSettings.cfg
 echo AppDataDownloadUrl=\"$AppDataDownloadUrl\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Reset SDL config when updating application to the new version (y) / (n)" >> AndroidAppSettings.cfg
@@ -393,7 +395,7 @@ echo "# GCC version, or 'clang' for CLANG" >> AndroidAppSettings.cfg
 echo NDK_TOOLCHAIN_VERSION=$NDK_TOOLCHAIN_VERSION >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Android platform version." >> AndroidAppSettings.cfg
-echo "# android-9 = Android 2.3, the earliest supported version." >> AndroidAppSettings.cfg
+echo "# android-16 = Android 4.1, the earliest supported version in NDK r18." >> AndroidAppSettings.cfg
 echo "# android-18 = Android 4.3, the first version supporting GLES3." >> AndroidAppSettings.cfg
 echo "# android-21 = Android 5.1, the first version with SO_REUSEPORT defined." >> AndroidAppSettings.cfg
 echo APP_PLATFORM=$APP_PLATFORM >> AndroidAppSettings.cfg
@@ -740,7 +742,7 @@ for KEY in $RedefinedKeysFourthGamepad; do
 done
 
 if [ "$APP_PLATFORM" = "" ]; then
-	APP_PLATFORM=android-18
+	APP_PLATFORM=android-16
 fi
 
 if [ "$MultiABI" = "y" ] ; then

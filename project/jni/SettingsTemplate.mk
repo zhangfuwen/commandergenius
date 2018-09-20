@@ -67,4 +67,4 @@ SDL_VERSION := 1.2
 # Latest GCC got better LTO support
 NDK_TOOLCHAIN_VERSION := clang
 
-APP_PLATFORM := android-18
+APP_PLATFORM := android-16

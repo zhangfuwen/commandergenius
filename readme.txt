@@ -1,7 +1,7 @@
-This is SDL 1.2 and 1.3 ported to Google Android (also bunch of other libs included).
+This is SDL 1.2 ported to Google Android (also bunch of other libs included).
 Sources or patches of the individual games are in the directory project/jni/application.
 
-The libsdl.org now has an official SDL 1.3/2.0 Android port, which is more recent and
+The libsdl.org now has an official SDL 2 Android port, which is more recent and
 better suited for creating new applications from scratch, this port is focused mainly
 on SDL 1.2 and compiling existing applications, it's up to you to decide which port is better.
 Also this port is developed very slowly, although the same is true for an official port.
@@ -11,12 +11,11 @@ Installation
 ============
 
 Install latest Android SDK and NDK from http://developer.android.com/index.html
-Add both to your PATH env variable 0 you should be able to run commands 'ndk-build' and 'android'.
-You will need to install Gradle also.
+Add NDK to your PATH env variable - you should be able to run commands 'ndk-build'.
 it is recommended to install OpenJDK and its development files.
 On RPM based distros they are usually called java-x.x.x-openjdk and java-x.x.x-openjdk-devel.
 On Debian or Ubuntu you install them like this: sudo apt-get install openjdk-8-jdk ant
-The application will run on Android 2.3 and above, but will use features from Android 6.0 if available.
+The application will run on Android 4.1 and above, but will use features from Android 9 if available.
 The most supported environment for this port is Linux, MacOs should be okay too.
 If you're developing under Windows, you will need to install some Linux environment,
 such as Bash shell on Windows 10, or Portable Ubuntu, then install Linux toolchain on it.
@@ -61,7 +60,7 @@ Note that GL ES is NOT pure OpenGL - there are no glBegin() and glEnd() call and
 and generally it will take a lot of effort to port OpenGL application to GL ES.
 
 
-Licensing issues when using gradle 
+Licensing issues when using gradle
 ==================================
 
 cd into android-sdk-linux/tools/bin
