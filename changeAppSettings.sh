@@ -401,7 +401,7 @@ echo "# android-21 = Android 5.1, the first version with SO_REUSEPORT defined." 
 echo APP_PLATFORM=$APP_PLATFORM >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Specify architectures to compile, 'all' or 'y' to compile for all architectures." >> AndroidAppSettings.cfg
-echo "# Available architectures: armeabi-v7a x86 mips arm64-v8a" >> AndroidAppSettings.cfg
+echo "# Available architectures: armeabi-v7a arm64-v8a x86 x86_64" >> AndroidAppSettings.cfg
 echo MultiABI=\'$MultiABI\' >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Optional shared libraries to compile - removing some of them will save space" >> AndroidAppSettings.cfg
