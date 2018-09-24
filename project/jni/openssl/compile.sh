@@ -37,6 +37,8 @@ build() {
 	../../setCrossEnvironment-$ARCH.sh sh -c './Configure shared zlib --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' || exit 1
 
 	sed -i.old 's/^CFLAGS=/CFLAGS:=$(CFLAGS) /' Makefile
+	sed -i.old 's/^LDFLAGS=/LDFLAGS:=$(LDFLAGS) /' Makefile
+	sed -i.old 's/^LIB_LDFLAGS=/LIB_LDFLAGS:=$(LDFLAGS) /' Makefile
 	sed -i.old 's/-mandroid//g' Makefile
 	sed -i.old 's/--sysroot=$(CROSS_SYSROOT)//g' Makefile
 
