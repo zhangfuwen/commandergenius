@@ -12,7 +12,7 @@ APP_AVAILABLE_STATIC_LIBS := jpeg png freetype fontconfig xerces ogg vorbis flac
 APP_MODULES := application sdl-1.2 sdl_main sdl_native_helpers jpeg png ogg flac vorbis freetype tremor ogg
 
 ifeq ($(APP_ABI),)
-APP_ABI := armeabi
+APP_ABI := armeabi-v7a
 endif
 
 # The namespace in Java file, with dots replaced with underscores
