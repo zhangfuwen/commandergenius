@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "net.olofson.ballfield"
-        minSdkVersion 16 // Android-15 and older is not supported by NDK r18 anymore
+        minSdkVersion 16 // Must match version numbers in project/AndroidManifestTemplate.xml
         targetSdkVersion 28
     }
 
