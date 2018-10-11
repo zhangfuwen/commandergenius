@@ -68,6 +68,9 @@ CURL_HEADERS := \
 	stdcheaders.h \
 	typecheck-gcc.h
 
+# Hide libcurl from the project if openssl is not compiled
+ifneq ($(filter ssl, $(APP_MODULES)),)
+
 LOCAL_SRC_FILES := $(addprefix lib/,$(CSOURCES))
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include/ $(LOCAL_PATH)/lib $(LOCAL_PATH)/../openssl/include
 LOCAL_CFLAGS += $(common_CFLAGS) -DBUILDING_LIBCURL
@@ -76,7 +79,6 @@ LOCAL_COPY_HEADERS_TO := libcurl/curl
 LOCAL_COPY_HEADERS := $(addprefix include/curl/,$(CURL_HEADERS))
 
 LOCAL_MODULE:= libcurl
-LOCAL_MODULE_TAGS := optional
 
 LOCAL_MODULE_FILENAME := libcurl-sdl # It clashes with system libcurl in Android 4.3 and older
 
@@ -85,3 +87,5 @@ LOCAL_SHARED_LIBRARIES := ssl crypto
 LOCAL_LDLIBS := -lz
 
 include $(BUILD_SHARED_LIBRARY)
+
+endif

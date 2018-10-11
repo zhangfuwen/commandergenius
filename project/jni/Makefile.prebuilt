@@ -13,9 +13,14 @@ OPENSSL := $(foreach ARCH, $(ARCHES32) $(ARCHES64), openssl/lib-$(ARCH)/libcrypt
 
 LIBS := $(ICONV) $(ICU) $(OPENSSL)
 
-prebuilt-libraries: $(LIBS)
+.PHONY: all boost openssl icu
+all: $(LIBS)
 
-.NOTPARALLEL: $(LIBS)
+openssl: $(OPENSSL)
+
+icu: $(ICONV) $(ICU)
+
+#.NOTPARALLEL: $(LIBS) $(BOOST)
 
 $(ICONV) $(ICU): iconv/src/build.sh
 	cd iconv/src  && \
@@ -34,9 +39,6 @@ $(ICONV) $(ICU): iconv/src/build.sh
 $(OPENSSL): openssl/compile.sh
 	cd openssl && ./compile.sh
 
-iconv/src/build.sh openssl/compile.sh:
-	git submodule update --init --recursive
-
 BOOST_LIBS := atomic chrono container context coroutine date_time exception filesystem \
 				graph iostreams log log_setup \
 				prg_exec_monitor program_options random regex serialization signals stacktrace_basic stacktrace_noop \
@@ -47,16 +49,18 @@ BOOST_LIBS := atomic chrono container context coroutine date_time exception file
 
 BOOST := $(foreach ARCH, $(ARCHES32) $(ARCHES64), $(foreach NAME, $(BOOST_LIBS), boost/lib/$(ARCH)/libboost_$(NAME).a))
 
-$(BOOST):
+$(BOOST): boost/src/build-android.sh
 	rm -rf boost/include boost/lib ; \
 	cd boost/src && \
-	./build-android.sh --boost=1.65.1 --arch=$(shell echo $(foreach ARCH, $(ARCHES32) $(ARCHES64),$(ARCH),) | tr -d ' ') && \
+	./build-android.sh --boost=1.68.0 --arch=$(shell echo $(foreach ARCH, $(ARCHES32) $(ARCHES64),$(ARCH),) | tr -d ' ') && \
 	for ARCH in $(ARCHES32) $(ARCHES64); do  \
 		mkdir -p ../lib/$$ARCH ../include ; \
-		$(foreach NAME, $(BOOST_LIBS), cp -f build/out/$$ARCH/lib/libboost_$(NAME)-clang-mt-1_65_1.a ../lib/$$ARCH/libboost_$(NAME).a || exit 1 ;) \
-		cp -r -f build/out/$$ARCH/include/boost-1_65_1/* ../include/ || exit 1 ; \
+		$(foreach NAME, $(BOOST_LIBS), cp -f build/out/$$ARCH/lib/libboost_$(NAME)-clang-mt-1_68_0.a ../lib/$$ARCH/libboost_$(NAME).a || exit 1 ;) \
+		cp -r -f build/out/$$ARCH/include/boost-1.68.0/* ../include/ || exit 1 ; \
 	done || exit 1 ; \
 	$(foreach NAME, $(BOOST_LIBS), ln -sf boost ../../boost_$(NAME) ;)
 
-.PHONY: boost
 boost: $(BOOST)
+
+iconv/src/build.sh boost/src/build-android.sh:
+	git submodule update --init --recursive
