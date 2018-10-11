@@ -4,7 +4,7 @@
 [submodule "project/jni/boost/src"]
 	path = project/jni/boost/src
 	url = https://github.com/pelya/Boost-for-Android.git
-	branch = master2
+	branch = master
 	update = merge
 [submodule "project/jni/application/commandergenius/commandergenius"]
 	path = project/jni/application/commandergenius/commandergenius
@@ -36,6 +36,8 @@
 [submodule "project/jni/iconv/src"]
 	path = project/jni/iconv/src
 	url = https://github.com/pelya/libiconv-libicu-android.git
+	branch = master
+	update = merge
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = https://github.com/pelya/openttd-android.git
