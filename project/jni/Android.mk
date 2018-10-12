@@ -7,7 +7,7 @@ endif
 NDK_VERSION := $(strip $(patsubst android-ndk-%,%,$(filter android-ndk-%, $(subst /, ,$(dir $(TARGET_CC))))))
 #$(info NDK version $(NDK_VERSION)) # This warning puzzles ndk-gdb
 ifneq ($(filter r1 r2 r3 r4 r5 r6 r7 r8,$(NDK_VERSION)),)
-$(error Your NDK $(NDK_VERSION) is too old, please download NDK r4b, r5c or r6 from http://developer.android.com)
+$(error Your NDK $(NDK_VERSION) is too old, please download NDK from http://developer.android.com)
 endif
 
 NDK_PATH := $(shell dirname $(shell which ndk-build))

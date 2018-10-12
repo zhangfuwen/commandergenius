@@ -49,9 +49,7 @@ LOCAL_SHARED_LIBRARIES := sdl-$(SDL_VERSION) $(filter-out $(APP_AVAILABLE_STATIC
 
 LOCAL_STATIC_LIBRARIES := $(filter $(APP_AVAILABLE_STATIC_LIBS), $(COMPILED_LIBRARIES))
 
-APP_STL := gnustl_static
-
-LOCAL_LDLIBS := $(APPLICATION_GLES_LIBRARY) -ldl -llog -lz # -lgnustl_static
+LOCAL_LDLIBS := $(APPLICATION_GLES_LIBRARY) -ldl -llog -lz
 
 LOCAL_LDFLAGS := -Lobj/local/$(TARGET_ARCH_ABI)
 
@@ -88,30 +86,11 @@ LOCAL_PATH_SDL_APPLICATION := $(LOCAL_PATH)
 
 $(shell cd $(LOCAL_PATH_SDL_APPLICATION)/src && $(PARALLEL_UNLOCK))
 
-obj/local/armeabi/libapplication.so: $(LOCAL_PATH)/src/libapplication-armeabi.so
-
-$(LOCAL_PATH)/src/libapplication-armeabi.so: $(SDL_APP_LIB_DEPENDS-armeabi) OVERRIDE_CUSTOM_LIB
-	cd $(LOCAL_PATH_SDL_APPLICATION)/src && $(PARALLEL_LOCK) && \
-	./AndroidBuild.sh armeabi arm-linux-androideabi && $(PARALLEL_UNLOCK) && \
-	{ [ -e libapplication.so ] && ln -s libapplication.so libapplication-armeabi.so || true ; }
-
 obj/local/armeabi-v7a/libapplication.so: $(LOCAL_PATH)/src/libapplication-armeabi-v7a.so
 
 $(LOCAL_PATH)/src/libapplication-armeabi-v7a.so: $(SDL_APP_LIB_DEPENDS-armeabi-v7a) OVERRIDE_CUSTOM_LIB
 	cd $(LOCAL_PATH_SDL_APPLICATION)/src && $(PARALLEL_LOCK) && \
 	./AndroidBuild.sh armeabi-v7a arm-linux-androideabi && $(PARALLEL_UNLOCK)
-
-obj/local/armeabi-v7a-hard/libapplication.so: $(LOCAL_PATH)/src/libapplication-armeabi-v7a-hard.so
-
-$(LOCAL_PATH)/src/libapplication-armeabi-v7a-hard.so: $(SDL_APP_LIB_DEPENDS-armeabi-v7a-hard) OVERRIDE_CUSTOM_LIB
-	cd $(LOCAL_PATH_SDL_APPLICATION)/src && $(PARALLEL_LOCK) && \
-	./AndroidBuild.sh armeabi-v7a-hard arm-linux-androideabi && $(PARALLEL_UNLOCK)
-
-obj/local/mips/libapplication.so: $(LOCAL_PATH)/src/libapplication-mips.so
-
-$(LOCAL_PATH)/src/libapplication-mips.so: $(SDL_APP_LIB_DEPENDS-mips) OVERRIDE_CUSTOM_LIB
-	cd $(LOCAL_PATH_SDL_APPLICATION)/src && $(PARALLEL_LOCK) && \
-	./AndroidBuild.sh mips mipsel-linux-android && $(PARALLEL_UNLOCK)
 
 obj/local/x86/libapplication.so: $(LOCAL_PATH)/src/libapplication-x86.so
 
