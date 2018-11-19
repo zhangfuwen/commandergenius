@@ -20,6 +20,4 @@ LOCAL_SHARED_LIBRARIES += sdl_image sdl_ttf
 
 LOCAL_STATIC_LIBRARIES := 
 
-LOCAL_LDLIBS := -llog
-
 include $(BUILD_STATIC_LIBRARY)
