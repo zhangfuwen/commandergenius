@@ -27,6 +27,20 @@ TODO, which will get actually done
 
 - Debian: proot crashes on Shield TV arm64 box.
 
-- Debian: add harldink simulation to proot, for Android 6.
+- Debian: add hardlink simulation to proot, for Android 6.
 
 - Debian: add OpenSL ES output plugin to PulseAudio.
+
+- Debian: 64-bit arch support.
+
+- Debian: distribute Debian image inside .obb file along with the app.
+
+- XSDL: copy DISPLAY=... to clipboard on screen tap.
+
+- XSDL: use pixel size instead of video mode size.
+
+- XSDL: fix hardware keyboards with non-English layouts sending wrong keycodes.
+
+- XSDL: proper window resizing, with xrandr resizing XSDL screen buffer.
+
+- XSDL: use better approach than launching xsel to type Unicode symbols.
