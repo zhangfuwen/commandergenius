@@ -78,7 +78,7 @@ extern void SDL_ANDROID_MainThreadPushMouseMotion(int x, int y)
 {
 	SDL_ANDROID_currentMouseX = x;
 	SDL_ANDROID_currentMouseY = y;
-	__android_log_print(ANDROID_LOG_INFO, "libSDL", "MainThreadPushMouseMotion: %4d %4d", x, y);
+	//__android_log_print(ANDROID_LOG_INFO, "libSDL", "MainThreadPushMouseMotion: %4d %4d", x, y);
 	SDL_SendMouseMotion( ANDROID_CurrentWindow, 0, x, y );
 }
 
