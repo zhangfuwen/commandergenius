@@ -3,7 +3,10 @@ APP_PROJECT_PATH := $(call my-dir)/..
 include jni/Settings.mk
 
 APP_STL := c++_static
-APP_CFLAGS := -Oz -DNDEBUG -g # -Oz works best with clang
+APP_CFLAGS := -g
+ifneq ($(NDK_DEBUG),1)
+APP_CFLAGS += -Oz -DNDEBUG # -Oz works best with clang
+endif
 APP_PIE := true # This feature makes executables incompatible to Android API 15 or lower, but executables without PIE will not run on Android 5.0 and newer
 SDL_EXCLUDE_LIBGCC := -Wl,--exclude-libs,libgcc.a
 SDL_EXCLUDE_LIBUNWIND := -Wl,--exclude-libs,libunwind.a

@@ -5,10 +5,14 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := sdl_image
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH) $(LOCAL_PATH)/../jpeg/include $(LOCAL_PATH)/../png/include $(LOCAL_PATH)/../sdl-$(SDL_VERSION)/include $(LOCAL_PATH)/include
-LOCAL_CFLAGS := -O3 \
+LOCAL_CFLAGS := \
        -DLOAD_JPG -DLOAD_PNG -DLOAD_BMP -DLOAD_GIF -DLOAD_LBM \
        -DLOAD_PCX -DLOAD_PNM -DLOAD_TGA -DLOAD_XCF -DLOAD_XPM \
        -DLOAD_XV
+
+ifneq ($(NDK_DEBUG),1)
+LOCAL_CFLAGS += -O3 -DNDEBUG
+endif
 
 LOCAL_CPP_EXTENSION := .cpp
 
