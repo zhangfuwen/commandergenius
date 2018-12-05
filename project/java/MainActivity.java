@@ -1195,6 +1195,7 @@ public class MainActivity extends Activity
 					File libpath = new File(getFilesDir().getAbsolutePath() + "/../lib/" + libname);
 					Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
 					System.load(libpath.getPath());
+					Log.i("SDL", "libSDL: loaded lib " + libpath.getAbsolutePath());
 				}
 				catch( UnsatisfiedLinkError e )
 				{
@@ -1205,11 +1206,13 @@ public class MainActivity extends Activity
 						File libpath = new File(getFilesDir().getAbsolutePath() + "/" + libname);
 						Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
 						System.load(libpath.getPath());
+						Log.i("SDL", "libSDL: loaded lib " + libpath.getAbsolutePath());
 					}
 					catch( UnsatisfiedLinkError ee )
 					{
 						Log.i("SDL", "libSDL: error loading lib " + l + ": " + ee.toString());
 						System.loadLibrary(l);
+						Log.i("SDL", "libSDL: loaded lib " + l + " from app lib path");
 					}
 				}
 			}
