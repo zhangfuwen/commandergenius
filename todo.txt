@@ -25,6 +25,10 @@ TODO, which will get actually done
 
 - SDL: support for mounting OBB files as directories: https://developer.android.com/google/play/expansion-files.html
 
+- SDL: SdlVideoResizeKeepAspect=y mouse location shifted near right border.
+
+- SDL: Text input window is slightly out of screen on phone with virtual navigation keys.
+
 - Debian: proot crashes on Shield TV arm64 box.
 
 - Debian: add harldink simulation to proot, for Android 6.
