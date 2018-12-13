@@ -871,6 +871,8 @@ public class MainActivity extends Activity
 		screenKeyboard.setTextColor(this.getResources().getColor(android.R.color.background_light));
 		if( isRunningOnOUYA() && Globals.TvBorders )
 			screenKeyboard.setPadding(100, 100, 100, 100); // Bad bad HDMI TVs all have cropped borders
+		else
+			screenKeyboard.setPadding(20, 20, 20, 20); // Account for rounded screen corners
 		_screenKeyboard = screenKeyboard;
 		_videoLayout.addView(_screenKeyboard);
 		//_screenKeyboard.setKeyListener(new TextKeyListener(TextKeyListener.Capitalize.NONE, false));

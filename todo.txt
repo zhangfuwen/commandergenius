@@ -27,8 +27,6 @@ TODO, which will get actually done
 
 - SDL: SdlVideoResizeKeepAspect=y mouse location shifted near right border.
 
-- SDL: Text input window is slightly out of screen on phone with virtual navigation keys.
-
 - SDL: Text input window still blocks touches sometimes after text input is finished.
 
 - Debian: proot crashes on Shield TV arm64 box.

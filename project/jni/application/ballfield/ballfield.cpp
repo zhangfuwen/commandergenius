@@ -715,7 +715,7 @@ int main(int argc, char* argv[])
 					if(evt.key.keysym.sym == SDLK_2)
 					{
 						__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Async text input started");
-						asyncTextInputBuf[0] = 0;
+						strcpy(asyncTextInputBuf, "async");
 						SDL_ANDROID_GetScreenKeyboardTextInputAsync(asyncTextInputBuf, sizeof(asyncTextInputBuf));
 					}
 					if(evt.key.keysym.sym == SDLK_3)
@@ -768,7 +768,7 @@ int main(int argc, char* argv[])
 				}
 			}
 		}
-		if( screenKeyboardShown != SDL_IsScreenKeyboardShown(NULL))
+		if( screenKeyboardShown != SDL_IsScreenKeyboardShown(NULL) )
 		{
 			__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Screen keyboard shown: %d -> %d", screenKeyboardShown, SDL_IsScreenKeyboardShown(NULL));
 			screenKeyboardShown = SDL_IsScreenKeyboardShown(NULL);
