@@ -34,3 +34,15 @@ TODO, which will get actually done
 - Debian: add harldink simulation to proot, for Android 6.
 
 - Debian: add OpenSL ES output plugin to PulseAudio.
+
+- XServer: apostrophe and minus on hardware keyboard with Italian layout are swapped, and slash (key 7) dos not work, seems to be incorrect keycode processing in SDL.
+
+- XServer: do not use xsel to enter Unicode characters, modify clipboard directly.
+
+- XServer: remove checking network port and restarting, add SO_REUSEPORT flag.
+
+- XServer: fix xrandr screen resizing.
+
+- XServer: use pixel size instead of screen size.
+
+- XServer: native PulseAudio support using OpenSLES.
