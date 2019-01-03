@@ -46,3 +46,5 @@ TODO, which will get actually done
 - XServer: use pixel size instead of screen size.
 
 - XServer: native PulseAudio support using OpenSLES.
+
+- OpenLieroX: limited lives are shown incorrectly in score table when spectating.
