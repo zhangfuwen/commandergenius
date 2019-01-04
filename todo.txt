@@ -48,3 +48,8 @@ TODO, which will get actually done
 - XServer: native PulseAudio support using OpenSLES.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
+
+- SuperTux: update to new upstream version.
+
+- SuperTux: right click does not work in editor.
+
