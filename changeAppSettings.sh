@@ -405,7 +405,7 @@ echo "# Available architectures: armeabi-v7a arm64-v8a x86 x86_64" >> AndroidApp
 echo MultiABI=\'$MultiABI\' >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
 echo "# Optional shared libraries to compile - removing some of them will save space" >> AndroidAppSettings.cfg
-echo "# MP3 support by libMAD is encumbered by patents and libMAD is GPL-ed" >> AndroidAppSettings.cfg
+echo "# MP3 patents are expired, but libmad license is GPL, not LGPL" >> AndroidAppSettings.cfg
 grep 'Available' project/jni/SettingsTemplate.mk >> AndroidAppSettings.cfg
 echo CompiledLibraries=\"$CompiledLibraries\" >> AndroidAppSettings.cfg
 echo >> AndroidAppSettings.cfg
@@ -1102,8 +1102,6 @@ fi
 ./copyAssets.sh || exit 1
 
 rm -rf project/jni/android-support
-echo "$NDK_TOOLCHAIN_VERSION" | grep 'clang' > /dev/null || \
-	ln -s "`which ndk-build | sed 's@/ndk-build@@'`/sources/android/support" project/jni/android-support
 
 rm -rf project/res/drawable/banner.png
 if [ -e project/jni/application/src/banner.png ]; then

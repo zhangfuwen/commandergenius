@@ -11,9 +11,9 @@ index 9e6150a..09ade66 100644
  			if( Globals.TouchscreenKeyboardTheme == 4 )
  				nativeSetupScreenKeyboardButtons(loadRaw(p, R.raw.retro));
  			if( Globals.TouchscreenKeyboardTheme == 5 )
---- /dev/null	2018-04-10 21:06:44.327303421 +0300
-+++ b/project/java/RunFromOtherApp.java	2018-05-17 22:21:46.816651827 +0300
-@@ -0,0 +1,108 @@
+--- /dev/null	2018-12-13 18:37:19.876000065 +0200
++++ Connect.java	2018-12-17 21:16:01.027001714 +0200
+@@ -0,0 +1,115 @@
 +/*
 +Simple DirectMedia Layer
 +Java source code (C) 2009-2014 Sergii Pylypenko
@@ -105,7 +105,7 @@ index 9e6150a..09ade66 100644
 +import android.content.ComponentName;
 +
 +
-+public class RunFromOtherApp extends Activity
++public class Connect extends Activity
 +{
 +	@Override
 +	protected void onCreate(Bundle savedInstanceState)
@@ -114,9 +114,16 @@ index 9e6150a..09ade66 100644
 +
 +		Intent main = new Intent(this, MainActivity.class);
 +		main.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-+		if( getIntent().getScheme() != null && getIntent().getScheme().equals("openlierox") )
++		if( getIntent().getScheme() != null && getIntent().getScheme().equals("openlierox") && getIntent().getData() != null && getIntent().getData().getHost().equals("connect") )
 +		{
-+			main.putExtra(RestartMainActivity.SDL_RESTART_PARAMS, getIntent().getData().getHost() + ":" + getIntent().getData().getPort());
++			main.putExtra(RestartMainActivity.SDL_RESTART_PARAMS, getIntent().getData().getPath().replace("/","").replace("!",":"));
++		}
++		if( getIntent().getScheme() != null && getIntent().getScheme().equals("https") && getIntent().getData() != null && getIntent().getData().getPath().contains("connect") )
++		{
++			if( getIntent().getData().getQueryParameter("a") != null )
++				main.putExtra(RestartMainActivity.SDL_RESTART_PARAMS, getIntent().getData().getQueryParameter("a").replace("!",":"));
++			else
++				main.putExtra(RestartMainActivity.SDL_RESTART_PARAMS, getIntent().getData().getPath().replace("/connect/","").replace("!",":"));
 +		}
 +		startActivity(main);
 +		finish();

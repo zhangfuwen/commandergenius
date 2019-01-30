@@ -25,6 +25,10 @@ TODO, which will get actually done
 
 - SDL: support for mounting OBB files as directories: https://developer.android.com/google/play/expansion-files.html
 
+- SDL: SdlVideoResizeKeepAspect=y mouse location shifted near right border.
+
+- SDL: Text input window still blocks touches sometimes after text input is finished.
+
 - Debian: proot crashes on Shield TV arm64 box.
 
 - Debian: add hardlink simulation to proot, for Android 6.
@@ -44,3 +48,22 @@ TODO, which will get actually done
 - XSDL: proper window resizing, with xrandr resizing XSDL screen buffer.
 
 - XSDL: use better approach than launching xsel to type Unicode symbols.
+
+- XSDL: apostrophe and minus on hardware keyboard with Italian layout are swapped, and slash (key 7) dos not work, seems to be incorrect keycode processing in SDL.
+
+- XSDL: do not use xsel to enter Unicode characters, modify clipboard directly.
+
+- XSDL: add SO_REUSEPORT flag.
+
+- XSDL: fix xrandr screen resizing.
+
+- XSDL: use pixel size instead of screen size.
+
+- XSDL: native PulseAudio support using OpenSLES.
+
+- OpenLieroX: limited lives are shown incorrectly in score table when spectating.
+
+- SuperTux: update to new upstream version.
+
+- SuperTux: right click does not work in editor.
+
