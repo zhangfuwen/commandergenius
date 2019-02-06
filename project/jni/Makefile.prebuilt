@@ -39,17 +39,51 @@ $(ICONV) $(ICU): iconv/src/build.sh
 $(OPENSSL): openssl/compile.sh
 	cd openssl && ./compile.sh
 
-BOOST_LIBS := atomic chrono container context contract coroutine date_time exception filesystem graph iostreams log log_setup \
-				math_c99 math_c99f math_c99l math_tr1 math_tr1f math_tr1l prg_exec_monitor program_options random regex \
-				serialization signals stacktrace_basic stacktrace_noop system test_exec_monitor thread timer type_erasure \
-				unit_test_framework wave wserialization
+BOOST_LIBS := \
+	atomic \
+	chrono \
+	container \
+	context \
+	contract \
+	coroutine \
+	date_time \
+	exception \
+	fiber \
+	filesystem \
+	graph \
+	iostreams \
+	locale \
+	log \
+	log_setup \
+	math_c99 \
+	math_c99f \
+	math_c99l \
+	math_tr1 \
+	math_tr1f \
+	math_tr1l \
+	prg_exec_monitor \
+	program_options \
+	random \
+	regex \
+	serialization \
+	stacktrace_basic \
+	stacktrace_noop \
+	system \
+	test_exec_monitor \
+	thread \
+	timer \
+	type_erasure \
+	unit_test_framework \
+	wave \
+	wserialization \
+
 
 BOOST := $(foreach ARCH, $(ARCHES32) $(ARCHES64), $(foreach NAME, $(BOOST_LIBS), boost/lib/$(ARCH)/libboost_$(NAME).a))
 
 $(BOOST): boost/src/build-android.sh
 	rm -rf boost/include boost/lib ; \
 	cd boost/src && \
-	./build-android.sh --boost=1.68.0 --arch=$(shell echo $(foreach ARCH, $(ARCHES32) $(ARCHES64),$(ARCH),) | tr -d ' ') && \
+	./build-android.sh --boost=1.69.0 --with-iconv --arch=$(shell echo $(foreach ARCH, $(ARCHES32) $(ARCHES64),$(ARCH),) | tr -d ' ') && \
 	for ARCH in $(ARCHES32) $(ARCHES64); do  \
 		mkdir -p ../lib/$$ARCH ../include ; \
 		$(foreach NAME, $(BOOST_LIBS), cp -f build/out/$$ARCH/lib/libboost_$(NAME)-clang-mt-*.a ../lib/$$ARCH/libboost_$(NAME).a || exit 1 ;) \
@@ -61,3 +95,4 @@ boost: $(BOOST)
 
 iconv/src/build.sh boost/src/build-android.sh:
 	git submodule update --init --recursive
+

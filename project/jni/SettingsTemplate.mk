@@ -2,7 +2,7 @@
 # To filter out static libs from all libs in makefile
 APP_AVAILABLE_STATIC_LIBS := jpeg png freetype fontconfig xerces ogg vorbis flac \
 	boost_atomic boost_chrono boost_container boost_context boost_coroutine boost_date_time boost_exception boost_filesystem \
-	boost_graph boost_iostreams boost_log boost_log_setup boost_prg_exec_monitor boost_program_options boost_random \
+	boost_graph boost_iostreams boost_locale boost_log boost_log_setup boost_prg_exec_monitor boost_program_options boost_random \
 	boost_regex boost_serialization boost_signals boost_stacktrace_basic boost_stacktrace_noop \
 	boost_system boost_test_exec_monitor boost_thread boost_timer boost_type_erasure boost_unit_test_framework boost_wave boost_wserialization \
 	glu icudata icutest icui18n icuio icule iculx icutu icuuc icu-le-hb harfbuzz sdl_savepng android_support \

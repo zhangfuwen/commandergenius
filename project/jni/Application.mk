@@ -2,7 +2,7 @@ APP_PROJECT_PATH := $(call my-dir)/..
 
 include jni/Settings.mk
 
-APP_STL := c++_static
+APP_STL := c++_shared
 APP_CFLAGS := -g
 ifneq ($(NDK_DEBUG),1)
 APP_CFLAGS += -Oz -DNDEBUG # -Oz works best with clang
