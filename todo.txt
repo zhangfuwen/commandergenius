@@ -63,6 +63,8 @@ TODO, which will get actually done
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
+- OpenLieroX: download speed test at humus.kvalitne.cz is not working, replace it with some default value.
+
 - SuperTux: update to new upstream version.
 
 - SuperTux: right click does not work in editor.
