@@ -984,7 +984,7 @@ public class Settings
 	private static native void nativeSetCompatibilityHacks();
 	private static native void nativeSetVideoMultithreaded();
 	private static native void nativeSetVideoForceSoftwareMode();
-	private static native void nativeSetupScreenKeyboard(int size, int drawsize, int theme, int transparency, int floatingScreenJoystick, int buttonAmount);
+	public static native void  nativeSetupScreenKeyboard(int size, int drawsize, int theme, int transparency, int floatingScreenJoystick, int buttonAmount);
 	private static native void nativeSetupScreenKeyboardButtons(byte[] img);
 	private static native void nativeInitKeymap();
 	private static native int  nativeGetKeymapKey(int key);
@@ -993,6 +993,7 @@ public class Settings
 	private static native void nativeSetKeymapKeyScreenKb(int keynum, int key);
 	private static native void nativeSetScreenKbKeyUsed(int keynum, int used);
 	private static native void nativeSetScreenKbKeyLayout(int keynum, int x1, int y1, int x2, int y2);
+	public static native int   nativeGetScreenKeyboardButtonLayout(int button, int coord);
 	private static native int  nativeGetKeymapKeyMultitouchGesture(int keynum);
 	private static native void nativeSetKeymapKeyMultitouchGesture(int keynum, int key);
 	private static native void nativeSetMultitouchGestureSensitivity(int sensitivity);

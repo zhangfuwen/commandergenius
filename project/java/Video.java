@@ -1003,7 +1003,7 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 
 	private native void nativeInitJavaCallbacks();
 	private native void nativeInit(String CurrentPath, String CommandLine, int multiThreadedVideo, int unused);
-	private native void nativeResize(int w, int h, int keepAspectRatio);
+	public static native void nativeResize(int w, int h, int keepAspectRatio);
 	private native void nativeDone();
 	private native void nativeGlContextLost();
 	public native void nativeGlContextRecreated();

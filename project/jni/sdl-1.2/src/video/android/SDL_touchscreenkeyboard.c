@@ -1363,12 +1363,10 @@ int SDLCALL SDL_ANDROID_SetScreenKeyboardTransparency(int alpha)
 
 static int ScreenKbRedefinedByUser = 0;
 
-JNIEXPORT void JNICALL
-JAVA_EXPORT_NAME(Settings_nativeSetScreenKbKeyLayout) (JNIEnv* env, jobject thiz, jint keynum, jint x1, jint y1, jint x2, jint y2)
+static int convertJavaKeyIdToC(int keynum)
 {
-	SDL_Rect rect = {x1, y1, x2-x1, y2-y1};
-	int key = -1;
 	// Why didn't I use consistent IDs between Java and C code?
+	int key = -1;
 	if( keynum == 0 )
 		key = SDL_ANDROID_SCREENKEYBOARD_BUTTON_DPAD;
 	if( keynum == 1 )
@@ -1379,12 +1377,42 @@ JAVA_EXPORT_NAME(Settings_nativeSetScreenKbKeyLayout) (JNIEnv* env, jobject thiz
 		key = SDL_ANDROID_SCREENKEYBOARD_BUTTON_DPAD2;
 	if( keynum == SDL_ANDROID_SCREENKEYBOARD_BUTTON_DPAD3 ) // This one is consistent by chance
 		key = SDL_ANDROID_SCREENKEYBOARD_BUTTON_DPAD3;
+	return key;
+}
+
+JNIEXPORT void JNICALL
+JAVA_EXPORT_NAME(Settings_nativeSetScreenKbKeyLayout) (JNIEnv* env, jobject thiz, jint keynum, jint x1, jint y1, jint x2, jint y2)
+{
+	SDL_Rect rect = {x1, y1, x2-x1, y2-y1};
+	int key = convertJavaKeyIdToC(keynum);
 
 	if( key >= 0 )
 	{
 		ScreenKbRedefinedByUser = 1;
 		SDL_ANDROID_SetScreenKeyboardButtonPos(key, &rect);
 	}
+}
+
+JNIEXPORT jint JNICALL
+JAVA_EXPORT_NAME(Settings_nativeGetScreenKeyboardButtonLayout) ( JNIEnv* env, jobject thiz, jint keynum, jint coord )
+{
+	SDL_Rect rect = {0, 0, 0, 0};
+	int key = convertJavaKeyIdToC(keynum);
+
+	if( key < 0 )
+		return 0;
+
+	SDL_ANDROID_GetScreenKeyboardButtonPos(key, &rect);
+	if( coord == 0 )
+		return rect.x;
+	if( coord == 1 )
+		return rect.y;
+	if( coord == 2 )
+		return rect.x + rect.w;
+	if( coord == 3 )
+		return rect.y + rect.h;
+
+	return 0;
 }
 
 int SDL_ANDROID_GetScreenKeyboardRedefinedByUser()

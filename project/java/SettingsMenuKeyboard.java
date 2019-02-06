@@ -57,6 +57,7 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Button;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.text.Editable;
 import android.text.SpannedString;
@@ -625,8 +626,16 @@ class SettingsMenuKeyboard extends SettingsMenu
 		void run (final MainActivity p)
 		{
 			p.setText(p.getResources().getString(R.string.screenkb_custom_layout_help));
-			CustomizeScreenKbLayoutTool tool = new CustomizeScreenKbLayoutTool(p);
-			Globals.TouchscreenKeyboardSize = Globals.TOUCHSCREEN_KEYBOARD_CUSTOM;
+			if (Globals.ImmersiveMode)
+				DimSystemStatusBar.get().dim(p.getVideoLayout());
+			p.getVideoLayout().getHandler().postDelayed(new Runnable()
+			{
+				public void run()
+				{
+					CustomizeScreenKbLayoutTool tool = new CustomizeScreenKbLayoutTool(p);
+					Globals.TouchscreenKeyboardSize = Globals.TOUCHSCREEN_KEYBOARD_CUSTOM;
+				}
+			}, 200);
 		}
 
 		static class CustomizeScreenKbLayoutTool implements View.OnTouchListener, View.OnKeyListener
@@ -670,30 +679,27 @@ class SettingsMenuKeyboard extends SettingsMenu
 				boundary.setImageBitmap(boundaryBmp);
 				layout.addView(boundary);
 				currentButton = -1;
-				if( Globals.TouchscreenKeyboardTheme == 2 )
-				{
-					buttons = new int[] {
-						R.drawable.sun_dpad,
-						R.drawable.sun_keyboard,
-						R.drawable.sun_b1,
-						R.drawable.sun_b2,
-						R.drawable.sun_b3,
-						R.drawable.sun_b4,
-						R.drawable.sun_b5,
-						R.drawable.sun_b6,
-						R.drawable.sun_dpad,
-						R.drawable.sun_dpad
-					};
-				}
 
-				int displayX = 800;
-				int displayY = 480;
-				try {
-					DisplayMetrics dm = new DisplayMetrics();
-					p.getWindowManager().getDefaultDisplay().getMetrics(dm);
-					displayX = dm.widthPixels;
-					displayY = dm.heightPixels;
-				} catch (Exception eeeee) {}
+				final int displayX = p.getVideoLayout().getWidth();
+				final int displayY = p.getVideoLayout().getHeight();
+
+				if( Globals.TouchscreenKeyboardSize != Globals.TOUCHSCREEN_KEYBOARD_CUSTOM )
+				{
+					DemoRenderer.nativeResize(displayX, displayY, 0);
+					Settings.nativeSetupScreenKeyboard(	Globals.TouchscreenKeyboardSize,
+														Globals.TouchscreenKeyboardDrawSize,
+														Globals.TouchscreenKeyboardTheme,
+														Globals.TouchscreenKeyboardTransparency,
+														Globals.FloatingScreenJoystick ? 1 : 0,
+														Globals.AppTouchscreenKeyboardKeysAmount );
+					for( int i = 0; i < Globals.ScreenKbControlsLayout.length; i++ )
+					{
+						Globals.ScreenKbControlsLayout[i][0] = Settings.nativeGetScreenKeyboardButtonLayout(i, 0);
+						Globals.ScreenKbControlsLayout[i][1] = Settings.nativeGetScreenKeyboardButtonLayout(i, 1);
+						Globals.ScreenKbControlsLayout[i][2] = Settings.nativeGetScreenKeyboardButtonLayout(i, 2);
+						Globals.ScreenKbControlsLayout[i][3] = Settings.nativeGetScreenKeyboardButtonLayout(i, 3);
+					}
+				}
 
 				for( int i = 0; i < Globals.ScreenKbControlsLayout.length; i++ )
 				{
@@ -701,37 +707,7 @@ class SettingsMenuKeyboard extends SettingsMenu
 						continue;
 					if( currentButton == -1 )
 						currentButton = i;
-					//Log.i("SDL", "Screen kb button " + i + " coords " + Globals.ScreenKbControlsLayout[i][0] + ":" + Globals.ScreenKbControlsLayout[i][1] + ":" + Globals.ScreenKbControlsLayout[i][2] + ":" + Globals.ScreenKbControlsLayout[i][3] );
-					// Check if the button is off screen edge or shrunk to zero
-					if( Globals.ScreenKbControlsLayout[i][0] > Globals.ScreenKbControlsLayout[i][2] - displayY/12 )
-						Globals.ScreenKbControlsLayout[i][0] = Globals.ScreenKbControlsLayout[i][2] - displayY/12;
-					if( Globals.ScreenKbControlsLayout[i][1] > Globals.ScreenKbControlsLayout[i][3] - displayY/12 )
-						Globals.ScreenKbControlsLayout[i][1] = Globals.ScreenKbControlsLayout[i][3] - displayY/12;
-					if( Globals.ScreenKbControlsLayout[i][0] < Globals.ScreenKbControlsLayout[i][2] - displayY*2/3 )
-						Globals.ScreenKbControlsLayout[i][0] = Globals.ScreenKbControlsLayout[i][2] - displayY*2/3;
-					if( Globals.ScreenKbControlsLayout[i][1] < Globals.ScreenKbControlsLayout[i][3] - displayY*2/3 )
-						Globals.ScreenKbControlsLayout[i][1] = Globals.ScreenKbControlsLayout[i][3] - displayY*2/3;
-					if( Globals.ScreenKbControlsLayout[i][0] < 0 )
-					{
-						Globals.ScreenKbControlsLayout[i][2] += -Globals.ScreenKbControlsLayout[i][0];
-						Globals.ScreenKbControlsLayout[i][0] = 0;
-					}
-					if( Globals.ScreenKbControlsLayout[i][2] > displayX )
-					{
-						Globals.ScreenKbControlsLayout[i][0] -= Globals.ScreenKbControlsLayout[i][2] - displayX;
-						Globals.ScreenKbControlsLayout[i][2] = displayX;
-					}
-					if( Globals.ScreenKbControlsLayout[i][1] < 0 )
-					{
-						Globals.ScreenKbControlsLayout[i][3] += -Globals.ScreenKbControlsLayout[i][1];
-						Globals.ScreenKbControlsLayout[i][1] = 0;
-					}
-					if( Globals.ScreenKbControlsLayout[i][3] > displayY )
-					{
-						Globals.ScreenKbControlsLayout[i][1] -= Globals.ScreenKbControlsLayout[i][3] - displayY;
-						Globals.ScreenKbControlsLayout[i][3] = displayY;
-					}
-					//Log.i("SDL", "After bounds check coords " + Globals.ScreenKbControlsLayout[i][0] + ":" + Globals.ScreenKbControlsLayout[i][1] + ":" + Globals.ScreenKbControlsLayout[i][2] + ":" + Globals.ScreenKbControlsLayout[i][3] );
+					Log.i("SDL", "Screen kb button " + i + " coords " + Globals.ScreenKbControlsLayout[i][0] + ":" + Globals.ScreenKbControlsLayout[i][1] + ":" + Globals.ScreenKbControlsLayout[i][2] + ":" + Globals.ScreenKbControlsLayout[i][3] );
 
 					imgs[i] = new ImageView(p);
 					imgs[i].setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
@@ -752,6 +728,31 @@ class SettingsMenuKeyboard extends SettingsMenu
 					onKey( null, KeyEvent.KEYCODE_BACK, null ); // All buttons disabled - do not show anything
 				else
 					setupButton(currentButton);
+
+				final Button backButton = new Button(p);
+				backButton.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+				backButton.setText(android.R.string.ok);
+				//backButton.setTop(displayY / 30);
+				//backButton.setLeft(displayX / 2);
+				backButton.setOnClickListener(new View.OnClickListener()
+				{
+					public void onClick(View v)
+					{
+						p.getVideoLayout().removeView(layout);
+						layout = null;
+						goBack(p);
+					}
+				});
+				layout.addView(backButton, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+																			Gravity.TOP | Gravity.CENTER_HORIZONTAL));
+				layout.getHandler().postDelayed(new Runnable()
+				{
+					public void run()
+					{
+						//backButton.setLeft(displayX / 2 - backButton.getWidth() / 2);
+						//backButton.setLeft(displayX / 2);
+					}
+				}, 200);
 			}
 			
 			void setupButton(int i)
