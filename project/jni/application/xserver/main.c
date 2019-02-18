@@ -34,7 +34,7 @@ int main( int argc, char* argv[] )
 		port,
 		"-nolock",
 		"-noreset",
-		"-nopn",
+		"-pn",
 		"-nolisten",
 		"unix",
 		"-fp",

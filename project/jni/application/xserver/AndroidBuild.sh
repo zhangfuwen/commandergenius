@@ -4,6 +4,7 @@ CURDIR=`pwd`
 
 PACKAGE_NAME=`grep AppFullName AndroidAppSettings.cfg | sed 's/.*=//'`
 
+if false; then # Disable PulseAudio for now
 if [ -e pulseaudio/android-build.sh ]; then
 	[ -e pulseaudio/$1/install/bin/pulseaudio ] || {
 		cd pulseaudio
@@ -11,6 +12,7 @@ if [ -e pulseaudio/android-build.sh ]; then
 		cd ..
 	} || exit 1
 fi
+fi # Disable PulseAudio for now
 
 ../setEnvironment-$1.sh sh -c '\
 $CC $CFLAGS -Werror=format -c main.c -o main-'"$1.o" || exit 1
@@ -35,10 +37,6 @@ cd android
 	cd ..
 } || exit 1
 cd $1
-[ -e libfontenc-*/Makefile ] && {
-	grep "/proc/self/cwd" libfontenc-*/Makefile || \
-	git clean -f -d -x .
-}
 
 # Megahack: set /proc/self/cwd as the X.org data dir, and chdir() to the correct directory when runngin X.org
 env TARGET_DIR=/proc/self/cwd \
@@ -85,16 +83,9 @@ mkdir -p usr/bin
 # Executables linked with NDK, which crash on Lollipop.
 for f in xhost xkbcomp xli xsel; do cp -f $CURDIR/xserver/android/$1/$f ./usr/bin/$f ; done
 # Statically-linked prebuilt executables, generated using Debian chroot.
-# There are no executables for old ARMv5, so we'll use NDK executables instead for that arch.
-#for f in xhost xkbcomp xli xsel; do cp $CURDIR/xserver/data/$f-$1 ./usr/bin/$f ; done
-rm -f ../AndroidData/binaries-$1.zip
-zip -r ../AndroidData/binaries-$1.zip .
-# Executables linked with NDK with -pie, which crash on pre-Lollipop.
-for f in xhost xkbcomp xli xsel; do rm ./usr/bin/$f ; cp -f $CURDIR/xserver/android/$1/pie/$f ./usr/bin/$f ; done
-cp $CURDIR/xserver/data/busybox-$1-pie ./busybox
 
-# PulseAudio - PIE only
 mkdir -p pulse
+if false; then # Disable PulseAudio for now
 cp -f $CURDIR/pulseaudio/$1/install/bin/pulseaudio pulse/
 cp -f $CURDIR/pulseaudio/$1/install/lib/libpulse.so.0.18.2 pulse/libpulse.so.0
 #ln -sf libpulse.so.0.18.2 pulse/libpulse.so.0
@@ -104,9 +95,10 @@ cp -f $CURDIR/pulseaudio/$1/install/lib/pulseaudio/libpulsecommon-7.0.so pulse/
 for F in $CURDIR/pulseaudio/$1/install/lib/pulse-7.0/modules/*.so; do
 	cp -f $F pulse/
 done
+fi # Disable PulseAudio for now
 cp -f $CURDIR/pulseaudio/android-pulseaudio.conf pulse/pulseaudio.conf
 
-rm -f ../AndroidData/binaries-$1-pie.zip
-zip -r ../AndroidData/binaries-$1-pie.zip .
+rm -f ../AndroidData/binaries-$1.zip
+zip -r ../AndroidData/binaries-$1.zip .
 
 exit 0
