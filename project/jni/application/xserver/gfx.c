@@ -796,7 +796,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 				sprintf (msg, "export PULSE_SERVER=tcp:%s:4712", saddr);
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				y += resolutionH * 15 / VID_Y;
-				sprintf (msg, "metacity & gimp");
+				sprintf (msg, "gnome-session & gimp");
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				y += resolutionH * 20 / VID_Y;
 			}
