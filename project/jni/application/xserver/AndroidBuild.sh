@@ -43,15 +43,13 @@ env TARGET_DIR=/proc/self/cwd \
 ./build.sh || exit 1
 
 env CURDIR=$CURDIR \
-../../../../setEnvironment-$1.sh sh -c '\
+../../../../setEnvironment-$1.sh sh -c 'set -x ; \
 $CC $CFLAGS $LDFLAGS -o $CURDIR/libapplication-'"$1.so"' -L. \
 $CURDIR/main-'"$1.o"' \
 $CURDIR/gfx-'"$1.o"' \
 hw/kdrive/sdl/sdl.o \
-dix/.libs/libmain.a \
 dix/.libs/libdix.a \
 hw/kdrive/src/.libs/libkdrive.a \
-hw/kdrive/src/.libs/libkdrivestubs.a \
 fb/.libs/libfb.a \
 mi/.libs/libmi.a \
 xfixes/.libs/libxfixes.a \
@@ -61,6 +59,8 @@ record/.libs/librecord.a \
 randr/.libs/librandr.a \
 render/.libs/librender.a \
 damageext/.libs/libdamageext.a \
+dri3/.libs/libdri3.a \
+present/.libs/libpresent.a \
 miext/sync/.libs/libsync.a \
 miext/damage/.libs/libdamage.a \
 miext/shadow/.libs/libshadow.a \
@@ -69,8 +69,9 @@ xkb/.libs/libxkb.a \
 xkb/.libs/libxkbstubs.a \
 composite/.libs/libcomposite.a \
 os/.libs/libos.a \
-hw/kdrive/linux/.libs/liblinux.a \
--lpixman-1 -lXfont -lXau -lXdmcp -lfontenc -lts -lfreetype -landroid-shmem -l:libcrypto.so.sdl.0.so' \
+-L$CURDIR/../../../libs/'"$1"' \
+-lpixman-1 -lXfont2 -lXau -lxshmfence -lXdmcp -lfontenc -lfreetype \
+-llog -lsdl-1.2 -lsdl_native_helpers -lGLESv1_CM -landroid-shmem -l:libcrypto.so.sdl.1.so -lz -lm -ldl' \
 || exit 1
 
 rm -rf $CURDIR/tmp-$1
