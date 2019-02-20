@@ -161,7 +161,7 @@ int main( int argc, char* argv[] )
 		__android_log_print(ANDROID_LOG_INFO, "XSDL", "> %s", args[i]);
 
 	// We should never quit. If that happens, then the server did not start - try with different port number.
-	atexit( &retryLaunchWithDifferentPort );
+	atexit( &showError );
 
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL chdir to: %s", getenv("SECURE_STORAGE_DIR"));
 	chdir( getenv("SECURE_STORAGE_DIR") ); // Megahack: change /proc/self/cwd to the X.org data dir, and use /proc/self/cwd path in libX11
@@ -196,18 +196,9 @@ void setupEnv(void)
 	sprintf( buf, "%s/usr/share/X11/locale", getenv("SECURE_STORAGE_DIR") );
 }
 
-void retryLaunchWithDifferentPort(void)
+void showError(void)
 {
-	int portNum = atoi(port + 1);
-	if (portNum > 10)
-	{
-		// Server was ultimately unable to start - show error and exit
-		XSDL_initSDL();
-		XSDL_showServerLaunchErrorMessage();
-		XSDL_deinitSDL();
-		return;
-	}
-	sprintf(port, ":%d", portNum + 1);
-	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL launch failed, retrying with new display number %s", port);
-	SDL_ANDROID_RestartMyself(port);
+	XSDL_initSDL();
+	XSDL_showServerLaunchErrorMessage();
+	XSDL_deinitSDL();
 }

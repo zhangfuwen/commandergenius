@@ -826,9 +826,8 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 void XSDL_showServerLaunchErrorMessage()
 {
 	showErrorMessage(	"Error: X server failed to launch.\n\n"
-						"This may happen because of SELinux,\n"
-						"or because installation was corrupted.\n"
-						"Either way, this app will not work, which is sad.");
+						"Try to use different display number,\n"
+						"or reboot your device.");
 }
 
 void showErrorMessage(const char *msg)
