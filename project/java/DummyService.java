@@ -92,6 +92,8 @@ import android.inputmethodservice.Keyboard;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.widget.RemoteViews;
+import android.os.Build;
+import android.app.NotificationChannel;
 
 public class DummyService extends Service
 {
@@ -110,13 +112,29 @@ public class DummyService extends Service
 			System.exit(0);
 		}
 		Log.v("SDL", "Starting dummy service - displaying notification");
-		Notification ntf = new Notification();
-		ntf.icon = R.drawable.icon;
-		ntf.flags |= Notification.FLAG_NO_CLEAR;
+		Notification.Builder builder;
+		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.O )
+		{
+			String channelId = "app_running_ntf";
+			NotificationChannel channel = new NotificationChannel(channelId,
+										getString(R.string.notification_app_is_running, getString(getApplicationInfo().labelRes)),
+										NotificationManager.IMPORTANCE_LOW);
+			NotificationManager mgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			mgr.createNotificationChannel(channel);
+			builder = new Notification.Builder(this, channelId);
+		}
+		else
+		{
+			builder = new Notification.Builder(this);
+		}
+		Notification ntf = builder
+			.setSmallIcon(R.drawable.icon)
+			.setTicker(getString(getApplicationInfo().labelRes))
+			.setOngoing(true)
+			.build();
 		PendingIntent killIntent = PendingIntent.getService(this, 5, new Intent(Intent.ACTION_DELETE, null, this, DummyService.class), PendingIntent.FLAG_CANCEL_CURRENT);
 		PendingIntent showIntent = PendingIntent.getActivity(this, 0, new Intent("", null, this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT);
 		ntf.deleteIntent = killIntent;
-		ntf.tickerText = getString(getApplicationInfo().labelRes);
 		RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification);
 		view.setCharSequence(R.id.notificationText, "setText", getString(R.string.notification_app_is_running, getString(getApplicationInfo().labelRes)));
 		view.setOnClickPendingIntent(R.id.notificationText, showIntent);
