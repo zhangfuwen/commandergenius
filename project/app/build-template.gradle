@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.2"
 
     defaultConfig {
         applicationId "net.olofson.ballfield"
@@ -20,3 +19,4 @@ android {
     dependencies { compile 'com.google.android.gms:play-services-games:11.4.0' } // ==GOOGLEPLAYGAMESERVICES==
     dependencies { compile 'com.google.android.gms:play-services-drive:11.4.0' } // ==GOOGLEPLAYGAMESERVICES==
 }
+
