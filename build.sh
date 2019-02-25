@@ -148,25 +148,25 @@ cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU ndk-build -j$NCPU V=1 
 	{	if $build_release ; then \
 			$quick_rebuild && { \
 				ln -s -f libs lib ; \
-				zip -u -r app/build/outputs/apk/app-release-unsigned.apk lib assets || exit 1 ; \
+				zip -u -r app/build/outputs/apk/release/app-release-unsigned.apk lib assets || exit 1 ; \
 			} || ./gradlew assembleRelease || exit 1 ; \
 			[ '!' -x jni/application/src/AndroidPostBuild.sh ] || {
 				cd jni/application/src ; \
-				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/app-release-unsigned.apk || exit 1 ; \
+				./AndroidPostBuild.sh `pwd`/../../../app/build/outputs/apk/release/app-release-unsigned.apk || exit 1 ; \
 				cd ../../.. ; \
 			} || exit 1 ; \
-			rm -f app/build/outputs/apk/app-release.apk ; \
-			zipalign 4 app/build/outputs/apk/app-release-unsigned.apk app/build/outputs/apk/app-release.apk || exit 1 ; \
-			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/app-release.apk || exit 1 ; \
+			rm -f app/build/outputs/apk/release/app-release.apk ; \
+			zipalign 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release.apk || exit 1 ; \
+			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk || exit 1 ; \
 		else \
 			./gradlew assembleDebug && \
-			mv -f app/build/outputs/apk/app-debug.apk app/build/outputs/apk/app-release.apk \
+			mv -f app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk \
 			|| exit 1 ; \
 		fi ; } && \
 	{	if $sign_apk; then cd .. && ./sign.sh && cd project ; else true ; fi ; } && \
 	{	$install_apk && [ -n "`adb devices | tail -n +2`" ] && \
-		{	adb install -r app/build/outputs/apk/app-release.apk | grep 'Failure' && \
-			adb uninstall `grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'` && adb install -r app/build/outputs/apk/app-release.apk ; } ; \
+		{	adb install -r app/build/outputs/apk/release/app-release.apk | grep 'Failure' && \
+			adb uninstall `grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'` && adb install -r app/build/outputs/apk/release/app-release.apk ; } ; \
 		true ; } && \
 	{	$run_apk && { \
 			ActivityName="`grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'`/.MainActivity" ; \
