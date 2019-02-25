@@ -97,6 +97,8 @@ import android.app.UiModeManager;
 import android.Manifest;
 import android.content.pm.PermissionInfo;
 import java.util.Arrays;
+import java.util.zip.ZipFile;
+import java.util.ArrayList;
 
 
 public class MainActivity extends Activity
@@ -1309,38 +1311,56 @@ public class MainActivity extends Activity
 			}
 		}
 
+		ZipFile myApk = null;
+		try
+		{
+			myApk = new ZipFile(getPackageResourcePath());
+		}
+		catch( IOException eeeeeeeee ) {}
+
 		String [] binaryZipNames = { "binaries-" + android.os.Build.CPU_ABI + ".zip", "binaries-" + android.os.Build.CPU_ABI2 + ".zip", "binaries.zip" };
-		if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN )
-			binaryZipNames = new String[] { "binaries-" + android.os.Build.CPU_ABI + "-pie.zip", "binaries-" + android.os.Build.CPU_ABI2 + "-pie.zip", "binaries-" + android.os.Build.CPU_ABI + ".zip", "binaries-" + android.os.Build.CPU_ABI2 + ".zip", "binaries.zip" };
-		for(String binaryZip: binaryZipNames)
+		if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP )
+		{
+			ArrayList<String> a = new ArrayList<String>();
+			for( String arch: android.os.Build.SUPPORTED_ABIS )
+			{
+				a.add("binaries-" + arch + ".zip");
+			}
+			a.add("binaries.zip");
+			binaryZipNames = a.toArray(new String[0]);
+		}
+		for( String binaryZip: binaryZipNames )
 		{
 			try {
-				Log.i("SDL", "libSDL: Trying to extract binaries from assets " + binaryZip);
-				
 				InputStream in = null;
 				try
 				{
-					for( int i = 0; ; i++ )
-					{
-						InputStream in2 = getAssets().open(binaryZip + String.format("%02d", i));
-						if( in == null )
-							in = in2;
-						else
-							in = new SequenceInputStream( in, in2 );
-					}
+					//Log.i("SDL", "libSDL: Trying to extract binaries from assets/" + binaryZip);
+					if( in == null )
+						in = getAssets().open(binaryZip);
+					Log.i("SDL", "libSDL: Found binaries at assets/" + binaryZip);
 				}
-				catch( IOException ee )
+				catch( Exception eee ) {}
+
+				if( binaryZip.equals("binaries.zip") )
 				{
-					try
+					for( String arch: android.os.Build.SUPPORTED_ABIS )
 					{
-						if( in == null )
-							in = getAssets().open(binaryZip);
+						try
+						{
+							if( in == null && myApk != null )
+							{
+								//Log.i("SDL", "libSDL: Trying to extract binaries from lib/" + arch + "/" + binaryZip);
+								in = myApk.getInputStream(myApk.getEntry("lib/" + arch + "/" + binaryZip));
+								Log.i("SDL", "libSDL: Found binaries at lib/" + arch + "/" + binaryZip);
+							}
+						}
+						catch( Exception eeee ) {}
 					}
-					catch( IOException eee ) {}
 				}
 
 				if( in == null )
-					throw new RuntimeException("libSDL: Extracting binaries failed, the .apk file packaged incorrectly");
+					throw new RuntimeException("libSDL: Extracting binaries failed");
 
 				ZipInputStream zip = new ZipInputStream(in);
 
@@ -1354,10 +1374,8 @@ public class MainActivity extends Activity
 				{
 					ZipEntry entry = null;
 					entry = zip.getNextEntry();
-					/*
-					if( entry != null )
-						Log.i("SDL", "Extracting lib " + entry.getName());
-					*/
+					//if( entry != null )
+					//	Log.i("SDL", "Extracting binary " + entry.getName());
 					if( entry == null )
 					{
 						Log.i("SDL", "Extracting binaries finished");
@@ -1373,13 +1391,16 @@ public class MainActivity extends Activity
 
 					OutputStream out = null;
 					String path = libDir.getAbsolutePath() + "/" + entry.getName();
-					try {
+					try
+					{
 						File outDir = new File( path.substring(0, path.lastIndexOf("/") ));
 						if( !(outDir.exists() && outDir.isDirectory()) )
 							outDir.mkdirs();
-					} catch( SecurityException eeeeeee ) { };
+					}
+					catch( SecurityException eeeeeee ) { };
 
-					try {
+					try
+					{
 						CheckedInputStream check = new CheckedInputStream( new FileInputStream(path), new CRC32() );
 						while( check.read(buf, 0, buf.length) > 0 ) {};
 						check.close();
@@ -1417,6 +1438,12 @@ public class MainActivity extends Activity
 				//Log.i("SDL", "libSDL: Error: " + eee.toString());
 			}
 		}
+		try
+		{
+			if (myApk != null)
+				myApk.close();
+		}
+		catch( IOException eeeeeeeeee ) {}
 	};
 
 	public static String GetMappedLibraryName(final String s)

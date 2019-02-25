@@ -1073,6 +1073,9 @@ fi
 
 if [ -e project/jni/application/src/project.patch ]; then patch -p1 --dry-run -f -R < project/jni/application/src/project.patch > /dev/null 2>&1 || patch -p1 --no-backup-if-mismatch < project/jni/application/src/project.patch || exit 1 ; fi
 
+rm -f project/lib
+ln -s -f libs project/lib
+
 echo Cleaning up dependencies
 
 rm -rf project/libs/*/* project/gen
