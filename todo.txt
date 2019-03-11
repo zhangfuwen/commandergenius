@@ -11,7 +11,11 @@ TODO, which will get actually done
 
 - OpenArena: tap to aim for aiming modes with shoot button.
 
-- OpenArena: Option for the second tap to stop shooting in tap to shoot mode, 
+- OpenArena: Option for the second tap to stop shooting in tap to shoot mode.
+
+- OpenArena: Option to disable joystick jump.
+
+- OpenArena: Visual feedback when you start and stop shooting on tap (crosshair size change).
 
 - USB Keyboard: options for camera feed size and for redefining remote menu hotkey.
 
