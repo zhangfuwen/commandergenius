@@ -71,6 +71,8 @@ TODO, which will get actually done
 
 - OpenLieroX: download speed test at humus.kvalitne.cz is not working, replace it with some default value.
 
+- OpenLieroX: always dig while tapping Jump button, not just when in air.
+
 - SuperTux: update to new upstream version.
 
 - SuperTux: right click does not work in editor.
