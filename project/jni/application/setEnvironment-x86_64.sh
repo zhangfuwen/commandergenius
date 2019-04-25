@@ -37,7 +37,7 @@ all:
 
 APP_SHARED_LIBS=$(
 echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
-	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS application sdl_main stlport stdout-test | grep "\\\\b$LIB\\\\b"`
+	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS application sdl_main c++_shared | grep "\\\\b$LIB\\\\b"`
 	if [ -n "$STATIC" ] ; then true
 	else
 		case $LIB in
