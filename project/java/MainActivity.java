@@ -1376,27 +1376,31 @@ public class MainActivity extends Activity
 		Settings.nativeChdir(Globals.DataDir);
 		for(String l: Globals.AppMainLibraries)
 		{
+			Log.i("SDL", "libSDL: loading library " + l);
 			try
 			{
 				String libname = System.mapLibraryName(l);
 				File libpath = new File(context.getFilesDir().getAbsolutePath() + "/../lib/" + libname);
-				Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
+				//Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
 				System.load(libpath.getPath());
+				Log.i("SDL", "libSDL: loaded library " + libpath.getPath());
 			}
 			catch( UnsatisfiedLinkError e )
 			{
-				Log.i("SDL", "libSDL: error loading lib " + l + ": " + e.toString());
+				//Log.i("SDL", "libSDL: error loading lib " + l + ": " + e.toString());
 				try
 				{
 					String libname = System.mapLibraryName(l);
 					File libpath = new File(context.getFilesDir().getAbsolutePath() + "/" + libname);
-					Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
+					//Log.i("SDL", "libSDL: loading lib " + libpath.getAbsolutePath());
 					System.load(libpath.getPath());
+					Log.i("SDL", "libSDL: loaded library " + libpath.getPath());
 				}
 				catch( UnsatisfiedLinkError ee )
 				{
-					Log.i("SDL", "libSDL: error loading lib " + l + ": " + ee.toString());
+					//Log.i("SDL", "libSDL: error loading lib " + l + ": " + ee.toString());
 					System.loadLibrary(l);
+					Log.i("SDL", "libSDL: loaded library " + l);
 				}
 			}
 		}
