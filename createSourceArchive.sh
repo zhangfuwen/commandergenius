@@ -18,5 +18,6 @@ tar -c --exclude-vcs --exclude="*.o" --exclude="*.d" --exclude="*.dep" \
 project/jni/application/src \
 project/jni/application/`readlink project/jni/application/src` \
 project/AndroidManifest.xml project/src \
-project/obj/local/armeabi-v7a/*.so project/obj/local/x86/*.so \
+project/obj/local/armeabi-v7a/*.so project/obj/local/arm64-v8a/*.so project/obj/local/x86/*.so  project/obj/local/x86_64/*.so  \
+project/app/build/outputs/mapping/release/mapping.txt \
 "$@" | $ARCHIVER > $APPNAME-$APPVER-src.tar.$EXT
