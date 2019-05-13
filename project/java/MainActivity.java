@@ -1187,6 +1187,15 @@ public class MainActivity extends Activity
 			Log.i("SDL", "libSDL: Cannot load GLESv3 or GLESv2 lib");
 		}
 
+		String [] SupportedAbis = { android.os.Build.CPU_ABI };
+		if (android.os.Build.CPU_ABI2 != null && !android.os.Build.CPU_ABI2.equals(""))
+		{
+			SupportedAbis = new String [] { android.os.Build.CPU_ABI, android.os.Build.CPU_ABI2 };
+		}
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+		{
+			SupportedAbis = android.os.Build.SUPPORTED_ABIS;
+		}
 		// Load all libraries
 		try
 		{
@@ -1233,17 +1242,14 @@ public class MainActivity extends Activity
 		}
 		catch( IOException eeeeeeeee ) {}
 
-		String [] binaryZipNames = { "binaries-" + android.os.Build.CPU_ABI + ".zip", "binaries-" + android.os.Build.CPU_ABI2 + ".zip", "binaries.zip" };
-		if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP )
+		ArrayList<String> a = new ArrayList<String>();
+		for( String arch: SupportedAbis )
 		{
-			ArrayList<String> a = new ArrayList<String>();
-			for( String arch: android.os.Build.SUPPORTED_ABIS )
-			{
-				a.add("binaries-" + arch + ".zip");
-			}
-			a.add("binaries.zip");
-			binaryZipNames = a.toArray(new String[0]);
+			a.add("binaries-" + arch + ".zip");
 		}
+		a.add("binaries.zip");
+		String [] binaryZipNames = a.toArray(new String[0]);
+
 		for( String binaryZip: binaryZipNames )
 		{
 			try {
@@ -1259,7 +1265,7 @@ public class MainActivity extends Activity
 
 				if( binaryZip.equals("binaries.zip") )
 				{
-					for( String arch: android.os.Build.SUPPORTED_ABIS )
+					for( String arch: SupportedAbis )
 					{
 						try
 						{
@@ -1280,9 +1286,11 @@ public class MainActivity extends Activity
 				ZipInputStream zip = new ZipInputStream(in);
 
 				File libDir = getFilesDir();
-				try {
+				try
+				{
 					libDir.mkdirs();
-				} catch( SecurityException ee ) { };
+				}
+				catch( SecurityException ee ) { };
 				
 				byte[] buf = new byte[16384];
 				while(true)
