@@ -60,7 +60,7 @@
 	</application>
 
 	<!-- Must match version numbers in project/app/build-template.gradle -->
-	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="28" />
+	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="29" />
 
 	<!-- ==INTERNET== --> <uses-permission android:name="android.permission.INTERNET" />
 	<!-- ==EXTERNAL_STORAGE== --> <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
