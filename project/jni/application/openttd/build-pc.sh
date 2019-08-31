@@ -18,9 +18,12 @@ cd bin
 export LD_LIBRARY_PATH=/usr/local/lib
 
 if [ -z "$1" ]; then
-	./openttd -d 0 -g opntitle.sav
+	./openttd -d 0 -m null -g opntitle.sav
+elif [ -n "$2" ]; then
+	valgrind --track-fds=yes --log-file=../../valgrind.log --leak-check=full \
+	./openttd -d 0 -m null # -g opntitle.sav
 else
 	#valgrind --track-fds=yes --log-file=valgrind.log --leak-check=full \
 	gdb -ex run --args \
-	./openttd -d 0 # -g opntitle.sav
+	./openttd -d 0 -m null -g opntitle.sav
 fi
