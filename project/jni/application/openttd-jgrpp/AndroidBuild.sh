@@ -33,9 +33,10 @@ CPU_TYPE=32
 	env LDFLAGS_BUILD="-L." \
 	env ANDROID=1 \
 	env CLANG=1 ../setEnvironment-$1.sh sh -c "cd openttd-$VER-$1 && env ../src/configure \
-		--with-sdl --with-freetype --with-png --with-zlib --with-icu --without-fluidsynth \
+		--with-sdl --with-freetype --with-png --with-zlib --with-icu --with-libtimidity='pkg-config libtimidity' \
 		--with-lzo2=$LOCAL_PATH/../../../obj/local/$ARCH/liblzo2.so --prefix-dir='.' --data-dir='' \
-		--without-allegro --with-fontconfig --with-lzma --cpu-type=$CPU_TYPE --os=unix --cc-build=gcc --cxx-build=g++ --without-sse"
+		--without-allegro --with-fontconfig --with-lzma --cpu-type=$CPU_TYPE --os=unix --cc-build=gcc --cxx-build=g++ \
+		--without-sse --without-xdg-basedir --without-fluidsynth"
 } || exit 1
 
 NCPU=4
