@@ -17,6 +17,6 @@ cp -f app.aab ../../../../../../$APPNAME-$APPVER.aab || exit 1
 # Sign with the new certificate
 echo Using keystore $ANDROID_UPLOAD_KEYSTORE_FILE and alias $ANDROID_UPLOAD_KEYSTORE_ALIAS
 stty -echo
-apksigner sign --ks $ANDROID_UPLOAD_KEYSTORE_FILE --ks-key-alias $ANDROID_UPLOAD_KEYSTORE_ALIAS ../../../../../../$APPNAME-$APPVER.apk || exit 1
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $ANDROID_UPLOAD_KEYSTORE_FILE ../../../../../../$APPNAME-$APPVER.aab $ANDROID_UPLOAD_KEYSTORE_ALIAS || exit 1
 stty echo
 echo
