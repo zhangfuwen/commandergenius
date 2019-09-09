@@ -71,6 +71,7 @@
 	<!-- ==READ_OBB== --> <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="23" /> <!-- OBB file requires explicit permission before Marshmallow -->
 	<!-- ==RECORD_AUDIO== --> <uses-permission android:name="android.permission.RECORD_AUDIO" />
 	<!-- ==ADMOB== --> <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<!-- ==FOREGROUND_SERVICE== --> <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 	<!-- <uses-permission android:name="android.permission.VIBRATE"></uses-permission> --> <!-- Vibrator not supported yet by SDL -->
 

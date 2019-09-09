@@ -496,12 +496,6 @@ else
 	InhibitSuspend=false
 fi
 
-if [ "$CreateService" = "y" ] ; then
-	CreateService=true
-else
-	CreateService=false
-fi
-
 if [ "$NeedDepthBuffer" = "y" ] ; then
 	NeedDepthBuffer=true
 else
@@ -906,6 +900,13 @@ else
 	HideSystemMousePointer=false
 fi
 
+if [ "$CreateService" = "y" ] ; then
+	CreateService=true
+else
+	CreateService=false
+	$SEDI "/==FOREGROUND_SERVICE==/ d" project/AndroidManifest.xml
+fi
+
 GLESLib=-lGLESv1_CM
 GLESVersion=-DSDL_VIDEO_OPENGL_ES_VERSION=1
 
@@ -926,6 +927,7 @@ else
 	NeedGles3=false
 	$SEDI "/==GLES3==/ d" project/AndroidManifest.xml
 fi
+
 
 echo Patching project/src/Globals.java
 $SEDI "s/public static String ApplicationName = .*;/public static String ApplicationName = \"$AppShortName\";/" project/src/Globals.java
