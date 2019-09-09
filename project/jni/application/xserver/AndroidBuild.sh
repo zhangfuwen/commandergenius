@@ -79,7 +79,7 @@ mkdir -p $CURDIR/tmp-$1
 cd $CURDIR/tmp-$1
 cp -f $CURDIR/xserver/data/busybox-$1 ./busybox
 mkdir -p usr/bin
-for f in xhost xkbcomp xli xsel; do cp -f $CURDIR/xserver/android/$1/$f ./usr/bin/$f ; done
+for f in xhost xkbcomp xloadimage xsel; do cp -f $CURDIR/xserver/android/$1/$f ./usr/bin/$f ; done
 # Statically-linked prebuilt executables, generated using Debian chroot.
 
 if false; then # Disable PulseAudio for now

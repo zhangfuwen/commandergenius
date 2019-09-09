@@ -119,17 +119,17 @@ int main( int argc, char* argv[] )
 
 	if( !screenResOverride )
 	{
-		XSDL_showConfigMenu(&resolutionW, &displayW, &resolutionH, &displayH, &builtinKeyboard, &screenButtons);
+		XSDL_showConfigMenu(&resolutionW, &displayW, &resolutionH, &displayH, &builtinKeyboard, &screenButtons, port);
 		sprintf( screenres, "%d/%dx%d/%dx%d", resolutionW, displayW, resolutionH, displayH, SDL_GetVideoInfo()->vfmt->BitsPerPixel );
 	}
 
-	XSDL_generateBackground( port, printHelp, resolutionW, resolutionH );
+	XSDL_generateBackground( port, printHelp, 800, 600 );
 
 	XSDL_deinitSDL();
 
 	if( printHelp )
 	{
-		sprintf( clientcmd, "%s/usr/bin/xhost + ; %s/usr/bin/xli -onroot -center %s/background.bmp",
+		sprintf( clientcmd, "%s/usr/bin/xhost + ; %s/usr/bin/xloadimage -onroot -fullscreen %s/background.bmp",
 			getenv("SECURE_STORAGE_DIR"), getenv("SECURE_STORAGE_DIR"), getenv("UNSECURE_STORAGE_DIR") );
 		args[argnum] = "-exec";
 		args[argnum+1] = clientcmd;

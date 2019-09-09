@@ -394,12 +394,13 @@ void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 	SDL_JoystickClose(j0);
 }
 
-void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys)
+void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys, char * portStr)
 {
 	int x = 0, y = 0, i, ii;
 	SDL_Event event;
 	int res = -1, dpi = -1;
 	int customX = 1000, customY = 1000;
+	int port = atoi(portStr + 1);
 	enum { MODE_CUSTOM = 11 };
 	char native[32] = "0x0", native56[32], native46[32], native36[32], native26[32];
 	char custom[32] = "1000x1000";
@@ -460,10 +461,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 	cfgfile = fopen(cfgpath, "r");
 	if( cfgfile )
 	{
-		fscanf(cfgfile, "%d %d %d %d %d %d", &savedRes, &savedDpi, &customX, &customY, builtinKeyboard, ctrlAltShiftKeys);
+		fscanf(cfgfile, "%d %d %d %d %d %d %d", &savedRes, &savedDpi, &customX, &customY, builtinKeyboard, ctrlAltShiftKeys, &port);
 		fclose(cfgfile);
 	}
 	sprintf(custom, "%dx%d", customX, customY);
+	sprintf(portStr, ":%d", port);
 
 	int counter = 3000, config = 0;
 	Uint32 curtime = SDL_GetTicks();
@@ -496,6 +498,9 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
 		y += 30;
 		sprintf(buf, "Keyboard: %s", *builtinKeyboard == 0 ? "System" : *builtinKeyboard == 1 ? "Builtin QWERTY" : "System + Builtin");
+		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
+		y += 30;
+		sprintf(buf, "Display number: %d", port);
 		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
 		y += 40;
 		sprintf(buf, "Starting in %d seconds", counter / 1000 + 1);
@@ -692,10 +697,15 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 						x = y;
 						y = z;
 					}
-					if( y > 0 && y < VID_Y * 2 / 6 )
+					if( y > 0 && y < VID_Y * 1.5f / 6 )
 						*builtinKeyboard = (*builtinKeyboard + 1) % 3;
-					if( y > VID_Y * 2 / 6 &&  y < VID_Y * 4 / 6 )
+					if( y > VID_Y * 1.5f / 6 &&  y < VID_Y * 2.5f / 6 )
 						*ctrlAltShiftKeys = !*ctrlAltShiftKeys;
+					if( y > VID_Y * 2.5f / 6 &&  y < VID_Y * 3.5f / 6 )
+					{
+						port ++;
+						port %= 4;
+					}
 					if( y > VID_Y * 4 / 6 &&  y < VID_Y * 6 / 6 )
 						okay = 1;
 					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d dpi %d\n", x, y, res);
@@ -715,6 +725,9 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		renderString(buf, VID_X/2, VID_Y * 1 / 6);
 
 		sprintf(buf, "Separate Ctrl/Alt/Shift keys: %s", *ctrlAltShiftKeys == 0 ? "No" : "Yes");
+		renderString(buf, VID_X/2, VID_Y * 2 / 6);
+
+		sprintf(buf, "Display number: %d", port);
 		renderString(buf, VID_X/2, VID_Y * 3 / 6);
 
 		sprintf(buf, "Okay");
@@ -731,10 +744,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		cfgfile = fopen(cfgpath, "w");
 		if( cfgfile )
 		{
-			fprintf(cfgfile, "%d %d %d %d %d %d\n", res, dpi, customX, customY, *builtinKeyboard, *ctrlAltShiftKeys);
+			fprintf(cfgfile, "%d %d %d %d %d %d %d\n", res, dpi, customX, customY, *builtinKeyboard, *ctrlAltShiftKeys, port);
 			fclose(cfgfile);
 		}
 	}
+	sprintf(portStr, ":%d", port);
 }
 
 void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, int resolutionH)
