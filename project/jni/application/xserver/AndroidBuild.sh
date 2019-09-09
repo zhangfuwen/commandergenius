@@ -47,7 +47,7 @@ env CURDIR=$CURDIR \
 $CC $CFLAGS $LDFLAGS -o $CURDIR/libapplication-'"$1.so"' -L. \
 $CURDIR/main-'"$1.o"' \
 $CURDIR/gfx-'"$1.o"' \
-hw/kdrive/sdl/sdl.o \
+hw/kdrive/sdl/sdl*.o \
 dix/.libs/libdix.a \
 hw/kdrive/src/.libs/libkdrive.a \
 fb/.libs/libfb.a \
