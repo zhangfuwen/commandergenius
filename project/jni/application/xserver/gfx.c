@@ -15,6 +15,7 @@
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_screenkeyboard.h>
 #include <SDL/SDL_android.h>
+#include <savepng.h>
 #include <android/log.h>
 
 #include "gfx.h"
@@ -767,13 +768,13 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 	{
 		surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 16, 16, 24, 0x0000ff, 0x00ff00, 0xff0000, 0);
 		SDL_FillRect(surf, NULL, 0x00002f);
-		SDL_SaveBMP(surf, "background.bmp");
+		SDL_SavePNG(surf, "background.png");
 		SDL_FreeSurface(surf);
 		return;
 	}
 
 	surf = SDL_CreateRGBSurface(SDL_SWSURFACE, resolutionW, resolutionH, 24, 0x0000ff, 0x00ff00, 0xff0000, 0);
-	SDL_FillRect(surf, NULL, 0x00002f);
+	SDL_FillRect(surf, NULL, 0x7f0000);
 
 	renderStringScaled("Launch these commands on your Linux PC:", 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 	y += resolutionH * 30 / VID_Y;
@@ -810,7 +811,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 				sprintf (msg, "export PULSE_SERVER=tcp:%s:4712", saddr);
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				y += resolutionH * 15 / VID_Y;
-				sprintf (msg, "gnome-session & gimp");
+				sprintf (msg, "x-window-manager & gimp");
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				y += resolutionH * 20 / VID_Y;
 			}
@@ -833,7 +834,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 	sprintf (msg, "export DISPLAY=:0 PULSE_SERVER=tcp:127.0.0.1:4712");
 	renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 
-	SDL_SaveBMP(surf, "background.bmp");
+	SDL_SavePNG(surf, "background.png");
 	SDL_FreeSurface(surf);
 }
 
@@ -928,11 +929,14 @@ void renderString(const char *c, int x, int y)
 
 void renderStringScaled(const char *c, int size, int x, int y, int r, int g, int b, SDL_Surface * surf)
 {
+	char fontpath[PATH_MAX];
 	if (!c || !c[0])
 		return;
 	SDL_Color fColor = {r, g, b};
 	SDL_Rect fontRect = {0, 0, 0, 0};
-	TTF_Font* font = TTF_OpenFont("DroidSansMono.ttf", size);
+	strcpy( fontpath, getenv("UNSECURE_STORAGE_DIR") );
+	strcat( fontpath, "/DroidSansMono.ttf" );
+	TTF_Font* font = TTF_OpenFont(fontpath, size);
 	SDL_Surface* fontSurface = TTF_RenderUTF8_Solid(font, c, fColor);
 	TTF_CloseFont(font);
 	fontRect.w = fontSurface->w;

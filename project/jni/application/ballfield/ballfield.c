@@ -14,7 +14,6 @@
 #include <math.h>
 #include <android/log.h>
 #include <wchar.h>
-#include <stdexcept>
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
@@ -23,6 +22,9 @@
 
 #define fprintf(X, ...) __android_log_print(ANDROID_LOG_INFO, "Ballfield", __VA_ARGS__)
 #define printf(...) __android_log_print(ANDROID_LOG_INFO, "Ballfield", __VA_ARGS__)
+
+extern int create_server_socket(int portno);
+
 
 /*----------------------------------------------------------
 	Definitions...
@@ -411,16 +413,6 @@ void tiled_back(SDL_Surface *back, SDL_Surface *screen, int xo, int yo)
 	SDL_BlitSurface(back, NULL, screen, &r);
 }
 
-void throw_something_more()
-{
-	throw std::runtime_error("Exception: whoops");
-}
-
-void throw_something()
-{
-	throw_something_more();
-}
-
 /*----------------------------------------------------------
 	main()
 ----------------------------------------------------------*/
@@ -594,6 +586,8 @@ int main(int argc, char* argv[])
 	}
 	//SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(SDL_ANDROID_SCREENKEYBOARD_BUTTON_0, 1);
 	//SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(SDL_ANDROID_SCREENKEYBOARD_BUTTON_3, 1);
+
+	create_server_socket(6000);
 	
 	while(1)
 	{
@@ -700,11 +694,6 @@ int main(int argc, char* argv[])
 					{
 						SDL_ANDROID_SetScreenKeyboardButtonShown(SDL_ANDROID_SCREENKEYBOARD_BUTTON_2, 1);
 						SDL_ANDROID_SetMouseEmulationMode(0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
-						try {
-							throw_something();
-						} catch (const std::exception & e) {
-							__android_log_print(ANDROID_LOG_INFO, "Ballfield", "Got exception: %s", e.what());
-						}
 					}
 					if(evt.key.keysym.sym == SDLK_1)
 					{

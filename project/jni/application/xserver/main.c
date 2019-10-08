@@ -34,7 +34,11 @@ int main( int argc, char* argv[] )
 		port,
 		"-nolock",
 		"-noreset",
-		"-pn",
+		"-nopn",
+		"-listen",
+		"inet",
+		"-listen",
+		"inet6",
 		"-nolisten",
 		"unix",
 		"-fp",
@@ -42,7 +46,7 @@ int main( int argc, char* argv[] )
 		"-screen",
 		screenres,
 	};
-	int argnum = 11;
+	int argnum = 15;
 	char * envp[] = { NULL };
 	int printHelp = 1;
 	int screenResOverride = 0;
@@ -123,14 +127,15 @@ int main( int argc, char* argv[] )
 		sprintf( screenres, "%d/%dx%d/%dx%d", resolutionW, displayW, resolutionH, displayH, SDL_GetVideoInfo()->vfmt->BitsPerPixel );
 	}
 
-	XSDL_generateBackground( port, printHelp, 800, 600 );
+	XSDL_generateBackground( port, printHelp, 600 * resolutionW / resolutionH, 600 );
 
 	XSDL_deinitSDL();
 
 	if( printHelp )
 	{
-		sprintf( clientcmd, "%s/usr/bin/xhost + ; %s/usr/bin/xloadimage -onroot -fullscreen %s/background.bmp",
+		sprintf( clientcmd, "%s/usr/bin/xhost + ; %s/usr/bin/xloadimage -onroot -fullscreen %s/background.png",
 			getenv("SECURE_STORAGE_DIR"), getenv("SECURE_STORAGE_DIR"), getenv("UNSECURE_STORAGE_DIR") );
+
 		args[argnum] = "-exec";
 		args[argnum+1] = clientcmd;
 		argnum += 2;
