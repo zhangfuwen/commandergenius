@@ -59,8 +59,6 @@ TODO, which will get actually done
 
 - XSDL: do not use xsel to enter Unicode characters, modify clipboard directly.
 
-- XSDL: add SO_REUSEPORT flag.
-
 - XSDL: fix xrandr screen resizing.
 
 - XSDL: use pixel size instead of screen size.
