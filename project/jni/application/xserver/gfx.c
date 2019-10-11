@@ -760,6 +760,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 	SDL_Surface * surf;
 	int y = resolutionH * 1 / 6;
 	char msg[128];
+	char clipboard[8192] = "";
 
 	if (resolutionH > resolutionW)
 		resolutionH = resolutionW;
@@ -807,18 +808,23 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 					continue;
 				sprintf (msg, "export DISPLAY=%s%s", saddr, port);
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
+				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 15 / VID_Y;
 				sprintf (msg, "export PULSE_SERVER=tcp:%s:4712", saddr);
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
+				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 15 / VID_Y;
-				sprintf (msg, "x-window-manager & gimp");
+				sprintf (msg, "x-window-manager & firefox");
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
+				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 20 / VID_Y;
 			}
 		}
 
 		close(sd);
 	}
+
+	SDL_SetClipboardText(clipboard);
 
 	y += resolutionH * 10 / VID_Y;
 	sprintf (msg, "To tunnel X over SSH, forward port %d", atoi(port+1) + 6000);
