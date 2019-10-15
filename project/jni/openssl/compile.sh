@@ -27,23 +27,31 @@ build() {
 	mkdir -p build/$ARCH
 	cd build/$ARCH
 
-	tar -x -v -z -f ../../openssl-1.1.0h.tar.gz --strip=1
+	tar -x -v -z -f ../../openssl-1.1.1d.tar.gz --strip=1
 
 	NDK=`which ndk-build`
 	NDK=`dirname $NDK`
 	NDK=`readlink -f $NDK`
 	export CROSS_SYSROOT=$NDK/sysroot/usr
+	export ANDROID_NDK_HOME=$NDK
 
-	../../setCrossEnvironment-$ARCH.sh sh -c './Configure shared zlib --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' || exit 1
+	env LDFLAGS="-shared -landroid -llog" \
+		../../setCrossEnvironment-$ARCH.sh \
+		sh -c 'env PATH=`dirname $CC`:$PATH \
+		./Configure shared zlib --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' \
+		|| exit 1
 
-	sed -i.old 's/^CFLAGS=/CFLAGS:=$(CFLAGS) /' Makefile
-	sed -i.old 's/^LDFLAGS=/LDFLAGS:=$(LDFLAGS) /' Makefile
-	sed -i.old 's/^LIB_LDFLAGS=/LIB_LDFLAGS:=$(LDFLAGS) /' Makefile
-	sed -i.old 's/-mandroid//g' Makefile
-	sed -i.old 's/--sysroot=$(CROSS_SYSROOT)//g' Makefile
+	sed -i.old 's/^CNF_CPPFLAGS=.*/CNF_CPPFLAGS=/' Makefile
+	sed -i.old 's/^CNF_CFLAGS=.*/CNF_CFLAGS=/' Makefile
+	sed -i.old 's/^CNF_CXXFLAGS=.*/CNF_CXXFLAGS=/' Makefile
+	sed -i.old 's/^CNF_LDFLAGS=.*/CNF_LDFLAGS=/' Makefile
+	sed -i.old 's/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=sdl.1.so/' Makefile
 
 	# OpenSSL build system disables parallel compilation, -j4 won't do anything
-	../../setCrossEnvironment-$ARCH.sh make SHLIB_MAJOR=sdl SHLIB_MINOR=1.so
+	env LDFLAGS="-shared -landroid -llog" \
+		../../setCrossEnvironment-$ARCH.sh \
+		sh -c 'env PATH=`dirname $CC`:$PATH \
+		make build_libs'
 
 	cd ../..
 
