@@ -280,8 +280,36 @@ static void * unpackFilesThread(void * unused)
 	return (void *)1;
 }
 
+static void symlinkBusybox(void)
+{
+	char fname[PATH_MAX*2];
+	char fname2[PATH_MAX];
+
+	sprintf(fname, "%s/busybox", getenv("APPDIR"));
+	sprintf(fname2, "%s/busybox", getenv("LIBDIR"));
+	remove(fname);
+	symlink(fname2, fname);
+	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", fname2, fname);
+
+	strcpy( fname, getenv("APPDIR") );
+	strcat( fname, "/busybox" );
+	strcat( fname, " rm -rf " );
+	strcat( fname, getenv("APPDIR") );
+	strcat( fname, "/usr/bin" );
+
+	__android_log_print(ANDROID_LOG_INFO, "XSDL", "%s", fname);
+
+	system( fname );
+
+	sprintf(fname, "%s/usr/bin", getenv("APPDIR"));
+	symlink(getenv("LIBDIR"), fname);
+	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", getenv("LIBDIR"), fname);
+}
+
 void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 {
+	symlinkBusybox();
+
 	pthread_t thread_id;
 	void * status;
 	memset(unpackLog, 0, sizeof(unpackLog));

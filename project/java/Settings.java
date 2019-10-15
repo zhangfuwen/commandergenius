@@ -645,6 +645,7 @@ public class Settings
 		// TODO: get current user name and set envvar USER, the API is not availalbe on Android 1.6 so I don't bother with this
 		nativeSetEnv( "APPDIR", p.getFilesDir().getAbsolutePath() );
 		nativeSetEnv( "SECURE_STORAGE_DIR", p.getFilesDir().getAbsolutePath() );
+		nativeSetEnv( "LIBDIR", p.getApplicationInfo().nativeLibraryDir );
 		nativeSetEnv( "DATADIR", Globals.DataDir );
 		nativeSetEnv( "UNSECURE_STORAGE_DIR", Globals.DataDir );
 		SdcardAppPath.get().setEnv(p);

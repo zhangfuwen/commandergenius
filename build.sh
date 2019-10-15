@@ -167,9 +167,9 @@ cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU ndk-build -j$NCPU V=1 
 			} || exit 1 ; \
 			mkdir -p app/build/outputs/apk/release ; \
 			../copyAssets.sh pack-binaries app/build/outputs/apk/debug/app-debug.apk && \
+			rm -f app/build/outputs/apk/release/app-release.apk && \
 			zipalign 4 app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk &&
-			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk || \
-			mv -f app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk || exit 1 ; \
+			apksigner sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey --ks-pass pass:android app/build/outputs/apk/release/app-release.apk || exit 1 ; \
 		fi ; } && \
 	{	if $sign_apk; then cd .. && ./sign.sh && cd project ; else true ; fi ; } && \
 	{	$install_apk && [ -n "`adb devices | tail -n +2`" ] && \
