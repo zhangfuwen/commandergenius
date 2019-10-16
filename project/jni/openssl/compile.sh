@@ -8,9 +8,11 @@ mkdir -p build
 
 build() {
 	ARCH=$1
+	NO_ASM=""
 
 	case $ARCH in
 		armeabi-v7a)
+			#NO_ASM="-DOPENSSL_NO_ASM=1"
 			export CONFIGURE_ARCH=android;;
 		x86)
 			export CONFIGURE_ARCH=android;;
@@ -36,6 +38,7 @@ build() {
 	export ANDROID_NDK_HOME=$NDK
 
 	env LDFLAGS="-shared -landroid -llog" \
+		CFLAGS="$NO_ASM" \
 		../../setCrossEnvironment-$ARCH.sh \
 		sh -c 'env PATH=`dirname $CC`:$PATH \
 		./Configure shared zlib --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' \
@@ -49,9 +52,10 @@ build() {
 
 	# OpenSSL build system disables parallel compilation, -j4 won't do anything
 	env LDFLAGS="-shared -landroid -llog" \
+		CFLAGS="$NO_ASM" \
 		../../setCrossEnvironment-$ARCH.sh \
 		sh -c 'env PATH=`dirname $CC`:$PATH \
-		make build_libs'
+		make'
 
 	cd ../..
 
@@ -80,7 +84,7 @@ fi
 
 rm -rf include
 mkdir -p include
-cp -r -L build/armeabi-v7a/include/openssl include/openssl || exit 1
+cp -r -L build/arm64-v8a/include/openssl include/openssl || exit 1
 patch -p0 < opensslconf.h.patch || exit 1
 sed -i.tmp 's@".*/dist/.*"@"."@g' include/openssl/opensslconf.h
 rm -f include/openssl/opensslconf.h.tmp
