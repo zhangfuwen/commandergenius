@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ARCH_LIST="arm64-v8a x86_64 x86 armeabi-v7a"
+ARCH_LIST="armeabi-v7a x86_64 x86 arm64-v8a"
 
-PARALLEL=true
+PARALLEL=false
 
 mkdir -p build
 
@@ -12,14 +12,20 @@ build() {
 
 	case $ARCH in
 		armeabi-v7a)
-			#NO_ASM="-DOPENSSL_NO_ASM=1"
-			export CONFIGURE_ARCH=android;;
+			#NO_ASM="-DOPENSSL_NO_ASM=1" # Assembler in OpenSSL is broken when using clang
+			export CONFIGURE_ARCH=android-armeabi
+			;;
 		x86)
-			export CONFIGURE_ARCH=android;;
+			export CONFIGURE_ARCH=android-x86
+			;;
 		arm64-v8a)
-			export CONFIGURE_ARCH=android64;;
+			export CONFIGURE_ARCH=android64-aarch64
+			;;
 		x86_64)
-			export CONFIGURE_ARCH=android64;;
+			NO_ASM="-DOPENSSL_NO_ASM=1" # Assembler in OpenSSL is broken when using clang
+			#export CONFIGURE_ARCH=android64-x86_64
+			export CONFIGURE_ARCH=android64 # No-asm variant
+			;;
 		*)
 			echo "Arch $ARCH not defined"
 			exit 1;;
@@ -49,13 +55,17 @@ build() {
 	sed -i.old 's/^CNF_CXXFLAGS=.*/CNF_CXXFLAGS=/' Makefile
 	sed -i.old 's/^CNF_LDFLAGS=.*/CNF_LDFLAGS=/' Makefile
 	sed -i.old 's/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=sdl.1.so/' Makefile
+	if [ "$ARCH" = armeabi-v7a ]; then
+		sed -i.old 's/-DPOLY1305_ASM //' Makefile
+		sed -i.old 's@crypto/poly1305/poly1305-armv4.S @@' Makefile
+		sed -i.old 's@crypto/poly1305/poly1305-armv4.o @@' Makefile
+	fi
 
-	# OpenSSL build system disables parallel compilation, -j4 won't do anything
 	env LDFLAGS="-shared -landroid -llog" \
 		CFLAGS="$NO_ASM" \
 		../../setCrossEnvironment-$ARCH.sh \
 		sh -c 'env PATH=`dirname $CC`:$PATH \
-		make'
+		make -j8'
 
 	cd ../..
 
