@@ -159,3 +159,13 @@
 +		}).start();
 +	}
 +}
+--- Settings.java
++++ Settings.java
+@@ -636,6 +636,7 @@ public class Settings
+ 
+ 	static void setEnvVars(MainActivity p)
+ 	{
++		nativeSetEnv( "AUDIO_NATIVE_SAMPLE_RATE", String.valueOf(android.media.AudioTrack.getNativeOutputSampleRate(android.media.AudioManager.STREAM_MUSIC)) );
+ 		String lang = new String(Locale.getDefault().getLanguage());
+ 		if( Locale.getDefault().getCountry().length() > 0 )
+ 			lang = lang + "_" + Locale.getDefault().getCountry();
