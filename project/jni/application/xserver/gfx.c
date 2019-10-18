@@ -838,7 +838,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 15 / VID_Y;
-				sprintf (msg, "export PULSE_SERVER=tcp:%s:4712", saddr);
+				sprintf (msg, "export PULSE_SERVER=tcp:%s:4713", saddr);
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 15 / VID_Y;
