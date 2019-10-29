@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <sys/un.h>
 #include <errno.h>
+#include <pthread.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_screenkeyboard.h>
 #include <SDL/SDL_android.h>
@@ -21,6 +22,7 @@ static void retryLaunchWithDifferentPort(void);
 static void showError(void);
 static void setupEnv(void);
 static char port[16] = ":0";
+static void startPulseAudio(void);
 
 int main( int argc, char* argv[] )
 {
@@ -171,6 +173,8 @@ int main( int argc, char* argv[] )
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL chdir to: %s", getenv("SECURE_STORAGE_DIR"));
 	chdir( getenv("SECURE_STORAGE_DIR") ); // Megahack: change /proc/self/cwd to the X.org data dir, and use /proc/self/cwd path in libX11
 
+	startPulseAudio();
+
 	android_main( argnum, args, envp ); // Should never exit on success, if we want to terminate we kill ourselves
 
 	return 0;
@@ -206,4 +210,30 @@ void showError(void)
 	XSDL_initSDL();
 	XSDL_showServerLaunchErrorMessage();
 	XSDL_deinitSDL();
+}
+
+static void *pulseThread(void *param)
+{
+	char pulseCmd[PATH_MAX * 7] = "";
+	sprintf(pulseCmd, "HOME=%s TMPDIR=%s LD_LIBRARY_PATH=%s/usr/bin "
+						"logwrapper %s/usr/bin/pulseaudio --disable-shm -n -F %s/pulseaudio.conf "
+						"--dl-search-path=%s/usr/bin --daemonize=false --use-pid-file=false "
+						"--log-target=stderr --log-level=debug",
+						getenv("SECURE_STORAGE_DIR"), getenv("SECURE_STORAGE_DIR"),
+						getenv("SECURE_STORAGE_DIR"), getenv("SECURE_STORAGE_DIR"),
+						getenv("SECURE_STORAGE_DIR"), getenv("SECURE_STORAGE_DIR"));
+	while( 1 )
+	{
+		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Starting Pulseaudio");
+		__android_log_print(ANDROID_LOG_INFO, "XSDL", "%s", pulseCmd);
+		system(pulseCmd);
+		sleep(5);
+	}
+	return NULL;
+}
+
+void startPulseAudio(void)
+{
+	pthread_t threadId;
+	pthread_create(&threadId, NULL, &pulseThread, NULL);
 }

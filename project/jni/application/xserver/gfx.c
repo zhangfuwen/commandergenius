@@ -84,9 +84,12 @@ static int unpackFiles(const char *archive, const char *script, const char *dele
 	if( strlen(deleteOldDataMarkerFile) > 0 && stat( fname2, &st ) == 0 )
 	{
 		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Upgrade detected, showing warning dialog");
+		upgradeWarning = UPGRADE_WARNING_PROCEED;
+		/*
 		upgradeWarning = UPGRADE_WARNING_ASK;
 		while( upgradeWarning == UPGRADE_WARNING_ASK )
 			SDL_Delay(200);
+		*/
 		if( upgradeWarning == UPGRADE_WARNING_CANCEL )
 			return 1;
 		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Deleting old installation...");
@@ -290,6 +293,12 @@ static void symlinkBusybox(void)
 	remove(fname);
 	symlink(fname2, fname);
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", fname2, fname);
+}
+
+static void symlinkUsrBin(void)
+{
+	char fname[PATH_MAX*2];
+	char fname2[PATH_MAX];
 
 	strcpy( fname, getenv("APPDIR") );
 	strcat( fname, "/busybox" );
@@ -421,6 +430,8 @@ void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 		exit(1);
 	}
 	SDL_JoystickClose(j0);
+
+	symlinkUsrBin();
 }
 
 void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys, char * portStr)
