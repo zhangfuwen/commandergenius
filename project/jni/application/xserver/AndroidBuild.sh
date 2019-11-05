@@ -76,6 +76,8 @@ rm -rf $CURDIR/tmp-$1
 mkdir -p $CURDIR/tmp-$1
 cd $CURDIR/tmp-$1
 cp -f $CURDIR/xserver/data/busybox-$1 ./busybox
+cp -f $CURDIR/xserver/data/busybox-$1 ./libbusybox
+cp -f $CURDIR/xserver/data/busybox-$1 ./libbusybox.so
 for f in xhost xkbcomp xloadimage xsel; do cp -f $CURDIR/xserver/android/$1/$f ./$f ; done
 # Statically-linked prebuilt executables, generated using Debian chroot.
 
@@ -86,7 +88,7 @@ cp -f $CURDIR/pulseaudio/$1/install/lib/pulse-*/modules/*.so ./
 cp -f $CURDIR/pulseaudio/$1/*/install/lib/*.so ./
 
 rm -f ../AndroidData/binaries-$1.zip
-rm -rf ../AndroidData/lib
+rm -rf ../AndroidData/lib/$1
 mkdir -p ../AndroidData/lib/$1
 cp -a . ../AndroidData/lib/$1
 

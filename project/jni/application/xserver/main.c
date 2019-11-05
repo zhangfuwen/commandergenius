@@ -173,6 +173,30 @@ int main( int argc, char* argv[] )
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL chdir to: %s", getenv("SECURE_STORAGE_DIR"));
 	chdir( getenv("SECURE_STORAGE_DIR") ); // Megahack: change /proc/self/cwd to the X.org data dir, and use /proc/self/cwd path in libX11
 
+	system("logwrapper echo =====================");
+	system("logwrapper ls -l .");
+	system("logwrapper echo ===================== usr");
+	system("logwrapper ls -l usr");
+	system("logwrapper echo ===================== usr/bin");
+	system("logwrapper ls -l usr/bin");
+	system("logwrapper echo ===================== usr/share/X11/xkb/rules");
+	system("logwrapper ls -l usr/share/X11/xkb/rules");
+	system("logwrapper echo ===================== ./busybox");
+	system("logwrapper ./busybox ls -l");
+	system("logwrapper ./busybox");
+	system("logwrapper ./busybox tar -h");
+	{
+		char buf[PATH_MAX];
+		system("logwrapper echo ===================== LIBDIR = $LIBDIR");
+		sprintf(buf, "logwrapper ls -l %s", getenv("LIBDIR"));
+		system(buf);
+		sprintf(buf, "logwrapper %s/busybox", getenv("LIBDIR"));
+		system(buf);
+		sprintf(buf, "logwrapper %s/busybox tar -h", getenv("LIBDIR"));
+		system(buf);
+	}
+	system("logwrapper echo ===================== END");
+
 	startPulseAudio();
 
 	android_main( argnum, args, envp ); // Should never exit on success, if we want to terminate we kill ourselves

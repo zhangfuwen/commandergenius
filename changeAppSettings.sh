@@ -1091,6 +1091,8 @@ rm -rf project/obj/local/*/objs*/sdl_*
 rm -rf project/obj/local/*/objs*/lzma/src/XZInputStream.o
 rm -rf project/obj/local/*/objs*/liblzma.so
 
+rm -rf project/jni/application/src/AndroidData/lib
+
 rm -rf project/bin/classes
 rm -rf project/bin/res
 rm -rf project/app/build
