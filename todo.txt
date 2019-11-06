@@ -61,8 +61,6 @@ TODO, which will get actually done
 
 - XSDL: use pixel size instead of screen size.
 
-- XSDL: native PulseAudio support using OpenSLES.
-
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
 - OpenLieroX: download speed test at humus.kvalitne.cz is not working, replace it with some default value.
