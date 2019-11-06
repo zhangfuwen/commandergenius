@@ -283,41 +283,55 @@ static void * unpackFilesThread(void * unused)
 	return (void *)1;
 }
 
-static void symlinkBusybox(void)
-{
-	char fname[PATH_MAX*2];
-	char fname2[PATH_MAX];
-
-	sprintf(fname, "%s/busybox", getenv("APPDIR"));
-	sprintf(fname2, "%s/busybox", getenv("LIBDIR"));
-	remove(fname);
-	symlink(fname2, fname);
-	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", fname2, fname);
-}
-
 static void symlinkUsrBin(void)
 {
-	char fname[PATH_MAX*2];
-	char fname2[PATH_MAX];
+	char libname[PATH_MAX];
+	char targetname[PATH_MAX];
+	char libpath[PATH_MAX];
+	char targetpath[PATH_MAX];
+	char mappingpath[PATH_MAX];
+	FILE *mapping;
 
-	strcpy( fname, getenv("APPDIR") );
-	strcat( fname, "/busybox" );
-	strcat( fname, " rm -rf " );
-	strcat( fname, getenv("APPDIR") );
-	strcat( fname, "/usr/bin" );
+	sprintf( mappingpath, "%s/bin-map-%s.txt", getenv("DATADIR"), XSDL_ARCH );
+	__android_log_print(ANDROID_LOG_INFO, "XSDL", "Opening %s", mappingpath);
+	mapping = fopen(mappingpath, "rb");
+	if (!mapping)
+	{
+		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Opening %s failed", mappingpath);
+		return;
+	}
 
-	__android_log_print(ANDROID_LOG_INFO, "XSDL", "%s", fname);
+	sprintf( targetpath, "%s/usr", getenv("APPDIR") );
+	mkdir(targetpath, 0700);
 
-	system( fname );
+	sprintf( targetpath, "%s/usr/bin", getenv("APPDIR") );
+	mkdir(targetpath, 0700);
 
-	sprintf(fname, "%s/usr/bin", getenv("APPDIR"));
-	symlink(getenv("LIBDIR"), fname);
-	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", getenv("LIBDIR"), fname);
+	while (fgets(libname, sizeof(libname), mapping) &&
+			fgets(targetname, sizeof(targetname), mapping))
+	{
+		if (strchr(libname, '\n'))
+			strchr(libname, '\n')[0] = 0;
+		if (strchr(targetname, '\n'))
+			strchr(targetname, '\n')[0] = 0;
+		sprintf( libpath, "%s/%s", getenv("LIBDIR"), libname );
+		sprintf( targetpath, "%s/usr/bin/%s", getenv("APPDIR"), targetname );
+		__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", libpath, targetpath);
+		symlink( libpath, targetpath );
+	}
+	fclose(mapping);
+
+	sprintf(targetpath, "%s/busybox", getenv("APPDIR"));
+	remove(targetpath);
+	symlink("usr/bin/busybox", targetpath);
+	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s usr/bin/busybox %s", targetpath);
+
+	remove(mappingpath);
 }
 
 void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 {
-	symlinkBusybox();
+	symlinkUsrBin();
 
 	pthread_t thread_id;
 	void * status;
@@ -430,8 +444,6 @@ void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 		exit(1);
 	}
 	SDL_JoystickClose(j0);
-
-	symlinkUsrBin();
 }
 
 void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys, char * portStr)
@@ -876,7 +888,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 	sprintf (msg, "If you run Linux in chroot on this device, run:");
 	renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 	y += resolutionH * 15 / VID_Y;
-	sprintf (msg, "export DISPLAY=:0 PULSE_SERVER=tcp:127.0.0.1:4712");
+	sprintf (msg, "export DISPLAY=:0 PULSE_SERVER=tcp:127.0.0.1:4713");
 	renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 
 	SDL_SavePNG(surf, "background.png");

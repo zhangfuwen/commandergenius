@@ -13,9 +13,9 @@ if [ -e pulseaudio/android-build.sh ]; then
 fi
 
 ../setEnvironment-$1.sh sh -c '\
-$CC $CFLAGS -Werror=format -c main.c -o main-'"$1.o" || exit 1
+$CC $CFLAGS -Werror=format -c main.c -DXSDL_ARCH=\"'$1'\" -o main-'"$1.o" || exit 1
 ../setEnvironment-$1.sh sh -c '\
-$CC $CFLAGS -Werror=format -c gfx.c -o gfx-'"$1.o" || exit 1
+$CC $CFLAGS -Werror=format -c gfx.c -DXSDL_ARCH=\"'$1'\" -o gfx-'"$1.o" || exit 1
 
 [ -e ../../../lib ] || ln -s libs ../../../lib
 
@@ -76,8 +76,6 @@ rm -rf $CURDIR/tmp-$1
 mkdir -p $CURDIR/tmp-$1
 cd $CURDIR/tmp-$1
 cp -f $CURDIR/xserver/data/busybox-$1 ./busybox
-cp -f $CURDIR/xserver/data/busybox-$1 ./libbusybox
-cp -f $CURDIR/xserver/data/busybox-$1 ./libbusybox.so
 for f in xhost xkbcomp xloadimage xsel; do cp -f $CURDIR/xserver/android/$1/$f ./$f ; done
 # Statically-linked prebuilt executables, generated using Debian chroot.
 
@@ -90,6 +88,18 @@ cp -f $CURDIR/pulseaudio/$1/*/install/lib/*.so ./
 rm -f ../AndroidData/binaries-$1.zip
 rm -rf ../AndroidData/lib/$1
 mkdir -p ../AndroidData/lib/$1
-cp -a . ../AndroidData/lib/$1
+
+#cp -a . ../AndroidData/lib/$1
+
+rm -r bin-map-$1.txt
+IDX=0
+for BIN in *; do
+	echo "lib$IDX.so" >> bin-map-$1.txt
+	echo "$BIN" >> bin-map-$1.txt
+	cp ./$BIN ../AndroidData/lib/$1/lib$IDX.so
+	IDX="`expr $IDX \+ 1`"
+done
+
+zip ../AndroidData/bin-map.zip bin-map-$1.txt
 
 exit 0
