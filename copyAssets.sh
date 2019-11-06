@@ -2,7 +2,7 @@
 
 ARCHES="arm64-v8a armeabi-v7a x86 x86_64"
 
-if [ "$1" = "pack-binaries" ]; then
+if [ "$1" = "pack-binaries" -o "$1" = "pack-binaries-bundle" ]; then
 [ -e jni/application/src/AndroidData/lib ] || exit 0
 [ -e jni/application/src/AndroidData/binaries*.zip ] && {
 	echo "Error: binaries.zip no longer supported in Android 10"
@@ -13,7 +13,16 @@ if [ "$1" = "pack-binaries" ]; then
 APK="`pwd`/$2"
 echo "Copying binaries to .apk file"
 cd jni/application/src/AndroidData/ || exit 1
-zip -r "$APK" lib || exit 1
+if [ "$1" = "pack-binaries-bundle" ]; then
+	rm -rf base
+	mkdir -p base
+	mv lib base/
+	zip -r "$APK" base || exit 1
+	mv base/lib ./
+	rm -rf base
+else
+	zip -r "$APK" lib || exit 1
+fi
 cd ../../../../
 exit 0
 fi

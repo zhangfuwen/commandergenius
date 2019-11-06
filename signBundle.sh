@@ -10,6 +10,8 @@ cd project
 
 ./gradlew bundleRelease || exit 1
 
+../copyAssets.sh pack-binaries-bundle app/build/outputs/bundle/release/app.aab
+
 cd app/build/outputs/bundle/release || exit 1
 
 # Remove old certificate
