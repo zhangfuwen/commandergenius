@@ -39,7 +39,7 @@ TODO, which will get actually done
 
 - Debian: add hardlink simulation to proot, for Android 6.
 
-- Debian: add OpenSL ES output plugin to PulseAudio.
+- Debian: dialog to allow writing to external storage.
 
 - Debian: 64-bit arch support.
 
@@ -60,6 +60,8 @@ TODO, which will get actually done
 - XSDL: fix xrandr screen resizing.
 
 - XSDL: use pixel size instead of screen size.
+
+- XSDL: additional fonts break the app.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
