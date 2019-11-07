@@ -43,13 +43,9 @@ TODO, which will get actually done
 
 - Debian: distribute Debian image inside .obb file along with the app.
 
-- XSDL: use pixel size instead of video mode size.
-
-- XSDL: fix hardware keyboards with non-English layouts sending wrong keycodes.
+- XSDL: use pixel size instead of video mode size, Android multiwindow support.
 
 - XSDL: proper window resizing, with xrandr resizing XSDL screen buffer.
-
-- XSDL: use better approach than launching xsel to type Unicode symbols.
 
 - XSDL: apostrophe and minus on hardware keyboard with Italian layout are swapped, and slash (key 7) dos not work, seems to be incorrect keycode processing in SDL.
 
@@ -57,7 +53,7 @@ TODO, which will get actually done
 
 - XSDL: fix xrandr screen resizing.
 
-- XSDL: use pixel size instead of screen size.
+- XSDL: 24bpp color depth support.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
