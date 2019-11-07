@@ -587,26 +587,6 @@ int main(int argc, char* argv[])
 	//SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(SDL_ANDROID_SCREENKEYBOARD_BUTTON_0, 1);
 	//SDL_ANDROID_SetScreenKeyboardButtonGenerateTouchEvents(SDL_ANDROID_SCREENKEYBOARD_BUTTON_3, 1);
 
-	{
-		// Write to SD card
-		FILE * ff = fopen("/storage/C164-1DEC/ballfield.txt", "wb");
-		if (ff)
-		{
-			fputs("Ballfield!\n", ff);
-			fclose(ff);
-		}
-	}
-
-	{
-		// Write to shared storage
-		FILE * ff = fopen("/storage/emulated/0/ballfield2.txt", "wb");
-		if (ff)
-		{
-			fputs("Ballfield!\n", ff);
-			fclose(ff);
-		}
-	}
-
 	while(1)
 	{
 		SDL_Rect r;
