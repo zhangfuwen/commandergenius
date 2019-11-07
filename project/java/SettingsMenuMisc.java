@@ -542,6 +542,42 @@ class SettingsMenuMisc extends SettingsMenu
 		}
 	}
 
+	public static class StorageAccessConfig extends Menu
+	{
+		public static int REQUEST_STORAGE_ID = 42;
+
+		public static void onActivityResult(final MainActivity p, final int requestCode, final int resultCode, final Intent resultData)
+		{
+			if (requestCode == REQUEST_STORAGE_ID)
+			{
+				if (resultCode == Activity.RESULT_OK)
+				{
+					Uri treeUri = resultData.getData();
+					p.getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+					Log.i("SDL", "Storage write permission granted to path " + treeUri.toString());
+				}
+				else
+				{
+					Log.i("SDL", "Storage write permission rejected");
+				}
+			}
+		}
+
+		String title(final MainActivity p)
+		{
+			return p.getResources().getString(R.string.storage_access);
+		}
+		void run (final MainActivity p)
+		{
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+			{
+				p.startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), REQUEST_STORAGE_ID);
+			}
+
+			goBack(p);
+		}
+	}
+
 	static class CommandlineConfig extends Menu
 	{
 		String title(final MainActivity p)

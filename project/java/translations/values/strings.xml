@@ -26,6 +26,7 @@
     <string name="storage_custom">Specify directory</string>
     <string name="storage_commandline">Command line parameters, one argument per line</string>
     <string name="storage_question">Data installation location</string>
+    <string name="storage_access">Permission to write to SD card</string>
     <string name="optional_downloads">Downloads</string>
     <string name="downloads">Downloads</string>
     <string name="ok">OK</string>

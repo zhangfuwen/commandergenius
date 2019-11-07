@@ -598,6 +598,7 @@ public class MainActivity extends Activity
 	public void onActivityResult(int request, int response, Intent data) {
 		super.onActivityResult(request, response, data);
 		cloudSave.onActivityResult(request, response, data);
+		SettingsMenuMisc.StorageAccessConfig.onActivityResult(this, request, response, data);
 	}
 
 	private int TextInputKeyboardList[][] =
