@@ -33,6 +33,8 @@ TODO, which will get actually done
 
 - SDL: Text input window still blocks touches sometimes after text input is finished.
 
+- SDL: Option to disable touch filtering.
+
 - Debian: add hardlink simulation to proot, for Android 6.
 
 - Debian: dialog to allow writing to external storage.
@@ -52,6 +54,8 @@ TODO, which will get actually done
 - XSDL: fix xrandr screen resizing.
 
 - XSDL: 24bpp color depth support.
+
+- XSDL: App window update lags behind mouse movement.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
