@@ -84,7 +84,7 @@ cp -f $CURDIR/pulseaudio/$1/install/lib/*.so ./
 cp -f $CURDIR/pulseaudio/$1/install/lib/pulseaudio/*.so ./
 cp -f $CURDIR/pulseaudio/$1/install/lib/pulse-*/modules/*.so ./
 cp -f $CURDIR/pulseaudio/$1/*/install/lib/*.so ./
-cp -f $CURDIR/debian-image/proot-prebuilt/* ./
+cp -f $CURDIR/debian-image/proot-prebuilt/$1/* ./
 
 rm -f ../AndroidData/binaries-$1.zip
 rm -rf ../AndroidData/lib/$1
