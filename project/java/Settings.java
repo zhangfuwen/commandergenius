@@ -75,6 +75,7 @@ import android.widget.Toast;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 
 
 // TODO: too much code here, split into multiple files, possibly auto-generated menus?
@@ -667,6 +668,12 @@ public class Settings
 		try {
 			nativeSetEnv( "ANDROID_APP_NAME", p.getString(p.getApplicationInfo().labelRes) );
 		} catch (Exception eeeeee) {}
+		try {
+			PackageInfo pInfo = p.getPackageManager().getPackageInfo(p.getPackageName(), 0);
+			nativeSetEnv( "ANDROID_PACKAGE_VERSION_NAME", pInfo.versionName );
+			nativeSetEnv( "ANDROID_PACKAGE_VERSION_CODE", String.valueOf(pInfo.versionCode) );
+		} catch (PackageManager.NameNotFoundException eeeeeeee) {
+		}
 		Log.d("SDL", "libSDL: Is running on OUYA: " + p.isRunningOnOUYA());
 		if( p.isRunningOnOUYA() )
 		{

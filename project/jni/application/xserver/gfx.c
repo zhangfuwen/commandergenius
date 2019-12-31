@@ -237,7 +237,7 @@ static int unpackFiles(const char *archive, const char *script, const char *dele
 			break;
 		if( strchr(buf, '\n') != NULL )
 			strchr(buf, '\n')[0] = 0;
-		__android_log_print(ANDROID_LOG_INFO, "XSDL", "> %s", buf);
+		__android_log_print(ANDROID_LOG_VERBOSE, "XSDL", "> %s", buf);
 		strncpy(unpackLog[3], unpackLog[2], sizeof(unpackLog[0]) - 4);
 		strncpy(unpackLog[2], unpackLog[1], sizeof(unpackLog[0]) - 4);
 		strncpy(unpackLog[1], unpackLog[0], sizeof(unpackLog[0]) - 4);
