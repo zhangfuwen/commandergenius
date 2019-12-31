@@ -196,32 +196,9 @@ static int unpackFiles(const char *archive, const char *script, const char *dele
 	strcat( fname, script );
 	if( stat( fname, &st ) != 0 )
 	{
-		strcpy( fname2, getenv("UNSECURE_STORAGE_DIR") );
-		strcat( fname2, "/" );
-		strcat( fname2, script );
-		if( stat( fname2, &st ) != 0 )
-		{
-			__android_log_print(ANDROID_LOG_INFO, "XSDL", "Cannot find postinstall script");
-			return 1;
-		}
-		else
-		{
-			strcpy( fname2, "cat " );
-			strcat( fname2, getenv("UNSECURE_STORAGE_DIR") );
-			strcat( fname2, "/" );
-			strcat( fname2, script );
-			strcat( fname2, " > " );
-			strcat( fname2, fname );
-			__android_log_print(ANDROID_LOG_INFO, "XSDL", "Copying postinstall script from SD card: %s", fname2);
-			system( fname2 );
-		}
+		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Cannot find postinstall script");
+		return 1;
 	}
-
-	__android_log_print(ANDROID_LOG_INFO, "XSDL", "Setting executable permissions on postinstall script");
-
-	strcpy( fname2, "chmod 755 " );
-	strcat( fname2, fname );
-	system( fname2 );
 
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "Running postinstall scipt: %s", script);
 
@@ -254,7 +231,7 @@ static void * unpackFilesThread(void * unused)
 {
 	const char *unpack[][4] =
 	{
-		{ "data.tar.gz", "postinstall.sh", "usr/lib/xorg/protocol.txt", "img img-* postinstall.sh update*.sh" },
+		{ "data.tar.gz", "usr/bin/postinstall.sh", "usr/lib/xorg/protocol.txt", "img img-* postinstall.sh update*.sh" },
 		{ "xfonts.tar.gz", "", "", "" },
 		{ "update1.tar.gz", "update1.sh", "", "" },
 		{ "update2.tar.gz", "update2.sh", "", "" },

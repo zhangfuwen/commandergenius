@@ -9,5 +9,15 @@ cd $SECURE_STORAGE_DIR
 echo "Extracting overlay data files"
 ./busybox tar xvJf $DATADIR/overlay.tar.xz
 cd $SECURE_STORAGE_DIR/img
+
 echo "Installation path: $SECURE_STORAGE_DIR/img"
-./postinstall.sh
+
+rm -f ./postinstall-img.sh ./proot.sh
+ln -s ../usr/bin/postinstall-img.sh .
+ln -s ../usr/bin/proot.sh .
+
+ls -l .
+
+echo "Running postinstall-img.sh:"
+
+./postinstall-img.sh
