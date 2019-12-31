@@ -364,7 +364,7 @@ void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 		renderString(unpackLog[3], VID_X/2, VID_Y*5/8);
 		progress++;
 		renderString(progressWheel[progress % PROGRESS_WHEEL_NUM], VID_X/2, VID_Y*6/8);
-		renderString("You may put this app to background while it's unpacking", VID_X/2, VID_Y*7/8);
+		renderString("Unpacking data ...", VID_X/2, VID_Y*7/8);
 		SDL_Flip(SDL_GetVideoSurface());
 		int x = 0, y = 0;
 		while( upgradeWarning == UPGRADE_WARNING_ASK )
