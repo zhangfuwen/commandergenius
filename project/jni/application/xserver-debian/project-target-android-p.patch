@@ -1,0 +1,19 @@
+diff --git a/project/app/build-template.gradle b/project/app/build-template.gradle
+index 2953ce993..c0250f801 100644
+--- a/project/app/build.gradle
++++ b/project/app/build.gradle
+@@ -1,12 +1,12 @@
+ apply plugin: 'com.android.application'
+ 
+ android {
+-    compileSdkVersion 29
++    compileSdkVersion 28
+ 
+     defaultConfig {
+         applicationId "com.cuntubuntu"
+         minSdkVersion 16 // Must match version numbers in project/AndroidManifestTemplate.xml
+-        targetSdkVersion 29
++        targetSdkVersion 28
+     }
+ 
+     buildTypes {

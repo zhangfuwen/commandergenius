@@ -7,6 +7,8 @@ echo "Extracting data files"
 cd $SECURE_STORAGE_DIR
 echo "./busybox tar xvJf $ANDROID_OBB_DIR/main.$OBB_VERSION.$ANDROID_PACKAGE_NAME.obb"
 ./busybox tar xvJf $ANDROID_OBB_DIR/main.$OBB_VERSION.$ANDROID_PACKAGE_NAME.obb
+echo "./busybox unzip -p $ANDROID_PACKAGE_PATH assets/dist-debian-buster-$ARCH.tar.xz | ./busybox tar xvJ"
+./busybox unzip -p $ANDROID_PACKAGE_PATH assets/dist-debian-buster-$ARCH.tar.xz | ./busybox tar xvJ
 echo "Extracting overlay data files"
 echo "./busybox tar xvJf $DATADIR/overlay.tar.xz"
 ./busybox tar xvJf $DATADIR/overlay.tar.xz
@@ -15,11 +17,9 @@ cd $SECURE_STORAGE_DIR/img
 echo "Installation path: $SECURE_STORAGE_DIR/img"
 
 rm -f ./postinstall-img.sh ./proot.sh
-ln -s ../usr/bin/postinstall-img.sh .
-ln -s ../usr/bin/proot.sh .
-
-# ls -l .
+ln -s $SECURE_STORAGE_DIR/usr/bin/postinstall-img.sh ./
+ln -s $SECURE_STORAGE_DIR/usr/bin/proot.sh ./
 
 echo "Running postinstall-img.sh:"
 
-./postinstall-img.sh
+logwrapper ./postinstall-img.sh

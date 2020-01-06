@@ -643,7 +643,7 @@ public class Settings
 		Log.i("SDL",  "libSDL: setting envvar LANGUAGE to '" + lang + "'");
 		nativeSetEnv( "LANG", lang );
 		nativeSetEnv( "LANGUAGE", lang );
-		// TODO: get current user name and set envvar USER, the API is not availalbe on Android 1.6 so I don't bother with this
+		nativeSetEnv( "ARCH", android.os.Build.CPU_ABI );
 		nativeSetEnv( "APPDIR", p.getFilesDir().getAbsolutePath() );
 		nativeSetEnv( "SECURE_STORAGE_DIR", p.getFilesDir().getAbsolutePath() );
 		nativeSetEnv( "LIBDIR", p.getApplicationInfo().nativeLibraryDir );
