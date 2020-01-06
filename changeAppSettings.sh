@@ -81,7 +81,7 @@ if [ -z "$CompatibilityHacksForceScreenUpdate" ]; then
 fi
 
 if [ -z "$CompatibilityHacksForceScreenUpdateMouseClick" ]; then
-	CompatibilityHacksForceScreenUpdateMouseClick=y
+	CompatibilityHacksForceScreenUpdateMouseClick=n
 fi
 
 if [ -z "$TouchscreenKeysTheme" ]; then

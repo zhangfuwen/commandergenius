@@ -166,7 +166,7 @@ static int moveMouseWithGyroscope = 0;
 static float moveMouseWithGyroscopeSpeed = 5.0f;
 static int moveMouseWithGyroscopeX = 0;
 static int moveMouseWithGyroscopeY = 0;
-static int forceScreenUpdateMouseClick = 1;
+static int forceScreenUpdateMouseClick = 0;
 
 static pthread_t mouseClickTimeoutThreadId = 0;
 static sem_t mouseClickTimeoutSemaphore;
@@ -541,7 +541,8 @@ static void ProcessMouseUp( int x, int y )
 		abs(mouseInitialY - y) < SDL_ANDROID_sFakeWindowHeight / 16 &&
 		SDL_GetTicks() - mouseInitialTime < 700 )
 	{
-		SDL_ANDROID_MainThreadPushMouseMotion( mouseInitialX, mouseInitialY );
+		if( forceScreenUpdateMouseClick )
+			SDL_ANDROID_MainThreadPushMouseMotion( mouseInitialX, mouseInitialY );
 		SDL_ANDROID_MainThreadPushMouseButton( SDL_PRESSED, SDL_BUTTON_LEFT );
 		if( forceScreenUpdateMouseClick && mouseInitialX > 0 )
 			SDL_ANDROID_MainThreadPushMouseMotion( mouseInitialX - 1, mouseInitialY );
