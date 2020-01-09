@@ -18,5 +18,5 @@ cd sdl-android
 git submodule update --init --recursive
 ./build.sh xserver
 
-Busybox is precompiled, taken from this repository:
-https://github.com/pelya/busybox-android
+Busybox is precompiled, extracted from this .apk file:
+https://f-droid.org/en/packages/ru.meefik.busybox/

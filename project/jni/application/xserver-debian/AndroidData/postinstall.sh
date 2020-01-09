@@ -9,6 +9,9 @@ echo "./busybox tar xvJf $ANDROID_OBB_DIR/main.$OBB_VERSION.$ANDROID_PACKAGE_NAM
 ./busybox tar xvJf $ANDROID_OBB_DIR/main.$OBB_VERSION.$ANDROID_PACKAGE_NAME.obb
 echo "./busybox unzip -p $ANDROID_PACKAGE_PATH assets/dist-debian-buster-$ARCH.tar.xz | ./busybox tar xvJ"
 ./busybox unzip -p $ANDROID_PACKAGE_PATH assets/dist-debian-buster-$ARCH.tar.xz | ./busybox tar xvJ
+echo "Extracting sloppy symlinks patch"
+echo "./busybox tar xvJf $DATADIR/symlinks.tar.xz"
+./busybox tar xvJf $DATADIR/symlinks.tar.xz
 echo "Extracting overlay data files"
 echo "./busybox tar xvJf $DATADIR/overlay.tar.xz"
 ./busybox tar xvJf $DATADIR/overlay.tar.xz
