@@ -19,10 +19,6 @@ TODO, which will get actually done
 
 - OpenArena: Zooming is totally broken, camera jumps upwards all the time.
 
-- USB Keyboard: options for camera feed size and for redefining remote menu hotkey.
-
-- UQM HD: add fonts from http://mosc-portal.bursa.ru/showthread.php?t=206 and switch back to joystick controls, set 4:3 aspect ratio as default.
-
 - SDL: CompatibilityHacksForceScreenUpdate=y does not redraw screen after putting to background and restoring.
 
 - SDL: add option for non-fullscreen non-immersive mode.
@@ -33,15 +29,11 @@ TODO, which will get actually done
 
 - SDL: Text input window still blocks touches sometimes after text input is finished.
 
-- SDL: Option to disable touch filtering.
+- SDL: Right mouse button sometimes gets stuck in tap or hold mode, faster scrollwheel while not moving mouse cursor.
 
-- Debian: add hardlink simulation to proot, for Android 6.
+- Debian: single script to start Debian instead of commandline with tabs.
 
-- Debian: dialog to allow writing to external storage.
-
-- Debian: 64-bit arch support.
-
-- Debian: distribute Debian image inside .obb file along with the app.
+- Debian: investigate why busybox cannot unpack tar with symlinks with no target.
 
 - XSDL: use pixel size instead of video mode size, Android multiwindow support.
 
@@ -55,7 +47,11 @@ TODO, which will get actually done
 
 - XSDL: 24bpp color depth support.
 
-- XSDL: App window update lags behind mouse movement.
+- XSDL: app window update lags behind mouse movement.
+
+- XSDL: synchronize clipboard between XSDL and Android.
+
+- XSDL: additional screen button to show screen keyboard.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
