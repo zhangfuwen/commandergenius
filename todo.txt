@@ -31,8 +31,6 @@ TODO, which will get actually done
 
 - SDL: Right mouse button sometimes gets stuck in tap or hold mode, faster scrollwheel while not moving mouse cursor.
 
-- Debian: single script to start Debian instead of commandline with tabs.
-
 - Debian: investigate why busybox cannot unpack tar with symlinks with no target.
 
 - XSDL: use pixel size instead of video mode size, Android multiwindow support.
@@ -50,8 +48,6 @@ TODO, which will get actually done
 - XSDL: app window update lags behind mouse movement.
 
 - XSDL: synchronize clipboard between XSDL and Android.
-
-- XSDL: additional screen button to show screen keyboard.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
