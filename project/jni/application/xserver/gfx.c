@@ -84,7 +84,8 @@ static int unpackFiles(const char *archive, const char *script, const char *dele
 	if( strlen(deleteOldDataMarkerFile) > 0 && stat( fname2, &st ) == 0 )
 	{
 		__android_log_print(ANDROID_LOG_INFO, "XSDL", "Upgrade detected, showing warning dialog");
-		upgradeWarning = UPGRADE_WARNING_PROCEED;
+		//upgradeWarning = UPGRADE_WARNING_PROCEED;
+		upgradeWarning = UPGRADE_WARNING_CANCEL;
 		/*
 		upgradeWarning = UPGRADE_WARNING_ASK;
 		while( upgradeWarning == UPGRADE_WARNING_ASK )
