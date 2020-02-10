@@ -49,6 +49,8 @@ TODO, which will get actually done
 
 - XSDL: synchronize clipboard between XSDL and Android.
 
+- XSDL: enable screen buttons, option to disable them.
+
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
 - OpenLieroX: download speed test at humus.kvalitne.cz is not working, replace it with some default value.
