@@ -295,7 +295,8 @@ static void symlinkUsrBin(void)
 		sprintf( libpath, "%s/%s", getenv("LIBDIR"), libname );
 		sprintf( targetpath, "%s/usr/bin/%s", getenv("APPDIR"), targetname );
 		__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s %s %s", libpath, targetpath);
-		symlink( libpath, targetpath );
+		remove(targetpath);
+		symlink(libpath, targetpath);
 	}
 	fclose(mapping);
 
