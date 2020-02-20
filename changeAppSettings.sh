@@ -894,10 +894,10 @@ else
 	ImmersiveMode=true
 fi
 
-if [ "$HideSystemMousePointer" = "y" ]; then
-	HideSystemMousePointer=true
-else
+if [ "$HideSystemMousePointer" = "n" ]; then
 	HideSystemMousePointer=false
+else
+	HideSystemMousePointer=true
 fi
 
 if [ "$CreateService" = "y" ] ; then
