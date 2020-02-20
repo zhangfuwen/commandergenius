@@ -533,10 +533,13 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		y += 30;
 		sprintf(buf, "Display number: %d", port);
 		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
+		y += 30;
+		sprintf(buf, "Ctrl/Alt/Shift overlay: %s", *ctrlAltShiftKeys == 0 ? "No" : *ctrlAltShiftKeys == 1 ? "Yes, left side" : "Yes, right side");
+		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
 		y += 40;
 		sprintf(buf, "Starting in %d seconds", counter / 1000 + 1);
 		renderString(buf, vertical ? VID_Y / 2 : VID_X/2, y);
-		SDL_Delay(100);
+		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 		counter -= SDL_GetTicks() - curtime;
 		curtime = SDL_GetTicks();
@@ -599,7 +602,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		}
 		//SDL_GetMouseState(&x, &y);
 		//renderString("X", x, y);
-		SDL_Delay(100);
+		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 		if (res == MODE_CUSTOM)
 		{
@@ -645,7 +648,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					renderString("Enter height:", VID_X/8, VID_Y/6);
 				renderString("Press Enter when done", VID_X*3/4, VID_Y/6);
 				renderString(custom, VID_X/8 + VID_X/4, VID_Y/6);
-				SDL_Delay(100);
+				SDL_Delay(50);
 				SDL_Flip(SDL_GetVideoSurface());
 			}
 			__android_log_print(ANDROID_LOG_INFO, "XSDL", "Selected custom display resolution: %s = %d %d", custom, customX, customY);
@@ -719,6 +722,8 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					if (event.key.keysym.sym == SDLK_HELP)
 						return;
 				break;
+				case SDL_MOUSEBUTTONDOWN:
+				break;
 				case SDL_MOUSEBUTTONUP:
 				{
 					//SDL_GetMouseState(&x, &y);
@@ -729,16 +734,26 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 						y = z;
 					}
 					if( y > 0 && y < VID_Y * 1.5f / 6 )
+					{
 						*builtinKeyboard = (*builtinKeyboard + 1) % 3;
+					}
 					if( y > VID_Y * 1.5f / 6 &&  y < VID_Y * 2.5f / 6 )
-						*ctrlAltShiftKeys = !*ctrlAltShiftKeys;
+					{
+						*ctrlAltShiftKeys = *ctrlAltShiftKeys + 1;
+						if (*ctrlAltShiftKeys > 2)
+						{
+							*ctrlAltShiftKeys = 0;
+						}
+					}
 					if( y > VID_Y * 2.5f / 6 &&  y < VID_Y * 3.5f / 6 )
 					{
 						port ++;
 						port %= 4;
 					}
 					if( y > VID_Y * 4 / 6 &&  y < VID_Y * 6 / 6 )
+					{
 						okay = 1;
+					}
 					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d dpi %d\n", x, y, res);
 				}
 				break;
@@ -755,7 +770,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		sprintf(buf, "Keyboard: %s", *builtinKeyboard == 0 ? "System" : *builtinKeyboard == 1 ? "Builtin QWERTY" : "System + Builtin");
 		renderString(buf, VID_X/2, VID_Y * 1 / 6);
 
-		sprintf(buf, "Separate Ctrl/Alt/Shift keys: %s", *ctrlAltShiftKeys == 0 ? "No" : "Yes");
+		sprintf(buf, "Ctrl/Alt/Shift overlay: %s", *ctrlAltShiftKeys == 0 ? "No" : *ctrlAltShiftKeys == 1 ? "Yes, left side" : "Yes, right side");
 		renderString(buf, VID_X/2, VID_Y * 2 / 6);
 
 		sprintf(buf, "Display number: %d", port);
@@ -764,7 +779,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		sprintf(buf, "Okay");
 		renderString(buf, VID_X/2, VID_Y * 5 / 6);
 
-		SDL_Delay(100);
+		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 	}
 

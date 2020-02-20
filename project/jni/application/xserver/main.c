@@ -162,6 +162,8 @@ int main( int argc, char* argv[] )
 		char s[16];
 		sprintf(s, "%d", builtinKeyboard);
 		setenv("XSDL_BUILTIN_KEYBOARD", s, 1);
+		sprintf(s, "%d", screenButtons);
+		setenv("XSDL_SCREEN_BUTTONS_ALIGN", s, 1);
 	}
 
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL video resolution %s, args:", screenres);
