@@ -552,6 +552,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 	}
 
 	SDL_Joystick * j0 = SDL_JoystickOpen(0);
+	int mouse = 0;
 
 	while ( res < 0 )
 	{
@@ -565,7 +566,6 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 				break;
 				case SDL_MOUSEBUTTONUP:
 				{
-					//SDL_GetMouseState(&x, &y);
 					if( vertical )
 					{
 						int z = x;
@@ -581,6 +581,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 				case SDL_JOYBALLMOTION:
 					x = event.jball.xrel;
 					y = event.jball.yrel;
+				break;
+				case SDL_MOUSEMOTION:
+					mouse = 1;
+					x = event.motion.x;
+					y = event.motion.y;
 				break;
 			}
 		}
@@ -600,8 +605,8 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 			if( i == 2 && ii == 3 && !vertical )
 				renderString("custom", VID_X/8 + (ii*VID_X/4), VID_Y/6 - VID_Y/12 + (i*VID_Y/3));
 		}
-		//SDL_GetMouseState(&x, &y);
-		//renderString("X", x, y);
+		if( mouse )
+			renderString("∆", x, y);
 		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 		if (res == MODE_CUSTOM)
@@ -661,6 +666,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		*resolutionW = customX;
 		*resolutionH = customY;
 	}
+	mouse = 0;
 	while ( dpi < 0 )
 	{
 		while (SDL_PollEvent(&event))
@@ -673,7 +679,6 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 				break;
 				case SDL_MOUSEBUTTONUP:
 				{
-					//SDL_GetMouseState(&x, &y);
 					if( vertical )
 					{
 						int z = x;
@@ -690,6 +695,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					x = event.jball.xrel;
 					y = event.jball.yrel;
 				break;
+				case SDL_MOUSEMOTION:
+					mouse = 1;
+					x = event.motion.x;
+					y = event.motion.y;
+				break;
 			}
 		}
 		SDL_FillRect(SDL_GetVideoSurface(), NULL, 0);
@@ -703,14 +713,15 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 			else
 				renderStringScaled(fontsStr[i*4+ii], scale, VID_X/8 + (ii*VID_X/4), VID_Y/8 + (i*VID_Y/4), 255, 255, 255, SDL_GetVideoSurface());
 		}
-		//SDL_GetMouseState(&x, &y);
-		//renderString("X", x, y);
-		SDL_Delay(100);
+		if( mouse )
+			renderString("∆", x, y);
+		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 	}
 	*displayW = *displayW / fontsVal[dpi];
 	*displayH = *displayH / fontsVal[dpi];
 
+	mouse = 0;
 	okay = !config;
 	while ( !okay )
 	{
@@ -726,7 +737,6 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 				break;
 				case SDL_MOUSEBUTTONUP:
 				{
-					//SDL_GetMouseState(&x, &y);
 					if( vertical )
 					{
 						int z = x;
@@ -761,6 +771,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					x = event.jball.xrel;
 					y = event.jball.yrel;
 				break;
+				case SDL_MOUSEMOTION:
+					mouse = 1;
+					x = event.motion.x;
+					y = event.motion.y;
+				break;
 			}
 		}
 		SDL_FillRect(SDL_GetVideoSurface(), NULL, 0);
@@ -779,6 +794,8 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		sprintf(buf, "Okay");
 		renderString(buf, VID_X/2, VID_Y * 5 / 6);
 
+		if( mouse )
+			renderString("∆", x, y);
 		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 	}
