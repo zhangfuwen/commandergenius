@@ -453,13 +453,12 @@ public class MainActivity extends Activity
 		{
 			_videoLayout.addView(mGLView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 		}
-		mGLView.setFocusableInTouchMode(true);
-		mGLView.setFocusable(true);
-		mGLView.requestFocus();
-		if (Globals.HideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N)
+		mGLView.captureMouse(true);
+		if( Globals.HideSystemMousePointer && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N )
 		{
 			mGLView.setPointerIcon(android.view.PointerIcon.getSystemIcon(this, android.view.PointerIcon.TYPE_NULL));
 		}
+
 
 		if( _ad.getView() != null )
 		{
@@ -553,9 +552,13 @@ public class MainActivity extends Activity
 		super.onWindowFocusChanged(hasFocus);
 		Log.i("SDL", "libSDL: onWindowFocusChanged: " + hasFocus + " - sending onPause/onResume");
 		if (hasFocus == false)
+		{
 			onPause();
+		}
 		else
+		{
 			onResume();
+		}
 	}
 	
 	public boolean isPaused()
@@ -618,6 +621,7 @@ public class MainActivity extends Activity
 			{
 				public void run()
 				{
+					mGLView.captureMouse(false);
 					if (keyboard == 0)
 					{
 						_inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -798,6 +802,7 @@ public class MainActivity extends Activity
 					_inputManager.hideSoftInputFromWindow(mGLView.getWindowToken(), 0);
 					DimSystemStatusBar.get().dim(_videoLayout);
 					//DimSystemStatusBar.get().dim(mGLView);
+					mGLView.captureMouse(true);
 				}
 			});
 		}
@@ -809,6 +814,7 @@ public class MainActivity extends Activity
 		if(Globals.CompatibilityHacksTextInputEmulatesHwKeyboard)
 		{
 			showScreenKeyboardWithoutTextInputField(Globals.TextInputKeyboard);
+			mGLView.captureMouse(false);
 			return;
 		}
 		if(_screenKeyboard != null)
@@ -882,6 +888,7 @@ public class MainActivity extends Activity
 		screenKeyboard.setInputType(InputType.TYPE_CLASS_TEXT);
 		screenKeyboard.setFocusableInTouchMode(true);
 		screenKeyboard.setFocusable(true);
+		mGLView.captureMouse(false);
 		//_inputManager.showSoftInput(screenKeyboard, InputMethodManager.SHOW_IMPLICIT);
 		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		// Hack to try to force on-screen keyboard
@@ -910,7 +917,10 @@ public class MainActivity extends Activity
 	public void hideScreenKeyboard()
 	{
 		if( keyboardWithoutTextInputShown )
+		{
 			showScreenKeyboardWithoutTextInputField(Globals.TextInputKeyboard);
+			mGLView.captureMouse(true);
+		}
 
 		if(_screenKeyboard == null || ! (_screenKeyboard instanceof EditText))
 			return;
@@ -927,9 +937,7 @@ public class MainActivity extends Activity
 		_inputManager.hideSoftInputFromWindow(_screenKeyboard.getWindowToken(), 0);
 		_videoLayout.removeView(_screenKeyboard);
 		_screenKeyboard = null;
-		mGLView.setFocusableInTouchMode(true);
-		mGLView.setFocusable(true);
-		mGLView.requestFocus();
+		mGLView.captureMouse(true);
 		DimSystemStatusBar.get().dim(_videoLayout);
 
 		_videoLayout.postDelayed( new Runnable()
@@ -945,7 +953,7 @@ public class MainActivity extends Activity
 	{
 		return _screenKeyboard != null;
 	};
-	
+
 	public void setScreenKeyboardHintMessage(String s)
 	{
 		_screenKeyboardHintMessage = s;
@@ -1051,79 +1059,6 @@ public class MainActivity extends Activity
 		}
 	}
 
-	/*
-	@Override
-	public boolean onKeyDown(int keyCode, final KeyEvent event)
-	{
-		if( keyCode == KeyEvent.KEYCODE_BACK )
-		{
-			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
-			{
-				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
-				DemoGLSurfaceView.nativeMouseButtonsPressed(2, 1);
-				return true;
-			}
-			else if( keyboardWithoutTextInputShown )
-			{
-				return true;
-			}
-		}
-		if( _screenKeyboard != null && _screenKeyboard.onKeyDown(keyCode, event) )
-			return true;
-
-		if( mGLView != null )
-		{
-			if( mGLView.nativeKey( keyCode, 1, event.getUnicodeChar() ) == 0 )
-				return super.onKeyDown(keyCode, event);
-		}
-		else
-		if( keyListener != null )
-		{
-			keyListener.onKeyEvent(keyCode);
-		}
-		else
-		if( _btn != null )
-			return _btn.onKeyDown(keyCode, event);
-		return true;
-	}
-	
-	@Override
-	public boolean onKeyUp(int keyCode, final KeyEvent event)
-	{
-		if( keyCode == KeyEvent.KEYCODE_BACK )
-		{
-			if( (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE )
-			{
-				// Stupid Samsung and stupid Acer remaps right mouse button to BACK key
-				DemoGLSurfaceView.nativeMouseButtonsPressed(2, 0);
-				return true;
-			}
-			else if( keyboardWithoutTextInputShown )
-			{
-				showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
-				return true;
-			}
-		}
-		if( _screenKeyboard != null && _screenKeyboard.onKeyUp(keyCode, event) )
-			return true;
-
-		if( mGLView != null )
-		{
-			if( mGLView.nativeKey( keyCode, 0, event.getUnicodeChar() ) == 0 )
-				return super.onKeyUp(keyCode, event);
-			if( keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU )
-			{
-				DimSystemStatusBar.get().dim(_videoLayout);
-				//DimSystemStatusBar.get().dim(mGLView);
-			}
-		}
-		else
-		if( _btn != null )
-			return _btn.onKeyUp(keyCode, event);
-		return true;
-	}
-	*/
-	
 	//private Configuration oldConfig = null;
 	@Override
 	public void onConfigurationChanged(Configuration newConfig)

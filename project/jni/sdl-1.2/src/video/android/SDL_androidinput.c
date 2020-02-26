@@ -478,7 +478,7 @@ static void ProcessMouseRelativeMovement( jint *xx, jint *yy, int action )
 {
 	int x = *xx, y = *yy;
 
-	if( !relativeMovement )
+	if( !relativeMovement || hardwareMouseDetected )
 		return;
 
 	if( action == MOUSE_DOWN )
@@ -863,9 +863,9 @@ JAVA_EXPORT_NAME(DemoGLSurfaceView_nativeMotionEvent) ( JNIEnv*  env, jobject  t
 
 	if( ProcessTouchscreenKeyboard( x, y, action, pointerId ) )
 		return;
-	
+
 	AssignNewTouchPointers( action, pointerId );
-	
+
 	AdjustTouchScreenCalibration( &x, &y );
 
 	ProcessMultitouchGesture( x, y, action, pointerId );
