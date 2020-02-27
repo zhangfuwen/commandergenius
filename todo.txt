@@ -39,8 +39,6 @@ TODO, which will get actually done
 
 - XSDL: fix xrandr screen resizing.
 
-- XSDL: 24bpp color depth support.
-
 - XSDL: app window update lags behind mouse movement.
 
 - XSDL: synchronize clipboard between XSDL and Android.
