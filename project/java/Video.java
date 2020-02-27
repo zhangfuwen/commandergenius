@@ -884,6 +884,12 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 		Clipboard.get().set(context, s);
 	}
 
+	public void setCapturedMousePosition(int x, int y) // Called from native code
+	{
+		DifferentTouchInput.capturedMouseX = x;
+		DifferentTouchInput.capturedMouseY = y;
+	}
+
 	public void exitApp()
 	{
 		 nativeDone();

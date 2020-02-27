@@ -967,6 +967,10 @@ static void ProcessMoveMouseWithGyroscope(float gx, float gy, float gz)
 void SDL_ANDROID_WarpMouse(int x, int y)
 {
 	//__android_log_print(ANDROID_LOG_INFO, "libSDL", "SDL_ANDROID_WarpMouse(): %dx%d rel %dx%d old %dx%d", x, y, relativeMovementX, relativeMovementY, SDL_ANDROID_currentMouseX, SDL_ANDROID_currentMouseY);
+	if( hardwareMouseDetected )
+	{
+		SDL_ANDROID_SetCapturedMousePosition(x, y);
+	}
 	relativeMovementX -= SDL_ANDROID_currentMouseX-x;
 	relativeMovementY -= SDL_ANDROID_currentMouseY-y;
 	SDL_ANDROID_MainThreadPushMouseMotion(x, y);

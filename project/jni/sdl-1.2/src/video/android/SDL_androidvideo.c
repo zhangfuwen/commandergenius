@@ -90,6 +90,7 @@ static jmethodID JavaRequestOpenExternalApp = NULL;
 static jmethodID JavaRequestRestartMyself = NULL;
 static jmethodID JavaRequestSetConfigOption = NULL;
 static jmethodID JavaSetSystemMousePointerVisible = NULL;
+static jmethodID JavaSetCapturedMousePosition = NULL;
 static int glContextLost = 0;
 static int showScreenKeyboardDeferred = 0;
 static const char * showScreenKeyboardOldText = "";
@@ -397,6 +398,7 @@ JAVA_EXPORT_NAME(DemoRenderer_nativeInitJavaCallbacks) ( JNIEnv*  env, jobject t
 	JavaRequestRestartMyself = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "restartMyself", "(Ljava/lang/String;)V");
 	JavaRequestSetConfigOption = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setConfigOptionFromSDL", "(II)V");
 	JavaSetSystemMousePointerVisible = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setSystemMousePointerVisible", "(I)V");
+	JavaSetCapturedMousePosition = (*JavaEnv)->GetMethodID(JavaEnv, JavaRendererClass, "setCapturedMousePosition", "(II)V");
 
 	ANDROID_InitOSKeymap();
 }
@@ -662,6 +664,12 @@ void SDLCALL SDL_ANDROID_SetSystemMousePointerVisible(int visible)
 {
 	JNIEnv *JavaEnv = GetJavaEnv();
 	(*JavaEnv)->CallVoidMethod( JavaEnv, JavaRenderer, JavaSetSystemMousePointerVisible, (jint)visible );
+}
+
+void SDLCALL SDL_ANDROID_SetCapturedMousePosition(int x, int y)
+{
+	JNIEnv *JavaEnv = GetJavaEnv();
+	(*JavaEnv)->CallVoidMethod( JavaEnv, JavaRenderer, JavaSetCapturedMousePosition, (jint)x, (jint)y );
 }
 
 // Dummy callback for SDL2 to satisfy linker
