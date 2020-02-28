@@ -43,6 +43,8 @@ TODO, which will get actually done
 
 - XSDL: synchronize clipboard between XSDL and Android.
 
+- XSDL: mouse wheel movement from Bluetooth mouse freezes the app for 1 second.
+
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
 - OpenLieroX: download speed test at humus.kvalitne.cz is not working, replace it with some default value.
