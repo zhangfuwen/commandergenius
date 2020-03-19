@@ -21,7 +21,7 @@
 [submodule "project/jni/application/xserver/xserver"]
 	path = project/jni/application/xserver/xserver
 	url = https://github.com/pelya/xserver.git
-	branch = xsdl2
+	branch = xsdl-1.20
 	update = merge
 [submodule "android-shmem"]
 	path = project/jni/shmem
@@ -41,6 +41,7 @@
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = https://github.com/pelya/openttd-android.git
+	branch = 1.9
 [submodule "project/jni/application/uae4all2"]
 	path = project/jni/application/uae4all2
 	url = https://github.com/lubomyr/uae4all2.git
@@ -56,6 +57,7 @@
 [submodule "project/jni/application/xserver/pulseaudio"]
 	path = project/jni/application/xserver/pulseaudio
 	url = https://github.com/pelya/pulseaudio-android.git
+	branch = master
 [submodule "project/jni/application/supertux/supertux"]
 	path = project/jni/application/supertux/supertux
 	url = https://github.com/pelya/supertux.git
