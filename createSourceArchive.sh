@@ -5,8 +5,8 @@ APPVER=`grep AppVersionName AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' |
 
 ARCHIVER=gzip
 EXT=gz
-which xz > /dev/null && ARCHIVER="xz -z" && EXT=xz
-which pxz > /dev/null && ARCHIVER=pxz && EXT=xz || echo "Install pxz for faster archiving: sudo apt-get install pxz"
+which xz > /dev/null && ARCHIVER="xz -z -T 0" && EXT=xz
+#which pxz > /dev/null && ARCHIVER=pxz && EXT=xz || echo "Install pxz for faster archiving: sudo apt-get install pxz"
 
 # TODO: Boost, Python and ffmpeg are stored in repository as precompiled binaries, the proper way to fix that is to build them using scripts, and remove that binaries
 # --exclude="*.a" --exclude="*.so"
