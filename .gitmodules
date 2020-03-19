@@ -3,7 +3,7 @@
 	url = https://github.com/usineur/android-newraw.git
 [submodule "project/jni/boost/src"]
 	path = project/jni/boost/src
-	url = https://github.com/pelya/Boost-for-Android.git
+	url = https://github.com/moritz-wundke/Boost-for-Android.git
 	branch = master
 	update = merge
 [submodule "project/jni/application/commandergenius/commandergenius"]
