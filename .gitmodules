@@ -41,7 +41,7 @@
 [submodule "project/jni/application/openttd/src"]
 	path = project/jni/application/openttd/src
 	url = https://github.com/pelya/openttd-android.git
-	branch = 1.9
+	branch = 1.10
 [submodule "project/jni/application/uae4all2"]
 	path = project/jni/application/uae4all2
 	url = https://github.com/lubomyr/uae4all2.git
