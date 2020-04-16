@@ -15,10 +15,8 @@ export CXXFLAGS=-O0
 make -j8 VERBOSE=1 || exit 1
 cd bin
 
-export LD_LIBRARY_PATH=/usr/local/lib
-
 if [ -z "$1" ]; then
-	./openttd -d 0 -m null -g opntitle.sav -r 854x480
+	./openttd -d 2 -m null -g opntitle.sav -r 854x480
 elif [ -n "$2" ]; then
 	valgrind --track-fds=yes --log-file=../../valgrind.log --leak-check=full \
 	./openttd -d 0 -m null # -g opntitle.sav

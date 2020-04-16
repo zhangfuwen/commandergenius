@@ -176,8 +176,13 @@ cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU ndk-build -j$NCPU V=1 
 		fi ; } && \
 	{	if $sign_apk; then cd .. && ./sign.sh && cd project ; else true ; fi ; } && \
 	{	$install_apk && [ -n "`adb devices | tail -n +2`" ] && \
-		{	adb install -r app/build/outputs/apk/release/app-release.apk | grep 'Failure' && \
-			adb uninstall `grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'` && adb install -r app/build/outputs/apk/release/app-release.apk ; } ; \
+		{	if $sign_apk; then \
+				APPNAME=`grep AppName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---'` ; \
+				APPVER=`grep AppVersionName ../AndroidAppSettings.cfg | sed 's/.*=//' | tr -d '"' | tr " '/" '---'` ; \
+				adb install -r ../$APPNAME-$APPVER.apk ; \
+			else \
+				adb install -r app/build/outputs/apk/release/app-release.apk ; \
+			fi ; } ; \
 		true ; } && \
 	{	$run_apk && { \
 			ActivityName="`grep AppFullName ../AndroidAppSettings.cfg | sed 's/.*=//'`/.MainActivity" ; \
