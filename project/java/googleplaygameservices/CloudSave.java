@@ -364,10 +364,6 @@ public class CloudSave implements GameHelper.GameHelperListener {
 		mHelper.enableDebugLog(enabled);
 	}
 
-	public String getInvitationId() {
-		return mHelper.getInvitationId();
-	}
-
 	public void reconnectClient() {
 		mHelper.reconnectClient();
 	}

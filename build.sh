@@ -142,6 +142,9 @@ strip_libs() {
 	return 0
 }
 
+# Fix Gradle compilation error
+[ -z "$ANDROID_NDK_HOME" ] && export ANDROID_NDK_HOME="`which ndk-build | sed 's@/ndk-build@@'`"
+
 cd project && env PATH=$NDKBUILDPATH BUILD_NUM_CPUS=$NCPU ndk-build -j$NCPU V=1 $QUICK_REBUILD_ARGS && \
 	strip_libs && \
 	cd .. && ./copyAssets.sh && cd project && \

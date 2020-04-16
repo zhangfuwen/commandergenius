@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "net.olofson.ballfield"
@@ -12,11 +13,11 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-local.cfg', '../proguard.cfg'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard-local.cfg', '../proguard.cfg'
         }
     }
 
-    dependencies { compile 'com.google.android.gms:play-services-games:11.4.0' } // ==GOOGLEPLAYGAMESERVICES==
-    dependencies { compile 'com.google.android.gms:play-services-drive:11.4.0' } // ==GOOGLEPLAYGAMESERVICES==
+    dependencies { compile 'com.google.android.gms:play-services-games:19.0.0' } // ==GOOGLEPLAYGAMESERVICES==
+    dependencies { compile 'com.google.android.gms:play-services-drive:17.0.0' } // ==GOOGLEPLAYGAMESERVICES==
 }
 
