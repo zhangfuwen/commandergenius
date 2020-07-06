@@ -5,7 +5,7 @@ Install following packages onto Debian 10 for x86_64 architecture:
 sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install bison make zip git locales pkg-config \
-xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev \
+xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev libxmuu-dev \
 curl autoconf automake autopoint libtool libtool-bin \
 libjpeg-dev libpng-dev \
 help2man texinfo intltool
