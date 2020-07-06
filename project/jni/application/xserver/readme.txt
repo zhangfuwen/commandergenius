@@ -5,7 +5,7 @@ Install following packages, assuming fresh Debian 10 installation for x86_64 arc
 sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install bison xfonts-utils \
-curl autoconf autoconf2.59 automake automake1.11 libtool libtool-bin pkg-config \
+curl autoconf automake autopoint libtool libtool-bin pkg-config \
 libjpeg-dev libpng-dev git locales \
 make zip
 
