@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt-get install bison xfonts-utils \
 curl autoconf automake autopoint libtool libtool-bin pkg-config \
 libjpeg-dev libpng-dev git locales \
-make zip
+make zip help2man texinfo
 
 Install Android NDK r20 and Android SDK with Android 10.0 framework, they must be in your $PATH.
 
