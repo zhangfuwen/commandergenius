@@ -1,15 +1,19 @@
 You will need to install some packages to your Debian/Ubuntu first.
 
-Install following packages, assuming fresh Debian 10 installation for x86_64 architecture:
+Install following packages onto Debian 10 for x86_64 architecture:
 
 sudo dpkg --add-architecture i386
 sudo apt-get update
-sudo apt-get install bison xfonts-utils xutils-dev libfontenc-dev \
-curl autoconf automake autopoint libtool libtool-bin pkg-config \
-libjpeg-dev libpng-dev git locales \
-make zip help2man texinfo
+sudo apt-get install bison make zip git locales pkg-config \
+xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev \
+curl autoconf automake autopoint libtool libtool-bin \
+libjpeg-dev libpng-dev \
+help2man texinfo intltool
 
-Install Android NDK r20 and Android SDK with Android 10.0 framework, they must be in your $PATH.
+Install Android NDK r21 and Android SDK with Android 10.0 framework, they must be in your $PATH.
+
+Anything other than Debian 10 is not guaranteed to compile XSDL,
+because autoconf scripts search for specific package versions in system directories.
 
 Download SDL repo, select xserver project, and build it:
 
