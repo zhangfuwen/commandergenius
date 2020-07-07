@@ -80,10 +80,6 @@
 	path = project/jni/application/openlierox/src
 	url = https://github.com/albertz/openlierox.git
 	branch = half-assed-android-port
-[submodule "project/jni/application/xmoto/src"]
-	path = project/jni/application/xmoto/src
-	url = https://github.com/pelya/xmoto.git
-	branch = android
 [submodule "project/jni/application/xserver-debian/debian-image"]
 	path = project/jni/application/xserver-debian/debian-image
 	url = https://github.com/pelya/debian-noroot
