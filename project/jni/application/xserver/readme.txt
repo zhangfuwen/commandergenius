@@ -5,10 +5,9 @@ Install following packages onto Debian 10 for x86_64 architecture:
 sudo dpkg --add-architecture i386
 sudo apt-get update
 sudo apt-get install bison make zip git locales pkg-config \
+curl autoconf automake autopoint libtool libtool-bin help2man texinfo intltool \
 xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev libxmuu-dev \
-curl autoconf automake autopoint libtool libtool-bin \
-libjpeg-dev libpng-dev libpixman-1-dev libssl-dev \
-help2man texinfo intltool
+libjpeg-dev libpng-dev libpixman-1-dev libssl-dev libpciaccess-dev
 
 Install Android NDK r21 and Android SDK with Android 10.0 framework, they must be in your $PATH.
 
