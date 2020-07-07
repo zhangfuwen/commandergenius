@@ -7,7 +7,7 @@ sudo apt-get update
 sudo apt-get install bison make zip git locales pkg-config \
 xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev libxmuu-dev \
 curl autoconf automake autopoint libtool libtool-bin \
-libjpeg-dev libpng-dev \
+libjpeg-dev libpng-dev libpixman-1-dev libssl-dev \
 help2man texinfo intltool
 
 Install Android NDK r21 and Android SDK with Android 10.0 framework, they must be in your $PATH.

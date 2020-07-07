@@ -69,7 +69,7 @@ composite/.libs/libcomposite.a \
 os/.libs/libos.a \
 -L$CURDIR/../../../libs/'"$1"' \
 -lpixman-1 -lXfont2 -lXau -lxshmfence -lXdmcp -lfontenc -lfreetype -lsdl_savepng -lpng \
--llog -lsdl-1.2 -lsdl_native_helpers -lGLESv1_CM -landroid-shmem -l:libcrypto.so.sdl.1.so -lz -lm -ldl' \
+-llog -lGLESv1_CM -landroid-shmem -lz -lm -ldl' \
 || exit 1
 
 rm -rf $CURDIR/tmp-$1
