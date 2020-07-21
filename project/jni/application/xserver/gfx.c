@@ -305,7 +305,8 @@ static void symlinkUsrBin(void)
 	symlink("usr/bin/busybox", targetpath);
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "ln -s usr/bin/busybox %s", targetpath);
 
-	remove(mappingpath);
+	// Reinstalling the app with the same version number will change LIBDIR, so update symlinks on each start
+	//remove(mappingpath);
 }
 
 void XSDL_unpackFiles(int _freeSpaceRequiredMb)
@@ -494,6 +495,10 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 	{
 		fscanf(cfgfile, "%d %d %d %d %d %d %d", &savedRes, &savedDpi, &customX, &customY, builtinKeyboard, ctrlAltShiftKeys, &port);
 		fclose(cfgfile);
+		if (strcmp(portStr, ":0") != 0)
+		{
+			port = atoi(portStr + 1);
+		}
 	}
 	sprintf(custom, "%dx%d", customX, customY);
 	sprintf(portStr, ":%d", port);
@@ -554,6 +559,8 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 	SDL_Joystick * j0 = SDL_JoystickOpen(0);
 	int mouse = 0;
 
+	x = 0;
+	y = 0;
 	while ( res < 0 )
 	{
 		while (SDL_PollEvent(&event))
@@ -578,14 +585,21 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d res %d\n", x, y, res);
 				}
 				break;
+				case SDL_MOUSEMOTION:
+					if (mouse > 2)
+					{
+						x = event.motion.x;
+						y = event.motion.y;
+					}
+					else
+					{
+						mouse++;
+					}
+				break;
 				case SDL_JOYBALLMOTION:
+					mouse = 0;
 					x = event.jball.xrel;
 					y = event.jball.yrel;
-				break;
-				case SDL_MOUSEMOTION:
-					mouse = 1;
-					x = event.motion.x;
-					y = event.motion.y;
 				break;
 			}
 		}
@@ -605,8 +619,8 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 			if( i == 2 && ii == 3 && !vertical )
 				renderString("custom", VID_X/8 + (ii*VID_X/4), VID_Y/6 - VID_Y/12 + (i*VID_Y/3));
 		}
-		if( mouse )
-			renderString("∆", x, y);
+
+		renderString("∆", x, y);
 		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 		if (res == MODE_CUSTOM)
@@ -666,7 +680,9 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		*resolutionW = customX;
 		*resolutionH = customY;
 	}
-	mouse = 0;
+
+	x = 0;
+	y = 0;
 	while ( dpi < 0 )
 	{
 		while (SDL_PollEvent(&event))
@@ -688,17 +704,24 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					i = (y / (VID_Y/4));
 					ii = (x / (VID_X/4));
 					dpi = i * 4 + ii;
-					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d dpi %d\n", x, y, res);
+					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d dpi %d\n", x, y, dpi);
 				}
 				break;
+				case SDL_MOUSEMOTION:
+					if (mouse > 2)
+					{
+						x = event.motion.x;
+						y = event.motion.y;
+					}
+					else
+					{
+						mouse++;
+					}
+				break;
 				case SDL_JOYBALLMOTION:
+					mouse = 0;
 					x = event.jball.xrel;
 					y = event.jball.yrel;
-				break;
-				case SDL_MOUSEMOTION:
-					mouse = 1;
-					x = event.motion.x;
-					y = event.motion.y;
 				break;
 			}
 		}
@@ -713,15 +736,16 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 			else
 				renderStringScaled(fontsStr[i*4+ii], scale, VID_X/8 + (ii*VID_X/4), VID_Y/8 + (i*VID_Y/4), 255, 255, 255, SDL_GetVideoSurface());
 		}
-		if( mouse )
-			renderString("∆", x, y);
+
+		renderString("∆", x, y);
 		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 	}
 	*displayW = *displayW / fontsVal[dpi];
 	*displayH = *displayH / fontsVal[dpi];
 
-	mouse = 0;
+	x = 0;
+	y = 0;
 	okay = !config;
 	while ( !okay )
 	{
@@ -732,8 +756,6 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 				case SDL_KEYDOWN:
 					if (event.key.keysym.sym == SDLK_HELP)
 						return;
-				break;
-				case SDL_MOUSEBUTTONDOWN:
 				break;
 				case SDL_MOUSEBUTTONUP:
 				{
@@ -764,17 +786,26 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 					{
 						okay = 1;
 					}
-					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d dpi %d\n", x, y, res);
+					__android_log_print(ANDROID_LOG_INFO, "XSDL", "Screen coords %d %d\n", x, y);
+					x = 0;
+					y = 0;
 				}
 				break;
+				case SDL_MOUSEMOTION:
+					if (mouse > 2)
+					{
+						x = event.motion.x;
+						y = event.motion.y;
+					}
+					else
+					{
+						mouse++;
+					}
+				break;
 				case SDL_JOYBALLMOTION:
+					mouse = 0;
 					x = event.jball.xrel;
 					y = event.jball.yrel;
-				break;
-				case SDL_MOUSEMOTION:
-					mouse = 1;
-					x = event.motion.x;
-					y = event.motion.y;
 				break;
 			}
 		}
@@ -794,8 +825,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		sprintf(buf, "Okay");
 		renderString(buf, VID_X/2, VID_Y * 5 / 6);
 
-		if( mouse )
-			renderString("∆", x, y);
+		renderString("∆", x, y);
 		SDL_Delay(50);
 		SDL_Flip(SDL_GetVideoSurface());
 	}
@@ -876,7 +906,7 @@ void XSDL_generateBackground(const char * port, int showHelp, int resolutionW, i
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 15 / VID_Y;
-				sprintf (msg, "x-window-manager & firefox");
+				sprintf (msg, "xfwm4 & firefox");
 				renderStringScaled(msg, 12 * resolutionH / VID_Y, resolutionW/2, y, 255, 255, 255, surf);
 				strcat(clipboard, msg); strcat(clipboard, "\n");
 				y += resolutionH * 20 / VID_Y;
@@ -910,7 +940,7 @@ void XSDL_showServerLaunchErrorMessage()
 {
 	showErrorMessage(	"Error: X server failed to launch.\n\n"
 						"Try to use different display number,\n"
-						"or reboot your device.");
+						"reboot your device, or reinstall the app.");
 }
 
 void showErrorMessage(const char *msg)
