@@ -1,1 +1,3 @@
-../xserver-gimp/AndroidPreBuild.sh
+#!/bin/sh
+
+cp -f xsdl.raw ../../../res/raw/

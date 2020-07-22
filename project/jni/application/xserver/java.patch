@@ -170,3 +170,12 @@
  		String lang = new String(Locale.getDefault().getLanguage());
  		if( Locale.getDefault().getCountry().length() > 0 )
  			lang = lang + "_" + Locale.getDefault().getCountry();
+@@ -742,7 +742,7 @@ public class Settings
+ 				Globals.TouchscreenKeyboardTheme = 9;
+ 
+ 			if( Globals.TouchscreenKeyboardTheme == 0 )
+-				nativeSetupScreenKeyboardButtons(loadRaw(p, R.raw.ultimatedroid));
++				nativeSetupScreenKeyboardButtons(loadRaw(p, R.raw.xsdl));
+ 			if( Globals.TouchscreenKeyboardTheme == 1 )
+ 				nativeSetupScreenKeyboardButtons(loadRaw(p, R.raw.simpletheme));
+ 			if( Globals.TouchscreenKeyboardTheme == 2 )
