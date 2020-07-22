@@ -34,7 +34,8 @@ $(ICONV) $(ICU): iconv/src/build.sh
 		cp -f $$ARCH/include/unicode/*.h ../../icuuc/include/unicode/  ; \
 		cp -f $$ARCH/include/layout/*.h ../../icuuc/include/layout/  ; \
 		cp -f $$ARCH/include/icu-le-hb/layout/*.h ../../icuuc/include/layout/  ; \
-	done
+	done && \
+	git clean -f -d -x
 
 $(OPENSSL): openssl/compile.sh
 	cd openssl && ./compile.sh
@@ -89,6 +90,7 @@ $(BOOST): boost/src/build-android.sh
 		$(foreach NAME, $(BOOST_LIBS), cp -f build/out/$$ARCH/lib/libboost_$(NAME)-clang-mt-*.a ../lib/$$ARCH/libboost_$(NAME).a || exit 1 ;) \
 		cp -r -f build/out/$$ARCH/include/boost-*/* ../include/ || exit 1 ; \
 	done || exit 1 ; \
+	git clean -f -d -x ; \
 	$(foreach NAME, $(BOOST_LIBS), ln -sf boost ../../boost_$(NAME) ;)
 
 boost: $(BOOST)
