@@ -39,8 +39,6 @@ TODO, which will get actually done
 
 - XSDL: fix xrandr screen resizing.
 
-- XSDL: app window update lags behind mouse movement.
-
 - XSDL: synchronize clipboard between XSDL and Android.
 
 - XSDL: mouse wheel movement from Bluetooth mouse freezes the app for 1 second.
