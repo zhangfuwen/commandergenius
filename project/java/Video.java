@@ -770,13 +770,6 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 	{
 		if( ! super.SwapBuffers() && Globals.NonBlockingSwapBuffers )
 		{
-			if(mRatelimitTouchEvents)
-			{
-				synchronized(this)
-				{
-					this.notify();
-				}
-			}
 			return 0;
 		}
 
@@ -787,13 +780,6 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 		}
 
 		// Unblock event processing thread only after we've finished rendering
-		if(mRatelimitTouchEvents)
-		{
-			synchronized(this)
-			{
-				this.notify();
-			}
-		}
 		if( context.isScreenKeyboardShown() && !context.keyboardWithoutTextInputShown )
 		{
 			try {
@@ -1042,8 +1028,6 @@ class DemoRenderer extends GLSurfaceView_SDL.Renderer
 	public int mWidth = 0;
 	public int mHeight = 0;
 	int mOrientationFrameHackyCounter = 0;
-
-	public static final boolean mRatelimitTouchEvents = true; //(Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO);
 }
 
 class DemoGLSurfaceView extends GLSurfaceView_SDL {
@@ -1155,10 +1139,6 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 				event.offsetLocation(-getX(), -getY());
 		}
 		DifferentTouchInput.touchInput.process(event);
-		if( DemoRenderer.mRatelimitTouchEvents )
-		{
-			limitEventRate(event);
-		}
 		return true;
 	};
 
@@ -1166,10 +1146,6 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 	public boolean onGenericMotionEvent (final MotionEvent event)
 	{
 		DifferentTouchInput.touchInput.processGenericEvent(event);
-		if( DemoRenderer.mRatelimitTouchEvents )
-		{
-			limitEventRate(event);
-		}
 		return true;
 	}
 
@@ -1206,28 +1182,6 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 		super.onPointerCaptureChange(hasCapture);
 		DifferentTouchInput.capturedMouseX = this.getWidth() / 2;
 		DifferentTouchInput.capturedMouseY = this.getHeight() / 2;
-	}
-
-	public void limitEventRate(final MotionEvent event)
-	{
-		// Wait a bit, and try to synchronize to app framerate, or event thread will eat all CPU and we'll lose FPS
-		// With Froyo the rate of touch events seems to be limited by OS, but they are arriving faster then we're redrawing anyway
-		if((event.getAction() == MotionEvent.ACTION_MOVE ||
-			event.getAction() == MotionEvent.ACTION_HOVER_MOVE))
-		{
-			synchronized(mRenderer)
-			{
-				try
-				{
-					mRenderer.wait(300L); // And sometimes the app decides not to render at all, so this timeout should not be big.
-				}
-				catch (InterruptedException e)
-				{
-					Log.v("SDL", "DemoGLSurfaceView::limitEventRate(): Who dared to interrupt my slumber?");
-					Thread.interrupted();
-				}
-			}
-		}
 	}
 
 	public void exitApp() {
