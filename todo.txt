@@ -41,7 +41,7 @@ TODO, which will get actually done
 
 - XSDL: synchronize clipboard between XSDL and Android.
 
-- XSDL: mouse wheel movement from Bluetooth mouse freezes the app for 1 second.
+- XSDL: mouse wheel movement from Bluetooth mouse do not work when mouse capture is active.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
