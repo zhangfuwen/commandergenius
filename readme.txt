@@ -352,7 +352,7 @@ SDL_ANDROID_SetApplicationPutToBackgroundCallback( callback_t appPutToBackground
 where callback_t is function pointer of type "void (*) void".
 The default callbacks will call another Android-specific functions:
 SDL_ANDROID_PauseAudioPlayback() and SDL_ANDROID_ResumeAudioPlayback()
-which will pause and resume audio from HW layer, so appplication does not need to destroy and re-init audio,
+which will pause and resume audio from HW layer, so application does not need to destroy and re-init audio,
 and in general you don't need to redefine those functions, unless you want to play audio in background.
 The callbacks will be called from inside SDL_Flip().
 

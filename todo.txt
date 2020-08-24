@@ -37,11 +37,11 @@ TODO, which will get actually done
 
 - XSDL: do not use xsel to enter Unicode characters, modify clipboard directly.
 
-- XSDL: fix xrandr screen resizing.
-
-- XSDL: synchronize clipboard between XSDL and Android.
+- XSDL: Copy contents of XSDL clipboard to Android clipboard when the app loses focus.
 
 - XSDL: mouse wheel movement from Bluetooth mouse do not work when mouse capture is active.
+
+- Debian: force Chromium version to the last working one, from Jan 2020.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
 
