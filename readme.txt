@@ -80,6 +80,10 @@ Retry with
 
 ./sdkmanager --licenses
 
+If the system tells you that the licenses were accepted, but the build system tells otherwise, it might be looking at the wrong path. Symlinking the licenses directory might solve your problem:
+
+ln -s $ANDROID_HOME/licenses project
+
 
 How to compile a specific SDL based application
 ===============================================
