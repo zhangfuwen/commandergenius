@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2013 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,7 +18,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-#include "SDL_config.h"
+#include "../SDL_internal.h"
 
 /* General (mostly internal) pixel/color manipulation routines for SDL */
 
@@ -94,6 +94,7 @@ SDL_GetPixelFormatName(Uint32 format)
     CASE(SDL_PIXELFORMAT_INDEX8)
     CASE(SDL_PIXELFORMAT_RGB332)
     CASE(SDL_PIXELFORMAT_RGB444)
+    CASE(SDL_PIXELFORMAT_BGR444)
     CASE(SDL_PIXELFORMAT_RGB555)
     CASE(SDL_PIXELFORMAT_BGR555)
     CASE(SDL_PIXELFORMAT_ARGB4444)
@@ -122,6 +123,8 @@ SDL_GetPixelFormatName(Uint32 format)
     CASE(SDL_PIXELFORMAT_YUY2)
     CASE(SDL_PIXELFORMAT_UYVY)
     CASE(SDL_PIXELFORMAT_YVYU)
+    CASE(SDL_PIXELFORMAT_NV12)
+    CASE(SDL_PIXELFORMAT_NV21)
 #undef CASE
     default:
         return "SDL_PIXELFORMAT_UNKNOWN";
@@ -319,12 +322,18 @@ SDL_MasksToPixelFormatEnum(int bpp, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask,
             Amask == 0x0000) {
             return SDL_PIXELFORMAT_RGB444;
         }
+        if (Rmask == 0x000F &&
+            Gmask == 0x00F0 &&
+            Bmask == 0x0F00 &&
+            Amask == 0x0000) {
+            return SDL_PIXELFORMAT_BGR444;
+        }
         break;
     case 15:
         if (Rmask == 0) {
             return SDL_PIXELFORMAT_RGB555;
         }
-        /* Fall through to 16-bit checks */
+    /* fallthrough */
     case 16:
         if (Rmask == 0) {
             return SDL_PIXELFORMAT_RGB565;
@@ -400,6 +409,13 @@ SDL_MasksToPixelFormatEnum(int bpp, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask,
             Bmask == 0xF800 &&
             Amask == 0x0000) {
             return SDL_PIXELFORMAT_BGR565;
+        }
+        if (Rmask == 0x003F &&
+            Gmask == 0x07C0 &&
+            Bmask == 0xF800 &&
+            Amask == 0x0000) {
+            /* Technically this would be BGR556, but Witek says this works in bug 3158 */
+            return SDL_PIXELFORMAT_RGB565;
         }
         break;
     case 24:
@@ -481,16 +497,20 @@ SDL_MasksToPixelFormatEnum(int bpp, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask,
 }
 
 static SDL_PixelFormat *formats;
+static SDL_SpinLock formats_lock = 0;
 
 SDL_PixelFormat *
 SDL_AllocFormat(Uint32 pixel_format)
 {
     SDL_PixelFormat *format;
 
+    SDL_AtomicLock(&formats_lock);
+
     /* Look it up in our list of previously allocated formats */
     for (format = formats; format; format = format->next) {
         if (pixel_format == format->format) {
             ++format->refcount;
+            SDL_AtomicUnlock(&formats_lock);
             return format;
         }
     }
@@ -498,10 +518,12 @@ SDL_AllocFormat(Uint32 pixel_format)
     /* Allocate an empty pixel format structure, and initialize it */
     format = SDL_malloc(sizeof(*format));
     if (format == NULL) {
+        SDL_AtomicUnlock(&formats_lock);
         SDL_OutOfMemory();
         return NULL;
     }
     if (SDL_InitFormat(format, pixel_format) < 0) {
+        SDL_AtomicUnlock(&formats_lock);
         SDL_free(format);
         SDL_InvalidParamError("format");
         return NULL;
@@ -512,6 +534,9 @@ SDL_AllocFormat(Uint32 pixel_format)
         format->next = formats;
         formats = format;
     }
+
+    SDL_AtomicUnlock(&formats_lock);
+
     return format;
 }
 
@@ -589,7 +614,11 @@ SDL_FreeFormat(SDL_PixelFormat *format)
         SDL_InvalidParamError("format");
         return;
     }
+
+    SDL_AtomicLock(&formats_lock);
+
     if (--format->refcount > 0) {
+        SDL_AtomicUnlock(&formats_lock);
         return;
     }
 
@@ -604,6 +633,8 @@ SDL_FreeFormat(SDL_PixelFormat *format)
             }
         }
     }
+
+    SDL_AtomicUnlock(&formats_lock);
 
     if (format->palette) {
         SDL_FreePalette(format->palette);
@@ -649,7 +680,7 @@ SDL_SetPixelFormatPalette(SDL_PixelFormat * format, SDL_Palette *palette)
         return SDL_SetError("SDL_SetPixelFormatPalette() passed NULL format");
     }
 
-    if (palette && palette->ncolors != (1 << format->BitsPerPixel)) {
+    if (palette && palette->ncolors > (1 << format->BitsPerPixel)) {
         return SDL_SetError("SDL_SetPixelFormatPalette() passed a palette that doesn't match the format");
     }
 
@@ -707,9 +738,7 @@ SDL_FreePalette(SDL_Palette * palette)
     if (--palette->refcount > 0) {
         return;
     }
-    if (palette->colors) {
-        SDL_free(palette->colors);
-    }
+    SDL_free(palette->colors);
     SDL_free(palette);
 }
 
@@ -739,33 +768,6 @@ SDL_DitherColors(SDL_Color * colors, int bpp)
         colors[i].b = b;
         colors[i].a = SDL_ALPHA_OPAQUE;
     }
-}
-
-/*
- * Calculate the pad-aligned scanline width of a surface
- */
-int
-SDL_CalculatePitch(SDL_Surface * surface)
-{
-    int pitch;
-
-    /* Surface should be 4-byte aligned for speed */
-    pitch = surface->w * surface->format->BytesPerPixel;
-    switch (surface->format->BitsPerPixel) {
-    case 1:
-        pitch = (pitch + 7) / 8;
-        break;
-    case 4:
-        pitch = (pitch + 1) / 2;
-        break;
-    default:
-        break;
-    }
-#ifdef __ANDROID__
-    if( surface->format->BytesPerPixel != 2 ) /* Avoid extra memcpy() when calling SDL_UpdateTexture() */
-#endif
-    pitch = (pitch + 3) & ~3;   /* 4-byte aligning */
-    return (pitch);
 }
 
 /*
@@ -988,10 +990,8 @@ SDL_InvalidateMap(SDL_BlitMap * map)
     map->dst = NULL;
     map->src_palette_version = 0;
     map->dst_palette_version = 0;
-    if (map->info.table) {
-        SDL_free(map->info.table);
-        map->info.table = NULL;
-    }
+    SDL_free(map->info.table);
+    map->info.table = NULL;
 }
 
 int
@@ -1003,9 +1003,11 @@ SDL_MapSurface(SDL_Surface * src, SDL_Surface * dst)
 
     /* Clear out any previous mapping */
     map = src->map;
+#if SDL_HAVE_RLE
     if ((src->flags & SDL_RLEACCEL) == SDL_RLEACCEL) {
         SDL_UnRLESurface(src, 1);
     }
+#endif
     SDL_InvalidateMap(map);
 
     /* Figure out what kind of mapping we're doing */
@@ -1106,9 +1108,7 @@ SDL_CalculateGammaRamp(float gamma, Uint16 * ramp)
 
     /* 0.0 gamma is all black */
     if (gamma == 0.0f) {
-        for (i = 0; i < 256; ++i) {
-            ramp[i] = 0;
-        }
+        SDL_memset(ramp, 0, 256 * sizeof(Uint16));
         return;
     } else if (gamma == 1.0f) {
         /* 1.0 gamma is identity */
