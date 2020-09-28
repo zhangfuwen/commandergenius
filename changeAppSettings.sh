@@ -742,7 +742,7 @@ fi
 if [ "$MultiABI" = "y" ] ; then
 	MultiABI="all"
 elif [ "$MultiABI" = "n" ] ; then
-	MultiABI="armeabi"
+	MultiABI="armeabi-v7a"
 else
 	MultiABI="$MultiABI"
 fi
