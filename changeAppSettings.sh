@@ -996,11 +996,11 @@ $SEDI "s/public static String AppLibraries.*/public static String AppLibraries[]
 $SEDI "s/public static String AppMainLibraries.*/public static String AppMainLibraries[] = { $MainLibrariesToLoad };/" project/src/Globals.java
 
 APP_MODULES_BASE="sdl-$LibSdlVersion sdl_main sdl_native_helpers jpeg png ogg flac vorbis freetype"
+
+# TODO: We should not build png, jpeg if SDL2_image is used
 if [ "$LibSdlVersion" = "2.0" ]; then
         APP_MODULES_BASE="sdl-$LibSdlVersion"
 fi
-
-
 
 
 echo Patching project/jni/Settings.mk

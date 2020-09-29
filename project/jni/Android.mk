@@ -12,4 +12,19 @@ endif
 
 NDK_PATH := $(shell dirname $(shell which ndk-build))
 
-include $(call all-subdir-makefiles)
+NDK_SUBDIR_MAKEFILES_FULL := $(call all-subdir-makefiles)
+
+# If you want to exclude certain subprojects from the build process.
+# v.g.: SDL2_image already brings it's own implementation of png, so we exclude the bundled one
+ifeq ($(SDL_VERSION),2.0)
+BLACKLISTED_SUBPROJECTS := jpeg png
+else
+BLACKLISTED_SUBPROJECTS := sdl2_image
+endif
+
+BLACKLISTED_MAKEFILES := $(addprefix jni/../jni/,$(BLACKLISTED_SUBPROJECTS))
+BLACKLISTED_MAKEFILES := $(addsuffix /Android.mk,$(BLACKLISTED_MAKEFILES))
+
+NDK_SUBDIR_MAKEFILES := $(filter-out $(BLACKLISTED_MAKEFILES), $(NDK_SUBDIR_MAKEFILES_FULL))
+
+include $(NDK_SUBDIR_MAKEFILES)
