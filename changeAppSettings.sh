@@ -1007,7 +1007,7 @@ APP_MODULES_BASE="sdl-$LibSdlVersion sdl_main sdl_native_helpers jpeg png ogg fl
 
 # TODO: We should not build png, jpeg if SDL2_image is used
 if [ "$LibSdlVersion" = "2.0" ]; then
-        APP_MODULES_BASE="sdl-$LibSdlVersion"
+        APP_MODULES_BASE="SDL2"
 fi
 
 
