@@ -747,7 +747,15 @@ else
 	MultiABI="$MultiABI"
 fi
 
-LibrariesToLoad="\\\"sdl_native_helpers\\\", \\\"sdl-$LibSdlVersion\\\""
+
+if [ "$LibSdlVersion" = "2.0" ] ; then
+	LibrariesToLoad="\\\"sdl_native_helpers\\\", \\\"SDL2\\\""
+else
+	LibrariesToLoad="\\\"sdl_native_helpers\\\", \\\"sdl-$LibSdlVersion\\\""
+fi
+
+
+
 StaticLibraries="`echo '
 include project/jni/SettingsTemplate.mk
 all:
