@@ -1003,11 +1003,12 @@ $SEDI "s%public static String GooglePlayGameServicesId = .*%public static String
 $SEDI "s/public static String AppLibraries.*/public static String AppLibraries[] = { $LibrariesToLoad };/" project/src/Globals.java
 $SEDI "s/public static String AppMainLibraries.*/public static String AppMainLibraries[] = { $MainLibrariesToLoad };/" project/src/Globals.java
 
-APP_MODULES_BASE="sdl-$LibSdlVersion sdl_main sdl_native_helpers jpeg png ogg flac vorbis freetype"
 
 # TODO: We should not build png, jpeg if SDL2_image is used
 if [ "$LibSdlVersion" = "2.0" ]; then
         APP_MODULES_BASE="SDL2"
+else
+	APP_MODULES_BASE="sdl-$LibSdlVersion sdl_main sdl_native_helpers jpeg png ogg flac vorbis freetype"
 fi
 
 
