@@ -873,6 +873,7 @@ cat project/app/build-template.gradle | \
 	project/app/build.gradle
 
 echo "-keep class $AppFullName.** { *; }" > project/proguard-local.cfg
+echo "-keep class org.libsdl.app.** { *; }" >> project/proguard-local.cfg
 
 if [ "$AppRecordsAudio" = "n" -o -z "$AppRecordsAudio" ] ; then
 	$SEDI "/==RECORD_AUDIO==/ d" project/AndroidManifest.xml
