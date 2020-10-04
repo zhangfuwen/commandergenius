@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:ignore="MissingTranslation">
     <string name="app_name">Commander Genius</string>
 
 
@@ -22,8 +24,9 @@
     <string name="storage_phone">Internal storage - %d MB free</string>
     <string name="storage_sd">SD card storage - %d MB free</string>
     <string name="storage_custom">Specify directory</string>
-    <string name="storage_commandline">Specify command line parameters</string>
+    <string name="storage_commandline">Command line parameters, one argument per line</string>
     <string name="storage_question">Data installation location</string>
+    <string name="storage_access">Permission to write to SD card</string>
     <string name="optional_downloads">Downloads</string>
     <string name="downloads">Downloads</string>
     <string name="ok">OK</string>
@@ -98,16 +101,21 @@
     <string name="leftclick_timeout_time_4">1.5 sec</string>
     <string name="click_with_dpadcenter">Left mouse click with trackball / joystick center</string>
 
-    <string name="pointandclick_question">Advanced features</string>
-    <string name="pointandclick_keepaspectratio">Keep 4:3 screen aspect ratio</string>
-    <string name="pointandclick_showcreenunderfinger">Show screen under finger in separate window</string>
-    <string name="pointandclick_showcreenunderfinger2">On-screen magnifying glass</string>
-    <string name="pointandclick_joystickmouse">Move mouse with joystick or trackball</string>
-    <string name="pointandclick_joystickmousespeed">Move mouse with joystick speed</string>
-    <string name="pointandclick_joystickmouseaccel">Move mouse with joystick acceleration</string>
-    <string name="pointandclick_relative">Relative mouse movement (laptop mode)</string>
-    <string name="pointandclick_relative_speed">Relative mouse movement speed</string>
-    <string name="pointandclick_relative_accel">Relative mouse movement acceleration</string>
+    <string name="advanced">Advanced features</string>
+    <string name="mouse_keepaspectratio">Keep 4:3 screen aspect ratio</string>
+    <string name="mouse_showcreenunderfinger">Show screen under finger in separate window</string>
+    <string name="mouse_showcreenunderfinger2">On-screen magnifying glass</string>
+    <string name="mouse_joystickmouse">Move mouse with joystick or trackball</string>
+    <string name="mouse_joystickmousespeed">Move mouse with joystick speed</string>
+    <string name="mouse_joystickmouseaccel">Move mouse with joystick acceleration</string>
+    <string name="mouse_relative">Relative mouse movement (laptop mode)</string>
+    <string name="mouse_relative_speed">Relative mouse movement speed</string>
+    <string name="mouse_relative_accel">Relative mouse movement acceleration</string>
+    <string name="mouse_hover_jitter_filter">Filter jitter for stylus/finger hover</string>
+    <string name="mouse_gyroscope_mouse">Control mouse with gyroscope</string>
+    <string name="mouse_gyroscope_mouse_sensitivity">Gyroscope sensitivity</string>
+    <string name="mouse_finger_hover">Finger hover</string>
+    <string name="mouse_subframe_touch_events">Multiple touch events per video frame</string>
 
     <string name="none">None</string>
 
@@ -140,18 +148,25 @@
 
     <string name="screenkb_custom_layout">Customize on-screen keyboard layout</string>
     <string name="screenkb_custom_layout_help">Press BACK when done. Resize buttons by sliding on empty space.</string>
+    <string name="screenkb_floating_joystick">Floating joystick</string>
 
     <string name="calibrate_touchscreen">Calibrate touchscreen</string>
     <string name="calibrate_touchscreen_touch">Touch all edges of the screen, press BACK when done</string>
 
     <string name="video">Video settings</string>
     <string name="video_smooth">Linear video filtering</string>
-    <string name="video_separatethread">Separate thread for video, will increase FPS on some devices</string>
+    <string name="video_separatethread">Separate thread for video, it can increase FPS, it also can crash the app</string>
+    <string name="video_orientation_vertical">Portrait/vertical screen orientation</string>
+    <string name="video_orientation_autodetect">Auto-detect screen orientation</string>
+    <string name="video_bpp_24">24 bpp screen color depth</string>
+    <string name="video_immersive">Hide system navigation buttons / immersive mode</string>
+    <string name="tv_borders">TV borders</string>
 
     <string name="text_edit_click_here">Tap to start typing, press Back when done</string>
 
     <string name="display_size_mouse">Mouse emulation mode</string>
     <string name="display_size">Display size for mouse emulation</string>
+    <string name="display_size_desktop">Desktop, no emulation</string>
     <string name="display_size_large">Large (tablets)</string>
     <string name="display_size_small">Small, magnifying glass</string>
     <string name="display_size_small_touchpad">Small, touchpad mode</string>
@@ -177,5 +192,19 @@
     <string name="cancel_download_resume">You can resume it later, the data will not be downloaded twice.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <!-- Play Game Services strings -->
+    <string name="gamehelper_sign_in_failed">Failed to sign in. Please check your network connection and try again.</string>
+    <string name="gamehelper_app_misconfigured">The application is incorrectly configured. Check that the package name and signing certificate match the client ID created in Developer Console. Also, if the application is not yet published, check that the account you are trying to sign in with is listed as a tester account. See logs for more information.</string>
+    <string name="gamehelper_license_failed">License check failed.</string>
+    <string name="gamehelper_unknown_error">Unknown error.</string>
+    <string name="accessing_network">Accessing network, please wait</string>
+
+    <string name="google_play_game_services_app_id" translatable="false">==GOOGLEPLAYGAMESERVICES_APP_ID==</string>
+
+    <string name="restarting_please_wait">Restarting, please wait.</string>
+
+    <string name="notification_app_is_running">%s is running</string>
+    <string name="notification_stop">Stop</string>
 
 </resources>
