@@ -39,11 +39,24 @@
         android:required="false" /> -->
 
     <!-- Allow writing to external storage -->
+    <!--
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    -->
     <!-- Allow access to Bluetooth devices -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <!-- Allow access to the vibrator -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- ==INTERNET== --> <uses-permission android:name="android.permission.INTERNET" />
+    <!-- ==EXTERNAL_STORAGE== --> <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- ==NOT_EXTERNAL_STORAGE== --> <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <!-- ==NOT_EXTERNAL_STORAGE== --> <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="18" /> <!-- App has write access to it's own dir on SD card without this permission on Android 4.4 and above -->
+    <!-- ==READ_OBB== --> <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <!-- ==READ_OBB== --> <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="23" /> <!-- OBB file requires explicit permission before Marshmallow -->
+    <!-- ==RECORD_AUDIO== --> <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- ==ADMOB== --> <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- ==FOREGROUND_SERVICE== --> <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+
 
     <!-- if you want to capture audio, uncomment this. -->
     <!-- <uses-permission android:name="android.permission.RECORD_AUDIO" /> -->

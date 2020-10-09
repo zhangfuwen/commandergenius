@@ -35,7 +35,7 @@ build() {
 	mkdir -p build/$ARCH
 	cd build/$ARCH
 
-	tar -x -v -z -f ../../openssl-1.1.1d.tar.gz --strip=1
+	tar -x -v -z -f ../../openssl-1.1.1h.tar.gz --strip=1
 
 	NDK=`which ndk-build`
 	NDK=`dirname $NDK`
