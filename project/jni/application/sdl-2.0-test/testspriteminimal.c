@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include "icon.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -47,7 +48,10 @@ LoadSprite(char *file, SDL_Renderer *renderer)
     SDL_Surface *temp;
 
     /* Load the sprite image */
-    temp = SDL_LoadBMP(file);
+    //temp = SDL_LoadBMP(file);
+    SDL_RWops *rw = SDL_RWFromMem(icon_bmp, icon_bmp_len);
+    temp = SDL_LoadBMP_RW(rw, 1);
+
     if (temp == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %s: %s\n", file, SDL_GetError());
         return (-1);
