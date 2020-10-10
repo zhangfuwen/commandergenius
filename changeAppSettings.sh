@@ -837,7 +837,7 @@ cd ../..
 
 echo Patching project/AndroidManifest.xml
 if [ "$LibSdlVersion" = "2.0" ] ; then
-	cat project/jni/sdl-2.0/android-project/app/src/main/AndroidManifest.xml | \
+	cat project/AndroidManifestTemplateSDL2.xml | \
 		sed "s/package=.*/package=\"$AppFullName\"/" | \
 		sed "s^android:versionCode=.*^android:versionCode=\"$AppVersionCode\"^" | \
 		sed "s^android:versionName=.*^android:versionName=\"$AppVersionName\"^" > \
