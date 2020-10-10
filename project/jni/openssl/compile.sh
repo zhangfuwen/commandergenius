@@ -10,6 +10,10 @@ build() {
 	ARCH=$1
 	NO_ASM=""
 
+	if [ -d "lib-$ARCH" ]; then
+	  exit 0
+	fi
+
 	case $ARCH in
 		armeabi-v7a)
 			#NO_ASM="-DOPENSSL_NO_ASM=1" # Assembler in OpenSSL is broken when using clang
@@ -43,25 +47,25 @@ build() {
 	export CROSS_SYSROOT=$NDK/sysroot/usr
 	export ANDROID_NDK_HOME=$NDK
 
-	env LDFLAGS="-shared -landroid -llog" \
+	env LDFLAGS="" \
 		CFLAGS="$NO_ASM" \
 		../../setCrossEnvironment-$ARCH.sh \
 		sh -c 'env PATH=`dirname $CC`:$PATH \
-		./Configure shared zlib --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' \
+		./Configure no-shared --prefix=`pwd`/dist --openssldir=. $CONFIGURE_ARCH -fPIC' \
 		|| exit 1
 
 	sed -i.old 's/^CNF_CPPFLAGS=.*/CNF_CPPFLAGS=/' Makefile
 	sed -i.old 's/^CNF_CFLAGS=.*/CNF_CFLAGS=/' Makefile
 	sed -i.old 's/^CNF_CXXFLAGS=.*/CNF_CXXFLAGS=/' Makefile
 	sed -i.old 's/^CNF_LDFLAGS=.*/CNF_LDFLAGS=/' Makefile
-	sed -i.old 's/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=sdl.1.so/' Makefile
+	#sed -i.old 's/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=sdl.1.so/' Makefile
 	if [ "$ARCH" = armeabi-v7a ]; then
 		sed -i.old 's/-DPOLY1305_ASM //' Makefile
 		sed -i.old 's@crypto/poly1305/poly1305-armv4.S @@' Makefile
 		sed -i.old 's@crypto/poly1305/poly1305-armv4.o @@' Makefile
 	fi
 
-	env LDFLAGS="-shared -landroid -llog" \
+	env LDFLAGS="" \
 		CFLAGS="$NO_ASM" \
 		../../setCrossEnvironment-$ARCH.sh \
 		sh -c 'env PATH=`dirname $CC`:$PATH \
@@ -71,8 +75,10 @@ build() {
 
 	rm -rf lib-$ARCH
 	mkdir -p lib-$ARCH
-	cp build/$ARCH/libcrypto.so.sdl.1.so lib-${ARCH}/libcrypto.so.sdl.1.so || exit 1
-	cp build/$ARCH/libssl.so.sdl.1.so lib-${ARCH}/libssl.so.sdl.1.so || exit 1
+#	cp build/$ARCH/libcrypto.so.sdl.1.so lib-${ARCH}/libcrypto.so.sdl.1.so || exit 1
+#	cp build/$ARCH/libssl.so.sdl.1.so lib-${ARCH}/libssl.so.sdl.1.so || exit 1
+	cp build/$ARCH/libcrypto.a lib-${ARCH}/libcrypto.a || exit 1
+	cp build/$ARCH/libssl.a lib-${ARCH}/libssl.a || exit 1
 }
 
 
