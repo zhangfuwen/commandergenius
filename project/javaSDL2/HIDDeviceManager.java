@@ -359,6 +359,22 @@ public class HIDDeviceManager {
                     HIDDeviceUSB device = new HIDDeviceUSB(this, usbDevice, interface_index);
                     int id = device.getId();
                     mDevicesById.put(id, device);
+
+                    if (usbDevice != null && !mUsbManager.hasPermission(usbDevice)) 
+                    {
+                      HIDDeviceOpenPending(id);
+                      try 
+                      {
+                         mUsbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(mContext, 0$
+                      } 
+                      catch (Exception e) 
+                      {
+                         Log.v(TAG, "Couldn't request permission for USB device " + usbDevice);
+                         HIDDeviceOpenResult(id, false);
+                         return;
+                      }
+                    }
+
                     HIDDeviceConnected(id, device.getIdentifier(), device.getVendorId(), device.getProductId(), device.getSerialNumber(), device.getVersion(), device.getManufacturerName(), device.getProductName(), usbInterface.getId(), usbInterface.getInterfaceClass(), usbInterface.getInterfaceSubclass(), usbInterface.getInterfaceProtocol());
                 }
             }
