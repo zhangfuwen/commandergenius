@@ -365,7 +365,7 @@ public class HIDDeviceManager {
                       HIDDeviceOpenPending(id);
                       try 
                       {
-                         mUsbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(mContext, 0$
+                	 mUsbManager.requestPermission(usbDevice, PendingIntent.getBroadcast(mContext, 0, new Intent(HIDDeviceManager.ACTION_USB_PERMISSION), 0));
                       } 
                       catch (Exception e) 
                       {
