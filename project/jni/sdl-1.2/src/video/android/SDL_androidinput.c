@@ -132,8 +132,8 @@ static int multitouchGestureMiddleX = -1;
 static int multitouchGestureMiddleY = -1;
 static int multitouchGestureHappened = 0;
 enum { MULTITOUCH_MOUSE_WHEEL_DIST = 20 };
-int SDL_ANDROID_TouchscreenCalibrationWidth = 480;
-int SDL_ANDROID_TouchscreenCalibrationHeight = 320;
+int SDL_ANDROID_TouchscreenCalibrationWidth = 0;
+int SDL_ANDROID_TouchscreenCalibrationHeight = 0;
 int SDL_ANDROID_TouchscreenCalibrationX = 0;
 int SDL_ANDROID_TouchscreenCalibrationY = 0;
 static int leftClickTimeout = 0;
@@ -309,14 +309,19 @@ static void AdjustTouchScreenCalibration( jint *xx, jint *yy )
 {
 	int x = *xx, y = *yy;
 
-	x -= SDL_ANDROID_TouchscreenCalibrationX;
-	y -= SDL_ANDROID_TouchscreenCalibrationY;
+	if( SDL_ANDROID_TouchscreenCalibrationWidth > 0 )
+	{
+		x -= SDL_ANDROID_TouchscreenCalibrationX;
+		y -= SDL_ANDROID_TouchscreenCalibrationY;
+		x = x * SDL_ANDROID_sRealWindowWidth / SDL_ANDROID_TouchscreenCalibrationWidth;
+		y = y * SDL_ANDROID_sRealWindowHeight / SDL_ANDROID_TouchscreenCalibrationHeight;
+	}
+
 #if SDL_VIDEO_RENDER_RESIZE
 	// Translate mouse coordinates
-
 	x -= (SDL_ANDROID_sRealWindowWidth - SDL_ANDROID_sWindowWidth) / 2;
-	x = x * SDL_ANDROID_sFakeWindowWidth / SDL_ANDROID_TouchscreenCalibrationWidth;
-	y = y * SDL_ANDROID_sFakeWindowHeight / SDL_ANDROID_TouchscreenCalibrationHeight;
+	x = x * SDL_ANDROID_sFakeWindowWidth / SDL_ANDROID_sWindowWidth;
+	y = y * SDL_ANDROID_sFakeWindowHeight / SDL_ANDROID_sWindowHeight;
 	if( x < 0 )
 		x = 0;
 	if( x > SDL_ANDROID_sFakeWindowWidth )
@@ -325,10 +330,6 @@ static void AdjustTouchScreenCalibration( jint *xx, jint *yy )
 		y = 0;
 	if( y > SDL_ANDROID_sFakeWindowHeight )
 		y = SDL_ANDROID_sFakeWindowHeight;
-	
-#else
-	x = x * SDL_ANDROID_sRealWindowWidth / SDL_ANDROID_TouchscreenCalibrationWidth;
-	y = y * SDL_ANDROID_sRealWindowHeight / SDL_ANDROID_TouchscreenCalibrationHeight;
 #endif
 
 	*xx = x;
