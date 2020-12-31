@@ -106,6 +106,7 @@ LDFLAGS="
 -Qunused-arguments
 -Wl,-z,relro
 -Wl,-z,now
+-Wl,--no-rosegment
 $SHARED
 $APP_SHARED_LIBS
 -landroid
@@ -127,11 +128,11 @@ CXXFLAGS="$CXXFLAGS $CFLAGS -frtti -fexceptions" \
 LDFLAGS="$LDFLAGS" \
 CC="$CC" \
 CXX="$CXX" \
-RANLIB="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/$BINUTILSPREFIX-ranlib" \
+RANLIB="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/llvm-ranlib" \
 LD="$CXX" \
-AR="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/$BINUTILSPREFIX-ar" \
+AR="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/llvm-ar" \
 CPP="$CPP" \
-NM="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/$BINUTILSPREFIX-nm" \
-AS="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/$BINUTILSPREFIX-as" \
-STRIP="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/$BINUTILSPREFIX-strip" \
+NM="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/llvm-nm" \
+AS="$CC" \
+STRIP="$NDK/toolchains/llvm/prebuilt/$MYARCH/bin/llvm-strip" \
 "$@"
