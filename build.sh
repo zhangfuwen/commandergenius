@@ -90,7 +90,7 @@ fi
 
 MYARCH=linux-x86_64
 if [ -z "$NCPU" ]; then
-	NCPU=4
+	NCPU=8
 	if uname -s | grep -i "linux" > /dev/null ; then
 		MYARCH=linux-x86_64
 		NCPU=`cat /proc/cpuinfo | grep -c -i processor`
