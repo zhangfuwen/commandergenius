@@ -1,13 +1,15 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "30.0.0"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "net.olofson.ballfield"
-        minSdkVersion 16 // Must match version numbers in project/AndroidManifestTemplate.xml
-        targetSdkVersion 29
+        minSdkVersion 16
+        targetSdkVersion 30
     }
 
     buildTypes {
@@ -16,11 +18,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../proguard-local.cfg', '../proguard.cfg'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
-    dependencies { compile 'com.google.android.gms:play-services-games:19.0.0' } // ==GOOGLEPLAYGAMESERVICES==
+    dependencies { compile 'com.google.android.gms:play-services-games:21.0.0' } // ==GOOGLEPLAYGAMESERVICES==
     dependencies { compile 'com.google.android.gms:play-services-drive:17.0.0' } // ==GOOGLEPLAYGAMESERVICES==
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 }

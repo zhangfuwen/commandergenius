@@ -43,7 +43,7 @@
 			<!-- ==OPENFILE== --> </intent-filter>
 		</activity>
 		<!-- ==ADMOB== --> <activity android:name="com.google.android.gms.ads.AdActivity" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"/>
-		<!-- ==ADMOB== --> <meta-data android:name="com.google.android.gms.version" android:value="4323000" /> <!-- Change this value to the actual Google Play SDK version -->
+		<!-- ==ADMOB== --> <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<!-- ==GOOGLEPLAYGAMESERVICES== --> <meta-data android:name="com.google.android.gms.games.APP_ID" android:value="@string/google_play_game_services_app_id" />
 		<!-- ==GOOGLEPLAYGAMESERVICES== --> <meta-data android:name="com.google.android.gms.appstate.APP_ID" android:value="@string/google_play_game_services_app_id" />
 		<!-- ==GOOGLEPLAYGAMESERVICES== --> <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
