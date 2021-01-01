@@ -63,7 +63,7 @@ if [ -n "$NO_SHARED_LIBS" ]; then
 fi
 
 APP_SHARED_LIBS="`echo $APP_SHARED_LIBS | sed \"s@\([-a-zA-Z0-9_.]\+\)@$LOCAL_PATH/../../obj/local/$ARCH/lib\1.so@g\"`"
-APP_MODULES_INCLUDE="`echo $APP_MODULES | sed 's@c++_shared@@' | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"`"
+APP_MODULES_INCLUDE="`echo $APP_MODULES | sed 's@\bc++_shared\b@@' | sed 's@\bapplication\b@@' | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"`"
 
 CFLAGS="
 -g
