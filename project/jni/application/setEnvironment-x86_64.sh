@@ -8,7 +8,7 @@ NDK=`dirname $NDK`
 
 if uname -s | grep -i "linux" > /dev/null ; then
 	MYARCH=linux-$(arch)
-  NDK=`readlink -f $NDK`
+	NDK=`readlink -f $NDK`
 elif uname -s | grep -i "darwin" > /dev/null ; then
 	MYARCH=darwin-x86_64
 elif uname -s | grep -i "windows" > /dev/null ; then
@@ -27,7 +27,7 @@ ARCH=x86_64
 GCCPREFIX=x86_64-linux-android
 APILEVEL=21
 
-APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@'`
+APP_MODULES=`grep 'APP_MODULES [:][=]' $LOCAL_PATH/../Settings.mk | sed 's@.*[=]\(.*\)@\1@' | sed 's@\b\(application\|sdl_main\|sdl_native_helpers\|c++_shared\)\b@@g'`
 
 APP_AVAILABLE_STATIC_LIBS="`echo '
 include $(LOCAL_PATH)/../Settings.mk
@@ -37,7 +37,7 @@ all:
 
 APP_SHARED_LIBS=$(
 echo $APP_MODULES | xargs -n 1 echo | while read LIB ; do
-	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS application sdl_main c++_shared | grep "\\\\b$LIB\\\\b"`
+	STATIC=`echo $APP_AVAILABLE_STATIC_LIBS | grep "\\\\b$LIB\\\\b"`
 	if [ -n "$STATIC" ] ; then true
 	else
 		case $LIB in
@@ -63,7 +63,7 @@ if [ -n "$NO_SHARED_LIBS" ]; then
 fi
 
 APP_SHARED_LIBS="`echo $APP_SHARED_LIBS | sed \"s@\([-a-zA-Z0-9_.]\+\)@$LOCAL_PATH/../../obj/local/$ARCH/lib\1.so@g\"`"
-APP_MODULES_INCLUDE="`echo $APP_MODULES | sed 's@\bc++_shared\b@@' | sed 's@\bapplication\b@@' | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"`"
+APP_MODULES_INCLUDE="`echo $APP_MODULES | sed \"s@\([-a-zA-Z0-9_.]\+\)@-isystem$LOCAL_PATH/../\1/include@g\"`"
 
 CFLAGS="
 -g
