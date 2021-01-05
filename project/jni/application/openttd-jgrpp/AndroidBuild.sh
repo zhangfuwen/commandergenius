@@ -82,6 +82,7 @@ export ARCH=$1
 		-DANDROID_ABI=$1 \
 		-DANDROID_NATIVE_API_LEVEL=$APILEVEL \
 		-DANDROID_STL=c++_shared \
+		-DGLOBAL_DIR="." \
 		-B openttd-$VER-$1 src
 
 } || exit 1
