@@ -29,12 +29,17 @@ How to compile demo application
 
 Launch commands
 
+	./build.sh ballfield
+
+Or in separate steps
+
 	rm project/jni/application/src
 	ln -s ballfield project/jni/application/src
 	./changeAppSettings.sh -a
-	
+	./build.sh
+
 Then edit file build.sh if needed to add NDK dir to your PATH, then launch it.
-It will compile a bunch of libs under project/libs/armeabi,
+It will compile a bunch of libs under project/libs/,
 create Android package file project/bin/MainActivity-debug.apk,
 and install it to your device or emulator, if you specify option -i or -r to build.sh.
 Then you can test it by launching Ballfield icon from Android applications menu.
@@ -63,32 +68,24 @@ and generally it will take a lot of effort to port OpenGL application to GL ES.
 Licensing issues when using gradle
 ==================================
 
-cd into android-sdk-linux/tools/bin
+cd into android-sdk-linux/tools/bin and
 
-
-and
-
-./sdkmanager --licenses
+	./sdkmanager --licenses
 
 if that does not work you need to update
 
-./sdkmanager --update
+	./sdkmanager --update
 
 Accept the license with 'y'. It might download additional stuff, yet not sure, why...
 
 Retry with
 
-./sdkmanager --licenses
+	./sdkmanager --licenses
 
 If the system tells you that the licenses were accepted, but the build system tells otherwise, it might be looking at the wrong path. Symlinking the licenses directory might solve your problem:
 
-ln -s $ANDROID_HOME/licenses project
+	ln -s $ANDROID_HOME/licenses project
 
-
-How to compile a specific SDL based application
-===============================================
-. build/envsetup.sh
-build
 
 How to compile your own application
 ===================================
@@ -302,14 +299,18 @@ There is helper script project/jni/application/setEnvironment.sh which will set 
 for configure script and makefile, see AndroidBuild.sh in project/jni/application/scummvm dir for reference.
 
 
-How to compile your own application using GCC 4.7 or newer
+Signing your application
 ==========================================================
 
-By default, your application will be build with GCC 4.6. To use a newer version of GCC, e.g. GCC 4.8, set-up
-your project like described but execute following commands before running any of the commandergenius scripts
-to configure or build your project:
-export GCCVER=4.8
-export NDK_TOOLCHAIN_VERSION=${GCCVER}
+You can use scripts sign.sh and signBundle.sh to sign your app.
+Set environment variables ANDROID_KEYSTORE_FILE and ANDROID_KEYSTORE_ALIAS
+to your app signing certificate path and certificate alias,
+and if you don't want the script asking you for a password, set variable
+ANDROID_KEYSTORE_PASS_FILE to a file containing your certificate password.
+
+If you are using app bundles, set envirnment variables
+ANDROID_UPLOAD_KEYSTORE_FILE, ANDROID_UPLOAD_KEYSTORE_ALIAS, and ANDROID_UPLOAD_KEYSTORE_PASS_FILE
+to your app bundle signing certificate in a similar way.
 
 
 Android application sleep/resume support
