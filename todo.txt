@@ -43,6 +43,8 @@ TODO, which will get actually done
 
 - XSDL: mouse wheel movement from Bluetooth mouse do not work when mouse capture is active.
 
+- XSDL: Update video when window not focused, this will allow for output in splitscreen mode.
+
 - Debian: force Chromium version to the last working one, from Jan 2020.
 
 - OpenLieroX: limited lives are shown incorrectly in score table when spectating.
