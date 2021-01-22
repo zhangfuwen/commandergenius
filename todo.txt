@@ -31,6 +31,8 @@ TODO, which will get actually done
 
 - SDL: Right mouse button sometimes gets stuck in tap or hold mode, faster scrollwheel while not moving mouse cursor.
 
+- SDL: SD card permission dialog does nothing on Android 10.
+
 - XSDL: use pixel size instead of video mode size, Android multiwindow support.
 
 - XSDL: proper window resizing, with xrandr resizing XSDL screen buffer.
