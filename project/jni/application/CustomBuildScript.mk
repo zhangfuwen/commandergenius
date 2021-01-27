@@ -39,6 +39,11 @@ SDL_APP_LIB_DEPENDS_$(1) += $$(APPDIR)/AndroidBuild.sh $$(APPDIR)/AndroidAppSett
 
 $$(APPDIR)/libapplication-$(1).so: $$(SDL_APP_LIB_DEPENDS_$(1))
 	cd $$(APPDIR) && ./AndroidBuild.sh $(1) $$(TARGET_GCC_PREFIX_$(1))
+	@objdump -p $$@ | grep 'SONAME' && { \
+		objdump -p $$@ | grep 'SONAME *libapplication.so' || { \
+			rm $$@ ; echo 'Error: $$@ must have SONAME set to "libapplication.so", add option -Wl,-soname=libapplication.so to your linker flags' ; \
+		} ; \
+	}
 
 #$$(warning ====== $$(APPDIR)/libapplication-$(1).so: ==> $$(SDL_APP_LIB_DEPENDS_$(1)))
 

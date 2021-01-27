@@ -92,5 +92,5 @@ export ARCH=$1
 NCPU=8
 uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i processor`
 
-make -C openttd-$VER-$1 -j$NCPU VERBOSE=1 STRIP='' && cp -f openttd-$VER-$1/libopenttd.so libapplication-$1.so || exit 1
+make -C openttd-$VER-$1 -j$NCPU VERBOSE=1 STRIP='' && cp -f openttd-$VER-$1/libapplication.so libapplication-$1.so || exit 1
 
