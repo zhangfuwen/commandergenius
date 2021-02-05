@@ -49,6 +49,9 @@ export ARCH=$1
 				# Hack for FREETYPE_INCLUDE_DIRS
 				echo "set(${TARGET}_INCLUDE_DIRS $LOCAL_PATH/../../$LIB/include)" >> $CMAKE_SDL
 				;;
+			fontconfig)
+				TARGET=Fontconfig
+				;;
 			icui18n|iculx|icuuc|icudata|icule|icuio)
 				TARGET="ICU_`echo $LIB | sed 's/icu//'`"
 				echo "set(PC_${TARGET}_INCLUDE_DIRS $LOCAL_PATH/../../$LIB/include)" >> $CMAKE_SDL
