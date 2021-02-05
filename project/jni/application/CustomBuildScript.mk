@@ -4,6 +4,8 @@ APPDIR := $(shell readlink src)
 
 all: $(foreach ARCH, $(APP_ABI), $(APPDIR)/libapplication-$(ARCH).so)
 
+.PHONY: all $(foreach ARCH, $(APP_ABI), $(APPDIR)/libapplication-$(ARCH).so)
+
 TARGET_GCC_PREFIX_armeabi-v7a := arm-linux-androideabi
 TARGET_GCC_PREFIX_x86 := i686-linux-android
 TARGET_GCC_PREFIX_arm64-v8a := aarch64-linux-android
