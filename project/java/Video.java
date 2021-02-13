@@ -1163,14 +1163,19 @@ class DemoGLSurfaceView extends GLSurfaceView_SDL {
 		if (DifferentTouchInput.capturedMouseY >= this.getHeight())
 			DifferentTouchInput.capturedMouseY = this.getHeight() - 1;
 
-		//Log.v("SDL", "DemoGLSurfaceView::onCapturedPointerEvent(): X " + DifferentTouchInput.capturedMouseX + " Y " + DifferentTouchInput.capturedMouseY +
+		//Log.v("SDL", "SDL DemoGLSurfaceView::onCapturedPointerEvent(): X " + DifferentTouchInput.capturedMouseX + " Y " + DifferentTouchInput.capturedMouseY +
 		//				" W " + this.getWidth() + " H " + this.getHeight() + " getX " + event.getX() + " getY " + event.getY() +
 		//				" RelX " + event.getAxisValue(MotionEvent.AXIS_RELATIVE_X) + " RelY " + event.getAxisValue(MotionEvent.AXIS_RELATIVE_Y) );
 
 		event.setLocation(DifferentTouchInput.capturedMouseX, DifferentTouchInput.capturedMouseY);
 		event.setAction(MotionEvent.ACTION_HOVER_MOVE);
 
-		//Log.v("SDL", "DemoGLSurfaceView::onCapturedPointerEvent(): XY " + event.getX() + " " + event.getY() + " action " + event.getAction());
+		int scrollX = Math.round(event.getAxisValue(MotionEvent.AXIS_HSCROLL));
+		int scrollY = Math.round(event.getAxisValue(MotionEvent.AXIS_VSCROLL));
+		if (scrollX != 0 || scrollY != 0)
+			DemoGLSurfaceView.nativeMouseWheel(scrollX, scrollY);
+
+		//Log.v("SDL", "DemoGLSurfaceView::onCapturedPointerEvent(): XY " + event.getX() + " " + event.getY() + " action " + event.getAction() + " scroll " + scrollX + " " + scrollY);
 
 		return this.onTouchEvent(event);
 	}
