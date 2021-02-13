@@ -41,8 +41,6 @@ TODO, which will get actually done
 
 - XSDL: Copy contents of XSDL clipboard to Android clipboard when the app loses focus.
 
-- XSDL: mouse wheel movement from Bluetooth mouse do not work when mouse capture is active.
-
 - XSDL: Update video when window not focused, this will allow for output in splitscreen mode.
 
 - XSDL: Option to disable PulseAudio.
