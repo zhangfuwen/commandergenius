@@ -49,6 +49,9 @@ export ARCH=$1
 				# Hack for FREETYPE_INCLUDE_DIRS
 				echo "set(${TARGET}_INCLUDE_DIRS $LOCAL_PATH/../../$LIB/include)" >> $CMAKE_SDL
 				;;
+			fontconfig)
+				TARGET=Fontconfig
+				;;
 			icui18n|iculx|icuuc|icudata|icule|icuio)
 				TARGET="ICU_`echo $LIB | sed 's/icu//'`"
 				echo "set(PC_${TARGET}_INCLUDE_DIRS $LOCAL_PATH/../../$LIB/include)" >> $CMAKE_SDL
@@ -83,6 +86,8 @@ export ARCH=$1
 		-DANDROID_NATIVE_API_LEVEL=$APILEVEL \
 		-DANDROID_STL=c++_shared \
 		-DGLOBAL_DIR="." \
+		-DHOST_BINARY_DIR=$LOCAL_PATH/build-tools \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
 		-B openttd-$VER-$1 src
 
 } || exit 1
@@ -90,5 +95,5 @@ export ARCH=$1
 NCPU=8
 uname -s | grep -i "linux" > /dev/null && NCPU=`cat /proc/cpuinfo | grep -c -i processor`
 
-make -C openttd-$VER-$1 -j$NCPU VERBOSE=1 STRIP='' && cp -f openttd-$VER-$1/libopenttd.so libapplication-$1.so || exit 1
+make -C openttd-$VER-$1 -j$NCPU VERBOSE=1 STRIP='' && cp -f openttd-$VER-$1/libapplication.so libapplication-$1.so || exit 1
 
