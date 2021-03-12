@@ -61,6 +61,8 @@ int main( int argc, char* argv[] )
 	int displayW = atoi(getenv("DISPLAY_WIDTH_MM"));
 	int displayH = atoi(getenv("DISPLAY_HEIGHT_MM"));
 
+	int pulseAudio = 1;
+
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "Actual video resolution %d/%dx%d/%d", resolutionW, displayW, resolutionH, displayH);
 	setupEnv();
 
@@ -125,7 +127,7 @@ int main( int argc, char* argv[] )
 
 	if( !screenResOverride )
 	{
-		XSDL_showConfigMenu(&resolutionW, &displayW, &resolutionH, &displayH, &builtinKeyboard, &screenButtons, port);
+		XSDL_showConfigMenu(&resolutionW, &displayW, &resolutionH, &displayH, &builtinKeyboard, &screenButtons, port, &pulseAudio);
 		sprintf( screenres, "%d/%dx%d/%dx%d", resolutionW, displayW, resolutionH, displayH,
 					SDL_GetVideoInfo()->vfmt->BitsPerPixel == 24 ? 32 : SDL_GetVideoInfo()->vfmt->BitsPerPixel );
 	}
@@ -177,7 +179,8 @@ int main( int argc, char* argv[] )
 	__android_log_print(ANDROID_LOG_INFO, "XSDL", "XSDL chdir to: %s", getenv("SECURE_STORAGE_DIR"));
 	chdir( getenv("SECURE_STORAGE_DIR") ); // Megahack: change /proc/self/cwd to the X.org data dir, and use /proc/self/cwd path in libX11
 
-	startPulseAudio();
+	if( pulseAudio )
+		startPulseAudio();
 
 	android_main( argnum, args, envp ); // Should never exit on success, if we want to terminate we kill ourselves
 

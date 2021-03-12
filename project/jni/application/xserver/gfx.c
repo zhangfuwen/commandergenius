@@ -426,7 +426,7 @@ void XSDL_unpackFiles(int _freeSpaceRequiredMb)
 	SDL_JoystickClose(j0);
 }
 
-void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys, char * portStr)
+void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, int * displayH, int * builtinKeyboard, int * ctrlAltShiftKeys, char * portStr, int * pulseAudio)
 {
 	int x = 0, y = 0, i, ii;
 	SDL_Event event;
@@ -493,7 +493,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 	cfgfile = fopen(cfgpath, "r");
 	if( cfgfile )
 	{
-		fscanf(cfgfile, "%d %d %d %d %d %d %d", &savedRes, &savedDpi, &customX, &customY, builtinKeyboard, ctrlAltShiftKeys, &port);
+		fscanf(cfgfile, "%d %d %d %d %d %d %d %d", &savedRes, &savedDpi, &customX, &customY, builtinKeyboard, ctrlAltShiftKeys, &port, pulseAudio);
 		fclose(cfgfile);
 		if (strcmp(portStr, ":0") != 0)
 		{
@@ -782,7 +782,11 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 						port ++;
 						port %= 4;
 					}
-					if( y > VID_Y * 4 / 6 &&  y < VID_Y * 6 / 6 )
+					if( y > VID_Y * 3.5f / 6 &&  y < VID_Y * 4.5f / 6 )
+					{
+						*pulseAudio = !(*pulseAudio);
+					}
+					if( y > VID_Y * 4.5 / 6 &&  y < VID_Y * 6 / 6 )
 					{
 						okay = 1;
 					}
@@ -822,6 +826,9 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		sprintf(buf, "Display number: %d", port);
 		renderString(buf, VID_X/2, VID_Y * 3 / 6);
 
+		sprintf(buf, "PulseAudio: %s", *pulseAudio ? "Yes" : "No");
+		renderString(buf, VID_X/2, VID_Y * 4 / 6);
+
 		sprintf(buf, "Okay");
 		renderString(buf, VID_X/2, VID_Y * 5 / 6);
 
@@ -837,7 +844,7 @@ void XSDL_showConfigMenu(int * resolutionW, int * displayW, int * resolutionH, i
 		cfgfile = fopen(cfgpath, "w");
 		if( cfgfile )
 		{
-			fprintf(cfgfile, "%d %d %d %d %d %d %d\n", res, dpi, customX, customY, *builtinKeyboard, *ctrlAltShiftKeys, port);
+			fprintf(cfgfile, "%d %d %d %d %d %d %d %d\n", res, dpi, customX, customY, *builtinKeyboard, *ctrlAltShiftKeys, port, *pulseAudio);
 			fclose(cfgfile);
 		}
 	}
