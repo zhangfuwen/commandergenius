@@ -94,10 +94,7 @@ else
 fi
 
 rm -rf include
-mkdir -p include
-cp -r -L build/arm64-v8a/include/openssl include/openssl || exit 1
-patch -p0 < opensslconf.h.patch || exit 1
-sed -i.tmp 's@".*/dist/.*"@"."@g' include/openssl/opensslconf.h
-rm -f include/openssl/opensslconf.h.tmp
+cp -r -L build/arm64-v8a/include ./ || exit 1
+patch -p1 < opensslconf.h.patch || exit 1
 
 rm -rf build
