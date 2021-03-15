@@ -2,14 +2,12 @@
 
 LOCAL_PATH=`dirname $0`
 LOCAL_PATH=`cd $LOCAL_PATH && pwd`
+export PATH=$HOME/src/endless_space/gdb-10/bin:$PATH
 
 mkdir -p openttd-pc openttd-pc/baseset
 cd openttd-pc
 [ -e bin/baseset ] || cp -a ../src/bin ./
 [ -e bin/fonts ] || cp -a ../data/fonts bin/
-
-export CFLAGS=-O0
-export CXXFLAGS=-O0
 
 [ -e Makefile ] || cmake ../src || exit 1
 make -j8 VERBOSE=1 || exit 1
