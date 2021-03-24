@@ -27,6 +27,16 @@ jobs:
       # Runs a single command using the runners shell
       - name: update submodules
         run: ls && git submodule update --init --recursive && ls
+        
+      - name: setup build env
+        run: |
+          apt-get install -y bison make zip git locales pkg-config curl autoconf automake autopoint libtool libtool-bin help2man texinfo intltool xfonts-utils xutils-dev libfontenc-dev libxkbfile-dev libxmuu-dev libjpeg-dev libpng-dev libpixman-1-dev libssl-dev libpciaccess-dev
+          apt-get install -y openjdk-8-jdk
+          mkdir /opt/android-sdk
+          cd /opt/android-sdk 
+          curl --output sdk-tools-linux.zip https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
+          unzip sdk-tools-linux.zip
+          echo -ne "y" | ./tools/bin/sdkmanager --install 'build-tools;29.0.2' 'platform-tools' 'platforms;android-29' 'tools'
 
       # Runs a set of commands using the runners shell
       - name: build
