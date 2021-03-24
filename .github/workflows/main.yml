@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: update submodules
         run: |
-          git submodule update project/jni/application/xserver-debian/debian-image
+          git submodule update --init project/jni/application/xserver-debian/debian-image
           cd project/jni/application/xserver-debian/debian-image
           git remote -v 
           git branch -av 
