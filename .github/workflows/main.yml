@@ -27,12 +27,14 @@ jobs:
       # Runs a single command using the runners shell
       - name: update submodules
         run: |
+          git submodule update project/jni/application/xserver-debian/debian-image
           cd project/jni/application/xserver-debian/debian-image
           git remote -v 
           git branch -av 
           cd -
           ls 
-          git submodule update --init --recursive && ls
+          git submodule update --init --recursive
+          ls
         
       - name: setup build env
         run: |
